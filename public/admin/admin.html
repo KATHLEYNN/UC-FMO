@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UC Campus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+    <body>
+    <style>
+    /* General */
+        * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-image: url('file:///D:/Downloads/home%20image.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+        .rankings-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .ranking-box {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .ranking-title {
+            color: #365486;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ranking-table th,
+        .ranking-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ranking-table th {
+            background-color: #f8f9fa;
+            color: #365486;
+            font-weight: bold;
+        }
+
+        .ranking-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #365486;
+            width: 50px;
+            text-align: center;
+        }
+
+        .usage-bar {
+            background: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .usage-fill {
+            background: #365486;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .percentage {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .chart-container {
+            width: 45%;
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: inline-block;
+            vertical-align: top;
+        }
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px;
+            gap: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #365486;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+    
+    <!-- Navigation Bar -->
+     <nav class="navbar">
+    <div class="logo">
+      <img src="/images/UC_LOGO.png" alt="uc logo">
+    </div>
+    <ul class="nav-links" id="navLinks">
+    <li><a href="/user/home.html">Home</a></li>
+      <li><a href="/admin/admin.html" class="active">Generate Report</a></li>
+      <li><a href="/admin/calendar.html">Calendar</a></li>
+      <li><a href="">Pending</a></li>
+    </ul>
+  </nav>
+
+    <style>
+    /* Navigation Bar */
+        nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background-color: #2e7d32;
+      color: #ffffff;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+.logo img {
+  height: 75px;
+  width: auto;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #a5d6a7; 
+}
+
+.home {
+  text-align: center;
+  padding: 1rem 2rem;
+  background-color: #e8f5e9;
+}
+
+    /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+    /* Toggle class for show/hide */
+        .show {
+            display: block;
+        }
+    </style>
+
+    <script>
+        function toggleDropdown() {
+            var dropdownContent = document.querySelector(".dropdown-content");
+            dropdownContent.classList.toggle("show");
+        }
+        function handleLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = 'auth/logout.php';
+            }
+        }
+    </script>
+
+
+    <div class="explore-container">
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $total_posts; ?></div>
+                <div class="stat-label">Total Reservation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $top_element; ?></div>
+                <div class="stat-label">Most Selected Reservation Type</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $top_style; ?></div>
+                <div class="stat-label">Clients</div>
+            </div>
+        </div>
+
+        <div class="rankings-container">
+        <!-- Selected Reservation Rankings -->
+        <div class="ranking-box">
+            <h2 class="ranking-title">Selected Reservation Rankings</h2>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Element</th>
+                        <th>Usage</th>
+                        <th>Distribution</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <!-- Most Clients -->
+        <div class="ranking-box">
+            <h2 class="ranking-title">Most Clients</h2>
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Style</th>
+                        <th>Usage</th>
+                        <th>Distribution</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    
+        <div class="chart-container">
+            <canvas id="cultureChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="stylesChart"></canvas>
+        </div>
+
+    </div>
+
+  <style>
+    /* Post container */
+.post {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    padding: 15px;
+    /* max-width: 600px; */
+    width: 100%;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.post-header span {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.delete-post {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.post-content h3 {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.post-content p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.post-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.post-interactions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.like-btn, .comment-toggle {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.like-btn.liked {
+    background: #28a745;
+}
+
+.comments-section {
+    margin-top: 20px;
+}
+
+.comment {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f7f7f7;
+    border-radius: 8px;
+}
+
+.comment-profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.comment-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-content strong {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.comment-content p {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.delete-comment {
+    background: transparent;
+    border: none;
+    font-size: 12px;
+    color: #dc3545;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.comment-input {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.comment-text {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.submit-comment {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+   .explore-container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-container {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .post-header div {
+      font-size: 14px;
+    }
+
+    .post-header strong {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .post-body {
+      margin-top: 10px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .post-body img {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      margin-top: 15px;
+      border-radius: 5px;
+    }
+
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .post-footer button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #555;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    .post-footer button:hover {
+      color: #007bff;
+    }
+
+    .post-footer .like-btn,
+    .post-footer .comment-btn,
+    .post-footer .share-btn {
+      padding: 5px 10px;
+    }
+
+    /* Tag Style for Elements */
+    .tags-container {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      background-color: #e7f1ff;
+      color: #007bff;
+      border-radius: 20px;
+      padding: 5px 15px;
+      font-size: 14px;
+      border: 1px solid #007bff;
+      transition: all 0.3s ease;
+    }
+
+    .tag:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
+  </style>
+
+</body>
+</head>
+</html>
