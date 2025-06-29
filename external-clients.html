@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>External Clients Registration Form</title>
+    <style>
+      @page {
+        size: 8.5in 13in;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        margin-top: 1cm;
+        margin-bottom: 1cm;
+      }
+      @media print {
+        .form-page {
+          display: block !important;
+        }
+        .navbar,
+        .footer,
+        .navigation {
+          display: none !important;
+        }
+      }
+      body {
+        font-family: Century Gothic, sans-serif;
+        font-size: 11px;
+        margin: 0;
+        padding: 0;
+      }
+      .navbar {
+        background-color: #2e7d32; /* dark green */
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        position: relative;
+      }
+      .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links li a {
+        text-decoration: none;
+        color: white;
+        font-weight: 500;
+        font-size: 16px;
+      }
+
+      .nav-links li a:hover {
+        color: #a5d6a7;
+      }
+      .footer {
+        background-color: #033e2e;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 14px;
+      }
+      .form-container {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+      }
+      td,
+      th {
+        border: 1px solid black;
+        padding: 5px;
+        vertical-align: top;
+      }
+      .no-border {
+        border: none !important;
+      }
+      .form-title {
+        background-color: #3535354d;
+        text-align: center;
+        font-weight: bold;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 2px solid black;
+        border-radius: 7px;
+      }
+      .two-columns {
+        display: flex;
+        gap: 10px;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .two-columns > div {
+        flex: 1;
+      }
+      .two-columns table {
+        width: 100%;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .section-title {
+        font-weight: bold;
+        background-color: #747272;
+      }
+      .small {
+        font-size: 10px;
+      }
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .header-row img {
+        height: 40px;
+      }
+      .form-page {
+        display: none;
+      }
+      .form-page.active {
+        display: block;
+      }
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
+      button {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+      .outer-border {
+        border: 1px solid black;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      .outer-border td,
+      .outer-border th {
+        border: none;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <script>
+    function onlyOne(checkbox) {
+      const checkboxes = document.getElementsByName("activity-type");
+      checkboxes.forEach((cb) => {
+        if (cb !== checkbox) cb.checked = false;
+      });
+    }
+  </script>
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
+          alt="UC Logo"
+          style="height: 75px; width: auto"
+        />
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="home.html" class="active">Home</a></li>
+        <li><a href="#">Inquire</a></li>
+        <li><a href="reservation.html">Reservation</a></li>
+      </ul>
+    </nav>
+    <form
+      class="form-container"
+      id="combinedForm"
+      onsubmit="event.preventDefault(); window.print();"
+    >
+      <!-- PAGE 1 -->
+      <!-- Header Section -->
+      <div id="page1" class="form-page active">
+        <div class="header-row">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png" alt="University of the Cordilleras Logo" />
+          <div style="text-align: right">
+            <strong>CAMPUS MANAGEMENT OFFICE</strong><br />
+            <strong>Facilities Management Operations Unit</strong>
+          </div>
+        </div>
+
+        <!-- Second Section -->
+        <div style="text-align: center">
+          <strong style="font-size: 15px"
+            >FACILITIES AND SERVICES REQUEST FORM FOR EXTERNAL CLIENTS</strong
+          ><br />
+          <span style="font-size: 13px"
+            >(Please read House Rules / Policy before filing out this
+            form.)</span
+          >
+        </div>
+        <br />
+
+        <table>
+          <tr>
+            <td colspan="2" style="width: 50%">
+              <strong>Name of Agency/Organization:</strong>
+              <input
+                type="text"
+                id="organization"
+                name="organization_name"
+                style="width: 98%"
+              />
+            </td>
+            <td colspan="1" style="width: 30%">
+              <strong>Contact Person:</strong>
+              <input
+                type="text"
+                id="contact_person"
+                name="contact_person"
+                style="width: 97%"
+              />
+            </td>
+            <td colspan="1" style="width: 20%">
+              <strong>Contact No.:</strong>
+              <input
+                type="text"
+                id="contact_number"
+                name="contact_number"
+                style="width: 96%"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4">
+              <strong>Address of Agency/Organization:</strong>
+              <input
+                type="text"
+                id="agency_org"
+                name="agency_org"
+                style="width: 99%"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <strong>Title/Theme of Activity:</strong>
+              <input
+                type="text"
+                id="title_theme"
+                name="title_theme"
+                style="width: 99%"
+              />
+            </td>
+            <td colspan="2">
+              <strong>Purpose of Activity:</strong>
+              <input
+                type="text"
+                id="purpose"
+                name="purpose"
+                style="width: 99%"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" style="width: 25%">
+              <strong>Date being reserved:</strong>
+              <input
+                type="date"
+                id="reserve_date"
+                name="reserve_date"
+                style="width: 99%"
+              />
+            </td>
+            <td colspan="1" style="width: 20%">
+              <strong>Time Start:</strong>
+              <input
+                type="text"
+                id="time_start"
+                name="time_start"
+                style="width: 95%"
+              />
+            </td>
+            <td colspan="1" style="width: 20%">
+              <strong>Time End:</strong>
+              <input
+                type="text"
+                id="time_end"
+                name="time_end"
+                style="width: 96%"
+              />
+            </td>
+            <td colspan="1" style="width: 35%">
+              <strong>Number of Participants</strong>
+              <input
+                type="text"
+                id="participants"
+                name="participants"
+                style="width: 96%"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4">
+  <div style="display: flex; justify-content: space-between;">
+    <div style="width: 50%;">
+      <strong>*With Food/Canteen Services?</strong>&nbsp;&nbsp;
+      <label>
+        <input
+          type="checkbox"
+          name="activity-type"
+          value="with_food"
+          onclick="onlyOne(this)"
+        />
+        Yes
+      </label>
+      &nbsp;&nbsp;
+      <label>
+        <input
+          type="checkbox"
+          name="activity-type"
+          value="without_food"
+          onclick="onlyOne(this)"
+        />
+        No
+      </label>
+    </div>
+
+    <div style="width: 50%; text-align: center;">
+      <strong>Canteen</strong><br />
+      <strong>___________________</strong><br />
+      <strong>(Name | Signature | Date)</strong>
+    </div>
+  </div>
+</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <strong>Facilities Needed</strong><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="classroom"
+                  onclick="onlyOne(this)" />
+                Classroom (Max Capacity = 45) Room No. &nbsp;<input
+                  type="text"
+                  id="classroom_number"
+                  name="classroom_number"
+                  style="width: 10%" /></label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="gym"
+                  onclick="onlyOne(this)"
+                />
+                Gymnasium (Max Capacity = 1,500)</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="auditorium"
+                  onclick="onlyOne(this)"
+                />
+                Auditorium (Max Capacity = 250)</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="theater"
+                  onclick="onlyOne(this)"
+                />
+                Theater (Max Capacity = 600)</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="review_center"
+                  onclick="onlyOne(this)"
+                />
+                G311-G312- Review Center (Max Capacity = 100)</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="training"
+                  onclick="onlyOne(this)"
+                />
+                Training Center (Max Capacity = 40)</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="other_facilities"
+                  onclick="onlyOne(this)" />
+                Others, Specify &nbsp;<input
+                  type="text"
+                  id="others_number"
+                  name="others_number"
+                  style="width: 70%" /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Max Capacity:
+                &nbsp;<input
+                  type="text"
+                  id="others_max"
+                  name="others_max"
+                  style="width: 10%"
+              /></label>
+            </td>
+            <td colspan="2">
+              <strong>Type of Activity</strong><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="play_presentation"
+                  onclick="onlyOne(this)"
+                />
+                Play Presentation</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="convention"
+                  onclick="onlyOne(this)"
+                />
+                Convention</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="seminar"
+                  onclick="onlyOne(this)"
+                />
+                Training/ Seminar/ Conference</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="graduiation"
+                  onclick="onlyOne(this)"
+                />
+                Graduation/ Convocation</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="fellowship"
+                  onclick="onlyOne(this)"
+                />
+                Fellowship</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="basketball_volleyball"
+                  onclick="onlyOne(this)"
+                />
+                Basketball/ Volleyball</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="sportsfest"
+                  onclick="onlyOne(this)"
+                />
+                Sportsfest</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="review"
+                  onclick="onlyOne(this)"
+                />
+                Review</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="other_activity"
+                  onclick="onlyOne(this)" />
+                Others, Specify:&nbsp;
+                <input
+                  type="text"
+                  id="activity_specify"
+                  name="activity_specify"
+                  style="width: 75%"
+              /></label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1">
+              <strong>Equipment Needed</strong><br /><br />
+              <label>&nbsp;&nbsp;•&nbsp;&nbsp;Furniture<br /></label>
+              <label><input type="checkbox" />Whiteboard:</label><br />
+              <label
+                ><input type="checkbox" />Chairs: &nbsp;<input
+                  type="number"
+                  id="chairs"
+                  name="chairs"
+                  min="0"
+                  step="1"
+                  style="width: 10%" /></label
+              ><br />
+              <label
+                ><input type="checkbox" />Long/Short Table: &nbsp;<input
+                  type="number"
+                  id="ls_tables"
+                  name="ls_tables"
+                  min="0"
+                  step="1"
+                  style="width: 10%" /></label
+              ><br />
+              <label><input type="checkbox" />Rosirum:</label><br />
+              <label
+                ><input type="checkbox" />Round Table: &nbsp;<input
+                  type="number"
+                  id="round_tables"
+                  name="round_tables"
+                  min="0"
+                  step="1"
+                  style="width: 10%" /></label
+              ><br />
+              <label
+                >&nbsp;&nbsp;•&nbsp;&nbsp;Others, Specify:
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                  type="text"
+                  name="others_equipment"
+                  style="width: 75%" /></label
+              ><br />
+            </td>
+            <td colspan="3">
+              <strong>*Audio-Visual Requirements</strong><br /><br />
+
+              <div style="display: flex; justify-content: space-between">
+                <div style="width: 58%">
+                  <label>
+                    <input type="checkbox" /> Microphones:
+                    <input
+                      type="number"
+                      id="mic"
+                      name="mic"
+                      min="0"
+                      step="1"
+                      style="width: 60px"
+                    />
+                    pcs </label
+                  ><br />
+
+                  <label>
+                    <input type="checkbox" /> Microphone Stands:
+                    <input
+                      type="number"
+                      id="mic_stands"
+                      name="mic_stands"
+                      min="0"
+                      step="1"
+                      style="width: 60px"
+                    />
+                    pcs </label
+                  ><br />
+                  <label><input type="checkbox" /> Projector</label><br />
+                  <label><input type="checkbox" /> PA System</label>
+                </div>
+                <div style="width: 40%">
+                  <label><input type="checkbox" /> WiFi Connection</label><br />
+                  <label><input type="checkbox" /> Podium Monitor Board</label
+                  ><br />
+                  <label><input type="checkbox" /> Live Streaming</label><br />
+                </div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap">
+                <strong>Lights &nbsp;</strong>
+                <label
+                  ><input type="checkbox" /> House Lights / Par
+                  Lights&nbsp;</label
+                ><br />
+                <label><input type="checkbox" /> Follow Spotlights&nbsp;</label>
+                <label><input type="checkbox" /> Stage Lights&nbsp;</label>
+              </div>
+              <label><input type="checkbox" /> Other AV needs:</label><br />
+              <input type="text" name="others_AV" style="width: 50%" />
+              <br /><br />
+              <div style="display: flex; justify-content: space-between">
+                <div style="text-align: center; width: 50%">
+                  <strong>*Maintenance Operation Unit:</strong><br /><br />
+                  <strong>____________________________</strong><br />
+                  <strong>(Name | Signature | Date)</strong>
+                </div>
+                <div style="text-align: center; width: 50%">
+                  <strong>*Media Center:</strong><br /><br />
+                  <strong>____________________________</strong><br />
+                  <strong>(Name | Signature | Date)</strong>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <table>
+          <strong>*Facilities Services</strong>
+          <td>
+            <div>
+              Please attach a floor plan and include all set-up needs. (Podium,
+              chairs, tables, riser, platform, *native cloth, etc)
+            </div>
+          </td>
+        </table>
+        <table>
+          <td>
+            <div>
+              If the activity will be cancelled, the client must inform the UC
+              *Campus Management Office at least three (3) days before the
+              scheduled date of activity.<br />
+              (Note: All activities are generakky cancelled whenever the school
+              is closed caused by inclement weather.)
+            </div>
+          </td>
+        </table>
+
+        <table class="outer-border">
+          <strong>Billing Particulars</strong>
+          <tr>
+            <td colspan="1">
+              <label
+                >Use of&nbsp;&nbsp;<input
+                  type="text"
+                  name="billing_use"
+                  style="width: 84%"
+                /><br />
+                Other Fees:&nbsp;&nbsp;<input
+                  type="text"
+                  name="billing_other1"
+                  style="width: 75%"
+                /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                  type="text"
+                  name="billing_other2"
+                  style="width: 75%"
+                /><br /><br />
+                Full Payment<br /><br />
+                Less Deposit/Payment<br /><br />
+                Balance<br /><br />
+                Additional
+              </label>
+            </td>
+            <td colspan="1">
+              <label
+                >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
+                &nbsp;<input
+                  type="number"
+                  id="php_use"
+                  name="php_use"
+                  min="0"
+                  step="1"
+                  style="width: 25%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
+                &nbsp;<input
+                  type="number"
+                  id="php_fees1"
+                  name="php_fees1"
+                  min="0"
+                  step="1"
+                  style="width: 25%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
+                &nbsp;<input
+                  type="number"
+                  id="php_fees2"
+                  name="php_fees2"
+                  min="0"
+                  step="1"
+                  style="width: 25%"
+                /><br /><br />
+                <strong>TOTAL</strong>&nbsp;&nbsp;PhP &nbsp;<input
+                  type="number"
+                  id="php_full"
+                  name="php_full"
+                  min="0"
+                  step="1"
+                  style="width: 25%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
+                &nbsp;<input
+                  type="number"
+                  id="php_less"
+                  name="php_less"
+                  min="0"
+                  step="1"
+                  style="width: 25%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
+                &nbsp;<input
+                  type="number"
+                  id="php_bal"
+                  name="php_bal"
+                  min="0"
+                  step="1"
+                  style="width: 25%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
+                &nbsp;<input
+                  type="number"
+                  id="php_additional"
+                  name="php_additional"
+                  min="0"
+                  step="1"
+                  style="width: 25%"
+                /><br />
+              </label>
+            </td>
+            <td colspan="1">
+              <label
+                ><br /><br /><br /><br /><br /><br /><strong>TOTAL</strong
+                >&nbsp;&nbsp;O.R. # &nbsp;<input
+                  type="number"
+                  id="OR_full"
+                  name="OR_full"
+                  min="0"
+                  step="1"
+                  style="width: 50%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O.R.
+                # &nbsp;<input
+                  type="number"
+                  id="OR_less"
+                  name="OR_less"
+                  min="0"
+                  step="1"
+                  style="width: 50%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O.R.
+                # &nbsp;<input
+                  type="number"
+                  id="OR_bal"
+                  name="OR_bal"
+                  min="0"
+                  step="1"
+                  style="width: 50%"
+                /><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O.R.
+                # &nbsp;<input
+                  type="number"
+                  id="OR_additional"
+                  name="OR_additional"
+                  min="0"
+                  step="1"
+                  style="width: 50%"
+                /><br />
+              </label>
+            </td>
+          </tr>
+        </table>
+
+        <table style="width: 100%; table-layout: fixed">
+          <colgroup>
+            <col style="width: 33%" />
+            <col style="width: 33%" />
+            <col style="width: 34%" />
+            <!-- adds up to 100% -->
+          </colgroup>
+          <tr>
+            <td style="background-color: #918f8f">
+              <strong>Concurred with</strong><br />
+            </td>
+            <td style="background-color: #918f8f">
+              <strong>Venue Reserved by</strong>
+            </td>
+            <td style="background-color: #918f8f">
+              <strong>*Approved by</strong>
+            </td>
+          </tr>
+          <tr>
+            <td><br /><br /></td>
+            <td><br /><br /></td>
+            <td><br /><br /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center"><strong>Contact Person</strong></td>
+            <td style="text-align: center">
+              <strong>Director, *Campus Management Office</strong>
+            </td>
+            <td style="text-align: center">
+              <strong>VP for Administration & Student Services</strong>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center">
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+            <td style="text-align: center">
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+            <td style="text-align: center">
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Pg 1 nav -->
+        <div class="navigation">
+          <span>Page 1 of 2</span>
+          <button type="button" onclick="goToPage(2)">Next Page →</button>
+        </div>
+      </div>
+      <div class="navigation">
+      <button type="button" onclick="goToPage(1)">← Previous Page</button>
+      <span>Page 2 of 2</span>
+      <button type="submit">Submit</button>
+    </div>
+    </form>
+    
+
+    <script>
+      function goToPage(pageNumber) {
+        document
+          .querySelectorAll(".form-page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("page" + pageNumber).classList.add("active");
+      }
+    </script>
+    <footer class="footer">
+      © 2025 University of the Cordilleras. All Rights Reserved.
+    </footer>
+  </body>
+</html>

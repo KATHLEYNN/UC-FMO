@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Combined On-Campus Registration Form</title>
+    <style>
+      .navbar {
+        background-color: #2e7d32; /* dark green */
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        position: relative;
+      }
+      .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links li a {
+        text-decoration: none;
+        color: white;
+        font-weight: 500;
+        font-size: 16px;
+      }
+
+      .nav-links li a:hover {
+        color: #a5d6a7;
+      }
+      .footer {
+        background-color: #033e2e;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 14px;
+      }
+      @page {
+        size: 8.5in 13in;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        margin-top: 1cm;
+        margin-bottom: 1cm;
+      }
+      @media print {
+        .form-page {
+          display: block !important;
+        }
+        .navbar,
+        .footer
+        .navigation {
+          display: none !important;
+        }
+      }
+      body {
+        font-family: Century Gothic, sans-serif;
+        font-size: 12px;
+        margin: 0;
+        padding: 0;
+      }
+      .form-container {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+      }
+      td,
+      th {
+        border: 1px solid black;
+        padding: 5px;
+        vertical-align: top;
+      }
+      .no-border {
+        border: none !important;
+      }
+      .form-title {
+        background-color: #3535354d;
+        text-align: center;
+        font-weight: bold;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 2px solid black;
+        border-radius: 7px;
+      }
+      .two-columns {
+        display: flex;
+        gap: 10px;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .two-columns > div {
+        flex: 1;
+      }
+      .two-columns table {
+        width: 100%;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .section-title {
+        font-weight: bold;
+        background-color: #eee;
+      }
+      .small {
+        font-size: 10px;
+      }
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .header-row img {
+        height: 40px;
+      }
+      .form-page {
+        display: none;
+      }
+      .form-page.active {
+        display: block;
+      }
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
+      button {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <script>
+    function onlyOne(checkbox) {
+      const checkboxes = document.getElementsByName("activity-type");
+      checkboxes.forEach((cb) => {
+        if (cb !== checkbox) cb.checked = false;
+      });
+    }
+  </script>
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
+          alt="UC Logo"
+          style="height: 75px; width: auto"
+        />
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="home.html" class="active">Home</a></li>
+        <li><a href="#">Inquire</a></li>
+        <li><a href="reservation.html">Reservation</a></li>
+      </ul>
+    </nav>
+    <form
+      class="form-container"
+      id="combinedForm"
+      onsubmit="event.preventDefault(); window.print();"
+    >
+      <!-- PAGE 1 -->
+      <!-- Header Section -->
+      <div id="page1" class="form-page active">
+        <div class="header-row">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png" alt="University of the Cordilleras Logo" />
+          <div style="text-align: right">
+            <strong>VICE PRESIDENT FOR ACADEMICS AND RESEARCH</strong><br />
+            <span
+              >___________________________________ <br />
+              College
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</span
+            >
+          </div>
+        </div>
+
+        <!-- Second Section -->
+        <div class="form-title">
+          STUDENT ACTIVITY REQUEST FORM FOR ON-CAMPUS
+        </div>
+
+        <table>
+          <tr>
+            <td rowspan="2" style="width: 50%">
+              <strong class="small" style="font-size: 11px">
+                This SARF is to be used by colleges, offices, recognized student
+                organizations, student councils and faculty members for
+                requesting approval of student activities in the campus. Submit
+                SARF in Triplicate, two (2) weeks prior to start date of
+                activity.
+              </strong>
+            </td>
+            <td rowspan="2" style="width: 30%">
+              <strong>Type of Activity</strong><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="Academic"
+                  onclick="onlyOne(this)"
+                />
+                Academic</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="Non-Academic"
+                  onclick="onlyOne(this)"
+                />
+                Non-Academic</label
+              ><br />
+              <label
+                ><input
+                  type="checkbox"
+                  name="activity-type"
+                  value="College/Institutional"
+                  onclick="onlyOne(this)"
+                />
+                College/Institutional</label
+              >
+            </td>
+            <td style="width: 20%">
+              <strong>SARF/Control No.:</strong><br />
+              <input
+                type="text"
+                id="control"
+                name="control"
+                style="width: 99%"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Received:<br />
+              <input
+                type="date"
+                id="received_date"
+                name="received_date"
+                style="width: 99%"
+              />
+            </td>
+          </tr>
+        </table>
+
+        <!-- Third Section -->
+        <div class="two-columns">
+          <!-- Left Column -->
+          <div>
+            <table>
+              <tr>
+                <td>
+                  <strong>Name of Organization/Office/College:</strong>
+                  <input
+                    type="text"
+                    id="organization"
+                    name="organization_name"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Title of Activity/Program:</strong>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Nature of Activity:</strong>
+                  <input
+                    type="text"
+                    id="nature"
+                    name="nature"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Activity Date/Time:</strong></td>
+              </tr>
+              <tr>
+                <td>
+                  &nbsp;&nbsp;Start:
+                  <input type="time" id="start-time" name="start-time" />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>&nbsp;&nbsp;End:</strong>
+                  <input type="time" id="end-time" name="end-time" />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Venue/Location:</strong>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+            </table>
+
+            <table>
+              <tr>
+                <td>
+                  <strong>Participants:</strong><br />
+                  <label
+                    ><input
+                      type="checkbox"
+                      name="activity-type"
+                      value="Academic"
+                      onclick="onlyOne(this)"
+                    />
+                    Members/Office Staff Only</label
+                  ><br />
+                  <label
+                    ><input
+                      type="checkbox"
+                      name="activity-type"
+                      value="Academic"
+                      onclick="onlyOne(this)"
+                    />
+                    With other UC Students/Employees</label
+                  ><br />
+                  <label
+                    ><input
+                      type="checkbox"
+                      name="activity-type"
+                      value="Academic"
+                      onclick="onlyOne(this)"
+                    />
+                    Open to Public/Outsiders</label
+                  ><br />
+                  <strong>Estimated Total No. of Participants:</strong>
+                  <input
+                    type="number"
+                    id="est_participants"
+                    name="est_participants"
+                    min="0"
+                    step="1"
+                  />
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <table>
+              <tr>
+                <td><strong>Remarks/Conditions:</strong></td>
+              </tr>
+              <tr>
+                <td>
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea>
+                </td>
+              </tr>
+            </table>
+
+            <table>
+              <tr>
+                <td>
+                  <strong>Checklist (For Review Use Only)</strong><br />
+                  <label
+                    ><input type="checkbox" /> Copy of Letter of Invitation/MOA
+                    (if with outside partner)</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Speaker/Facilitator Resume</label
+                  ><br />
+                  <label><input type="checkbox" /> Organizing Committee</label
+                  ><br />
+                  <label><input type="checkbox" /> Budget Request Form</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Copy of USC/CSC/Alternative
+                    Resolutions</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Copy of Program/Schedule of
+                    Activities</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Copy of Promotional
+                    Material/Posters</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Excuse Letter of Students</label
+                  ><br />
+                  <label><input type="checkbox" /> List of Participants</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Venue Floor Plan/Physical
+                    Set-up</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Curfew Form (if
+                    applicable)</label
+                  >
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="two-columns">
+          <!-- Left Column -->
+          <div>
+            <table>
+              <tr>
+                <td colspan="2">
+                  <strong>Source of Budget:</strong>
+                  <input type="text" name="budget_source" style="width: 99%" />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <strong>Estimated Total Budget:</strong>
+                  <input
+                    type="text"
+                    name="estimated_budget"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td
+                  colspan="2"
+                  class="section-title"
+                  style="text-align: center"
+                >
+                  <strong>In-Charge of Activity</strong>
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 30%"><strong>Name:</strong></td>
+                <td>
+                  <input type="text" name="incharge_name" style="width: 99%" />
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Designation:</strong></td>
+                <td>
+                  <input
+                    type="text"
+                    name="incharge_designation"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Contact No.:</strong></td>
+                <td>
+                  <input
+                    type="text"
+                    name="incharge_contact"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Email Address:</strong></td>
+                <td>
+                  <input
+                    type="email"
+                    name="incharge_email"
+                    style="width: 99%"
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" style="height: 100px">
+                  <div style="text-align: center">
+                    <strong style="font-size: 14px">
+                      Liability Waiver<br />
+                      [To be accomplished by the Adviser/Coordinator]
+                    </strong>
+                  </div>
+                  <p style="font-size: 13px; text-align: justify">
+                    I certify that the undersigned will stay with the students
+                    and participants for the duration of the aforementioned
+                    activity. Further, I acknowledge that as an Adviser of the
+                    organizing body, I am fully liable to any untoward events
+                    that may arise during the conduct of the above activity. My
+                    signature below indicates that I have read the policy stated
+                    in this Liability Waiver Form, and that I agree to abide by
+                    this policy.
+                  </p>
+                  <br /><br />
+                  <div style="height: 110px">
+                    <strong>
+                      <div
+                        style="display: flex; justify-content: space-between"
+                      >
+                        <div style="text-align: center; width: 60%">
+                          _____________________________<br />
+                          Adviser/Coordinator
+                        </div>
+                        <div style="text-align: center; width: 35%">
+                          ___________________<br />
+                          Date
+                        </div>
+                      </div>
+                    </strong>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <table>
+              <tr>
+                <td
+                  colspan="2"
+                  class="section-title"
+                  style="text-align: center"
+                >
+                  <strong>SIGNATURES: Printed Name and Signature, Date</strong>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>&nbsp;&nbsp;Submitted By:</strong> <br />
+                  <br />
+                  <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
+                    ________________
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;President/Organizer
+                  </p>
+                  <br />
+                  <strong>&nbsp;&nbsp;Noted By:</strong> <br />
+                  <br />
+                  <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
+                    ________________
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adviser/Corrdinator
+                  </p>
+                  <br />
+                  <strong>&nbsp;&nbsp;Recommending Approval:</strong> <br />
+                  <br />
+                  <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
+                    ________________
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Academic
+                    Dean/Prog. Chair
+                  </p>
+                  <br />
+                  <strong>&nbsp;&nbsp;Approved By:</strong> <br />
+                  <br />
+                  <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
+                    ________________
+                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VP
+                    for Academics and Research
+                  </p>
+                  <br />
+                  <strong>&nbsp;&nbsp;Venue Reserved:</strong> <br />
+                  <br />
+                  <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
+                    ________________ <br />&nbsp;&nbsp;&nbsp;Campus Facilities,
+                    Planning $ Dev't Officer
+                  </p>
+                  <br />
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <table>
+          <td colspan="7" class="section-title" style="text-align: center">
+            <strong>Amount of insurance per insured individual (PhP)</strong>
+          </td>
+          <tr>
+            <th style="width: 12%">Description of Persons to be Covered</th>
+            <th>Basic Life</th>
+            <th>Accidental Death & Dismemberment</th>
+            <th>Double Indemnity for Public Conveyance</th>
+            <th>Accidental Medical Expense</th>
+            <th>Daily Accident Hospital Benefit</th>
+            <th>Unprovoked Murder & Assault</th>
+          </tr>
+          <tr>
+            <th>All Eligible Students</th>
+            <th>15,000</th>
+            <th>150,000</th>
+            <th>300,000</th>
+            <th>50,000</th>
+            <th>500</th>
+            <th>150,000</th>
+          </tr>
+        </table>
+
+        <!-- Pg 1 nav -->
+        <div class="navigation">
+          <span>Page 1 of 2</span>
+          <button type="button" onclick="goToPage(2)">Next Page →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 2 -->
+      <div id="page2" class="form-page">
+        <div class="two-columns">
+          <!-- Left Column -->
+          <div>
+            <table>
+              <td colspan="2" class="section-title" style="text-align: center">
+                <strong>For BMO Support (if applicable)</strong><br />
+                <strong
+                  >Venue: <input type="text" name="venue" style="width: 87%"
+                /></strong>
+              </td>
+              <tr>
+                <td style="width: 50%">
+                  <p>Technical Requirements:</p>
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="wl_mic"
+                      name="wl_mic"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of WL microphones</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="wired_mic"
+                      name="wired_mic"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of wired microphones</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="mic_stands"
+                      name="mic_stands"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of microphone stands</label
+                  ><br />
+                  <label><input type="checkbox" /> Laptop</label><br />
+                  <label><input type="checkbox" /> Projector</label><br />
+                  <label><input type="checkbox" /> PA System</label><br />
+                  <label><input type="checkbox" /> VA mixer</label><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="lights"
+                      name="lights"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    par lights</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Moving intelligent lights</label
+                  ><br />
+                  <label><input type="checkbox" /> Follow Spot</label><br />
+                  <label><input type="checkbox" /> Others</label
+                  ><input
+                    type="text"
+                    name="others_tech"
+                    style="width: 97%"
+                  /><br />
+                </td>
+                <td>
+                  <strong>Other Requirements:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br /><br />
+                  <strong>Remarks:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" style="text-align: center">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 5px;
+                    "
+                  >
+                    <div style="text-align: left; width: 48%">
+                      <strong>Noted and Prroved:</strong>
+                    </div>
+                    <div style="text-align: center; width: 52%">
+                      <strong>Date:</strong>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between">
+                    <div style="text-align: center; width: 60%">
+                      <strong>_____________________________</strong><br />
+                      <strong>Head, LMO</strong>
+                    </div>
+                    <div style="text-align: center; width: 35%">
+                      <strong>_______________________</strong>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <table>
+              <td
+                colspan="2"
+                class="section-title"
+                style="text-align: center; height: 35px"
+              >
+                <strong>For LMO Support (if applicable)</strong><br />
+              </td>
+              <tr>
+                <td style="width: 50%">
+                  <p>Property Requirements:</p>
+                  <label><input type="checkbox" /> Podium</label><br />
+                  <label><input type="checkbox" /> Philippine Flag</label><br />
+                  <label><input type="checkbox" /> UC Flag</label><br />
+                  <label><input type="checkbox" /> Flagpoles</label><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="long_table"
+                      name="long_table"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of long tables</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="teachers_tables"
+                      name="teachers_tables"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of teachers tables</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="platforms"
+                      name="platforms"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of platforms</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="chairs"
+                      name="chairs"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of chairs</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="participants"
+                      name="trashbins"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    pcs of trashbins</label
+                  ><br />
+                  <label><input type="checkbox" /> Others</label
+                  ><input
+                    type="text"
+                    name="others_req"
+                    style="width: 87%"
+                  /><br />
+                </td>
+                <td>
+                  <strong>Other Requirements:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br /><br />
+                  <strong>Remarks:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" style="text-align: center">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 5px;
+                    "
+                  >
+                    <div style="text-align: left; width: 48%">
+                      <strong>Noted and Prroved:</strong>
+                    </div>
+                    <div style="text-align: center; width: 52%">
+                      <strong>Date:</strong>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between">
+                    <div style="text-align: center; width: 60%">
+                      <strong>_____________________________</strong><br />
+                      <strong>Head, LMO</strong>
+                    </div>
+                    <div style="text-align: center; width: 35%">
+                      <strong>_______________________</strong>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Second Column -->
+        <div class="two-columns">
+          <!-- Left Column -->
+          <div>
+            <table>
+              <td colspan="2" class="section-title" style="text-align: center">
+                <strong>For ITSS Support (if applicable)</strong><br />
+              </td>
+              <tr>
+                <td style="width: 50%">
+                  <p>Support Requirements:</p>
+                  <label><input type="checkbox" /> Internet Connection</label
+                  ><br />
+                  <label><input type="checkbox" /> Deskstop stations</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Internet network support</label
+                  ><br />
+                  <label><input type="checkbox" /> Web/FB posting</label><br />
+                  <p>
+                    (attach material here or email it to *aopardo@uc-bcf.edu.ph
+                    all subject to approval and editing)
+                  </p>
+                  <label
+                    ><input type="checkbox" /> Additional multimedia
+                    equipment</label
+                  ><input
+                    type="text"
+                    name="multimedia"
+                    style="width: 97%; height: 40px"
+                  /><br />
+                  <label><input type="checkbox" /> Others</label
+                  ><input
+                    type="text"
+                    name="others_support"
+                    style="width: 97%"
+                  /><br /><br />
+                </td>
+                <td>
+                  <strong>Other Requirements:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br /><br />
+                  <strong>Remarks:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" style="text-align: center">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 5px;
+                    "
+                  >
+                    <div style="text-align: left; width: 48%">
+                      <strong>Noted and Approved:</strong>
+                    </div>
+                    <div style="text-align: center; width: 52%">
+                      <strong>Date:</strong>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between">
+                    <div style="text-align: center; width: 60%">
+                      <strong>_____________________________</strong><br />
+                      <strong>Director</strong>
+                    </div>
+                    <div style="text-align: center; width: 35%">
+                      <strong>_______________________</strong>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <table>
+              <td colspan="2" class="section-title" style="text-align: center">
+                <strong>For ADMINISTRATIVE Support (if applicable)</strong
+                ><br />
+              </td>
+              <tr>
+                <td style="width: 50%">
+                  <p>Property Requirements:</p>
+                  <label><input type="checkbox" /> Medical/first-aid</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /><input
+                      type="number"
+                      id="guards"
+                      name="guards"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    security guards</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" />Parking for
+                    <input
+                      type="number"
+                      id="parking"
+                      name="parking"
+                      min="0"
+                      step="1"
+                      style="width: 20%"
+                    />
+                    vehicles</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Other personnel/staff<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                      type="text"
+                      name="personnel/staff"
+                      style="width: 87%" /></label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Transportation:
+                    <input
+                      type="text"
+                      name="transportation"
+                      style="width: 49%" /></label
+                  ><br />
+                  <label><input type="checkbox" /> Green board posting:</label
+                  ><br />
+                  <p>(write text below, all subject to approval and editing)</p>
+                  <input
+                    type="text"
+                    name="posting"
+                    style="width: 97%; height: 60px"
+                  />
+                </td>
+                <td>
+                  <strong>Other Requirements:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br /><br />
+                  <strong>Remarks:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" style="text-align: center">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 5px;
+                    "
+                  >
+                    <div style="text-align: left; width: 48%">
+                      <strong>Noted and Prroved:</strong>
+                    </div>
+                    <div style="text-align: center; width: 52%">
+                      <strong>Date:</strong>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between">
+                    <div style="text-align: center; width: 60%">
+                      <strong>_____________________________</strong><br />
+                      <strong>VP for Admin and Acad Services</strong>
+                    </div>
+                    <div style="text-align: center; width: 35%">
+                      <strong>_______________________</strong>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Third Column -->
+        <div>
+          <!-- Left Column -->
+          <div>
+            <table>
+              <td colspan="3" class="section-title" style="text-align: center">
+                <strong>For FMO Use:</strong><br />
+              </td>
+              <tr>
+                <td style="width: 35%">
+                  <p>Applicable Charges: (if any)</p>
+                  <label
+                    ><input type="checkbox" /> Janitorial
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
+                      type="number"
+                      id="janitoring"
+                      name="janitoring"
+                      min="0"
+                      step="1"
+                      style="width: 50%" /></label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Houselights
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
+                      type="number"
+                      id="houselights"
+                      name="houselights"
+                      min="0"
+                      step="1"
+                      style="width: 50%" /></label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Technical
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
+                      type="number"
+                      id="technical"
+                      name="technical"
+                      min="0"
+                      step="1"
+                      style="width: 50%" /></label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Water
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
+                      type="number"
+                      id="water"
+                      name="water"
+                      min="0"
+                      step="1"
+                      style="width: 50%" /></label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Staff OT
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
+                      type="number"
+                      id="staff_ot"
+                      name="staff_ot"
+                      min="0"
+                      step="1"
+                      style="width: 50%" /></label
+                  ><br />
+                  <label
+                    ><input type="checkbox" /> Others
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
+                      type="number"
+                      id="others_applicable"
+                      name="others_applicable"
+                      min="0"
+                      step="1"
+                      style="width: 50%"
+                    /> </label
+                  ><br /><br /><br />
+                  <strong
+                    >&nbsp;&nbsp;Total:
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
+                      type="number"
+                      id="total"
+                      name="total"
+                      min="0"
+                      step="1"
+                      style="width: 50%"
+                    /> </strong
+                  ><br /><br />
+                </td>
+                <td style="width: 24%">
+                  <strong>Other Requirements:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br /><br />
+                  <strong>Remarks:</strong><br />
+                  <textarea
+                    name="remarks"
+                    style="width: 98%; height: 110px; resize: vertical"
+                  ></textarea
+                  ><br />
+                </td>
+                <td style="width: 41%">
+                  <div style="text-align: center">
+                    <strong style="font-size: 14px"> Service Agreement </strong>
+                  </div>
+                  <p style="font-size: 14px">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I have read and discussed with
+                    the Director of FMO the policies and guidelines on the use
+                    of UC facilies and accept personal responsibility to abide
+                    by them. I understand that the use of UC facilities is
+                    contigent upon the approval of the concerned officials. I
+                    also understand that there may be additional charges as
+                    enumerated here. <br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;By signing here, I acknowledge
+                    responsibility for the care and condition of facilities and
+                    equipment used during the activity.
+                  </p>
+                  <br /><br /><br />
+                  <p style="text-align: center; margin-top: 20px">
+                    <span
+                      style="
+                        display: inline-block;
+                        text-align: center;
+                        margin-right: 40px;
+                      "
+                    >
+                      <strong>________________________________</strong><br />
+                      In-charge of Activity<br />
+                      (Printed Name and Signature)
+                    </span>
+                    <span style="display: inline-block; text-align: center">
+                      <strong>________________</strong><br />
+                      Date
+                    </span>
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align: center">
+                  <strong>Approved and Reserved:</strong><br />
+
+                  <div
+                    style="
+                      display: inline-block;
+                      text-align: center;
+                      margin-right: 40px;
+                    "
+                  >
+                    <strong
+                      >_____________________________________________</strong
+                    ><br />
+                    <strong>Campus Facilities, Planning & Dev't Officer</strong>
+                  </div>
+                  <div style="display: inline-block; text-align: center">
+                    <strong>_________________________</strong><br />
+                    <strong>Date</strong>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Pg nav -->
+          <div class="navigation">
+            <button type="button" onclick="goToPage(1)">← Previous Page</button>
+            <span>Page 2 of 2</span>
+            <button type="submit">Submit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <script>
+      function goToPage(pageNumber) {
+        document
+          .querySelectorAll(".form-page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("page" + pageNumber).classList.add("active");
+      }
+      window.goToPage = goToPage;
+    </script>
+    <footer class="footer">
+      © 2025 University of the Cordilleras. All Rights Reserved.
+    </footer>
+  </body>
+</html>

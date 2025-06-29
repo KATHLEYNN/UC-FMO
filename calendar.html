@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UC Calendar with Event Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f4f1;
+    }
+
+    nav.navbar {
+      position: sticky;
+      top: 0;
+      background-color: #2e7d32;
+      color: #fff;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .logo img {
+      height: 75px;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #a5d6a7;
+    }
+
+    .calendar-legend {
+      text-align: center;
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .legend-circle {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .today { background-color: #2e7d32; }
+    .reserved { background-color: #d32f2f; }
+    .available { background-color: white; border: 1px solid #ccc; }
+
+    .calendar-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .calendar-header h2 {
+      color: #2e7d32;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .day-name, .calendar-day {
+      text-align: center;
+      padding: 15px;
+      border-radius: 6px;
+    }
+
+    .day-name {
+      font-weight: bold;
+      background-color: #e8f5e9;
+    }
+
+    .calendar-day {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .calendar-day.today {
+      background-color: #2e7d32;
+      color: #fff;
+    }
+
+    .calendar-day.reserved {
+      background-color: #d32f2f;
+      color: #fff;
+    }
+
+    .calendar-day.empty {
+      background: none;
+      border: none;
+      cursor: default;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: left;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .modal-content h3 {
+      margin-bottom: 15px;
+      color: #2e7d32;
+    }
+
+    .modal-content p {
+      margin: 5px 0;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png" alt="UC Logo" />
+    </div>
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="admin.html">Generate Report</a></li>
+      <li><a href="calendar.html" class="active">Calendar</a></li>
+      <li><a href="#">Pending</a></li>
+    </ul>
+  </nav>
+
+  <!-- Legend -->
+  <div class="calendar-legend">
+    <div><span class="legend-circle today"></span> Green = Today</div>
+    <div><span class="legend-circle reserved"></span> Red = Reserved</div>
+    <div><span class="legend-circle pending" style="background-color:#ff9800;"></span> Orange = Pending</div>
+    <div><span class="legend-circle available"></span> White = Available</div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <h2 id="monthYear"></h2>
+    </div>
+    <div class="calendar-grid" id="calendar">
+      <div class="day-name">Sun</div>
+      <div class="day-name">Mon</div>
+      <div class="day-name">Tue</div>
+      <div class="day-name">Wed</div>
+      <div class="day-name">Thu</div>
+      <div class="day-name">Fri</div>
+      <div class="day-name">Sat</div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="eventModal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Event Title</h3>
+      <p><strong>Time:</strong> <span id="modalTime"></span></p>
+      <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+    </div>
+    <div class="close-btn" onclick="closeModal()">×</div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const reservedEvents = {
+      "2025-06-15": { title: "Faculty Meeting", time: "10:00 AM – 12:00 PM", location: "AVR Room" },
+      "2025-06-20": { title: "Student Orientation", time: "1:00 PM – 4:00 PM", location: "Auditorium" },
+      "2025-06-23": { title: "Defense Presentation", time: "9:00 AM – 11:00 AM", location: "Lecture Room 101" }
+    };
+
+    const calendar = document.getElementById("calendar");
+    const monthYear = document.getElementById("monthYear");
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const todayStr = now.toISOString().split("T")[0];
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    monthYear.textContent = `${monthNames[month]} ${year}`;
+
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement("div");
+      empty.classList.add("calendar-day", "empty");
+      calendar.appendChild(empty);
+    }
+
+    for (let d = 1; d <= lastDate; d++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const cell = document.createElement("div");
+      cell.classList.add("calendar-day");
+      cell.textContent = d;
+
+      if (dateStr === todayStr) {
+        cell.classList.add("today");
+      }
+
+      if (reservedEvents[dateStr]) {
+        cell.classList.add("reserved");
+        cell.onclick = () => showModal(dateStr);
+      }
+
+      calendar.appendChild(cell);
+    }
+
+    function showModal(date) {
+      const event = reservedEvents[date];
+      document.getElementById("modalTitle").textContent = event.title;
+      document.getElementById("modalTime").textContent = event.time;
+      document.getElementById("modalLocation").textContent = event.location;
+      document.getElementById("eventModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("eventModal").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
