@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UC Campus</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">
+      <img src="images\uc official logo.png" alt="uc logo">
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="admin.html">Admin</a></li>
+      <li><a href="home.html" class="active">Home</a></li>
+      <li><a href="">Inquire</a></li>
+      <li><a href="reservation.html">Reservation</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <main class="home">
+    <section class="welcome">
+      <h1>Welcome to the UC Campus Management Office</h1>
+      <p>Effortlessly book classrooms, laboratories, and university facilities anytime, anywhere.</p>
+    </section>
+    <section class="home-image">
+      <img src="file:///D:/Downloads/home%20image.jpg" alt="Campus Image">
+    </section>
+  </main>
+
+  <main class="home">
+    <h1>UC Campus</h1>
+    <div class="uc-campuses">
+      <a href="main-campus.html" class="option-card">Main Campus</a>
+      <a href="legarda-campus.html" class="option-card">Legarda Campus</a>
+      <a href="libertad-campus.html" class="option-card">Libertad Campus</a>
+    </div>
+  </main>
+
+   <div class="container">
+    <h1>Upcoming Events</h1>
+    <div id="events" class="events-grid"></div>
+
+    <div class="pagination">
+      <button id="prevBtn">Previous</button>
+      <button id="nextBtn">Next</button>
+    </div>
+  </div>
+
+  <script>
+    const eventsData = [
+      {
+        title: "Leadership Training",
+        date: "2025-07-01",
+        time: "8:00 AM - 12:00 PM",
+        location: "Function Hall, Main Campus",
+        image: "https://www.sessionlab.com/wp-content/uploads/Leadership-development-activities.jpg"
+      },
+      {
+        title: "Cultural Dance Practice",
+        date: "2025-07-03",
+        time: "1:00 PM - 3:00 PM",
+        location: "Gymnasium , Main Campus",
+        image: "https://cdn.tatlerasia.com/tatlerasia/i/2022/05/06123217-estudiantinausf_cover_1500x1003.jpeg"
+      },
+      {
+        title: "AI Workshop",
+        date: "2025-07-05",
+        time: "9:00 AM - 4:00 PM",
+        location: "M305, Main Campus",
+        image: "https://dataciders.com/wp-content/uploads/2024/08/dataciders-ki-workshop-fuer-unternehmen-1.jpg"
+      },
+      {
+        title: "Debate Championship",
+        date: "2025-07-07",
+        time: "10:00 AM - 2:00 PM",
+        location: "Auditorium, Main Campus",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe6-Clcs0oV1ug2SfiwwrY6qQyQEW_N_RGsw&s"
+      },
+      {
+        title: "UC Film Fest",
+        date: "2025-07-10",
+        time: "6:00 PM - 9:00 PM",
+        location: "Theater, Main Campus",
+        image: "https://www.hrw.org/sites/default/files/styles/embed_xxl/public/media_2024/03/202403film_fest_presser.JPG?itok=94ARRmtp"
+      },
+      {
+        title: "Music Recital",
+        date: "2025-07-12",
+        time: "3:00 PM - 5:00 PM",
+        location: "Theater, Libertad Campus",
+        image: "https://www.thepiano.sg/sites/thepiano.sg/files/styles/read_article_main_picture/public/thepiano_images/read/2019/02/23/15/41/shawn-lee-performing-pianovers-recital-2018.jpg?itok=Kkk4c9T5"
+      }
+    ];
+
+    const eventsPerPage = 4;
+    let currentPage = 1;
+
+    function displayEvents() {
+      const start = (currentPage - 1) * eventsPerPage;
+      const end = start + eventsPerPage;
+      const currentEvents = eventsData.slice(start, end);
+
+      const eventsContainer = document.getElementById("events");
+      eventsContainer.innerHTML = "";
+
+      currentEvents.forEach(event => {
+        const eventCard = document.createElement("div");
+        eventCard.className = "event-card";
+
+        eventCard.innerHTML = `
+          <img src="${event.image}" class="event-image" alt="Event Image" />
+          <div class="event-content">
+            <div class="event-title">${event.title}</div>
+            <div class="event-details">📅 ${event.date}</div>
+            <div class="event-details">🕒 ${event.time}</div>
+            <div class="event-details">📍 ${event.location}</div>
+          </div>
+        `;
+
+        eventsContainer.appendChild(eventCard);
+      });
+
+      document.getElementById("prevBtn").disabled = currentPage === 1;
+      document.getElementById("nextBtn").disabled = end >= eventsData.length;
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        displayEvents();
+      }
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if ((currentPage * eventsPerPage) < eventsData.length) {
+        currentPage++;
+        displayEvents();
+      }
+    });
+
+    displayEvents();
+  </script>
+
+  <div class="get-connected">
+  <h2>Get Connected</h2>
+  <div class="social-icons">
+    <a href="https://www.facebook.com/UCjaguars" target="_blank" class="social-link">
+      <i class="fab fa-facebook-f"></i>
+      <span>Like us<br>on Facebook</span>
+    </a>
+    <a href="https://x.com/UCJaguars" target="_blank" class="social-link">
+      <i class="fab fa-twitter"></i>
+      <span>Follow us<br>on Twitter</span>
+    </a>
+    <a href="https://www.youtube.com/@UCJaguars" target="_blank" class="social-link">
+      <i class="fab fa-youtube"></i>
+      <span>Subscribe to our<br>YouTube channel</span>
+    </a>
+  </div>
+</div>
+
+<footer class="footer">
+  © 2025 University of the Cordilleras. All Rights Reserved.
+</footer>
+
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background-color: #2e7d32;
+      color: #ffffff;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+.logo img {
+  height: 75px;
+  width: auto;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #a5d6a7; 
+}
+
+.home {
+  text-align: center;
+  padding: 1rem 2rem;
+  background-color: #e8f5e9;
+}
+
+.welcome h1 {
+  font-size: 2.5rem;
+  color: #1b5e20;
+  margin-bottom: 1rem;
+}
+
+.welcome p {
+  font-size: 1.2rem;
+  color: #4e944f;
+  margin-bottom: 0.5rem;
+}
+
+.home-image img {
+  margin-top: 1rem;
+  width: 60%;
+  max-width: 1000px;
+}
+
+.home h1 {
+      font-size: 2.2rem;
+      margin-bottom: 2px;
+      color: #1b5e20;
+    }
+
+.uc-campuses {
+  display: flex;
+  flex-direction: row; 
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+.option-card {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  width: 250px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #1b5e20;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #c5e1a5;
+}
+
+.option-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(67, 160, 71, 0.2);
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+ .container {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+      text-align: center;
+      padding: 30px 20px 10px;
+      color: var(--primary);
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      padding: 30px;
+    }
+
+    .event-card {
+      background-color: #ffffff;
+      border: 1px solid #d1e7dd;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .event-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .event-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .event-content {
+      padding: 15px 20px;
+    }
+
+    .event-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .event-details {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      gap: 10px;
+    }
+
+    .pagination button {
+      background-color: var(--accent);
+      border: none;
+      color: rgb(0, 0, 0);
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .pagination button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background-color: #a5d6a7;
+    }
+
+.get-connected {
+  background-color: #065F46; 
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+  font-family: Arial, sans-serif;
+}
+
+.get-connected h2 {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+}
+
+.social-link i {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.social-link:hover {
+  color: #A7F3D0; 
+  transform: scale(1.1);
+}
+
+.social-link:hover i {
+  color: #A7F3D0;
+}
+
+.footer {
+  background-color: #033E2E;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+}
+  </style>
+
+</body>
+</html>
