@@ -3,21 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UC Campus</title>
+  <title>UC Campus - Main Campus</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/utils/navbar.css">
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="logo">
-      <img src="images\uc official logo.png" alt="uc logo">
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="home.html" class="active">Home</a></li>
-      <li><a href="inquire.html">Inquire</a></li>
-      <li><a href="reservation.html">Reservation</a></li>
-    </ul>
-  </nav>
+  <!-- Navbar Container -->
+  <div id="navbar-container"></div>
 
   <main class="home">
     <section class="main">
@@ -142,6 +135,37 @@
   function closeModal() {
     document.getElementById("facilityModal").style.display = "none";
   }
+  document.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
+
+    fetch('/api/auth/verify', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (!data.user) {
+        window.location.href = '/login';
+        return;
+      }
+
+      if (data.user.role === 'admin') {
+        window.location.href = '/admin/admin';
+      } else if (data.user.role === 'student' || data.user.role === 'external') {
+        initializeNavbar('user', 'campus', data.user.role);
+      } else {
+        window.location.href = '/login';
+      }
+    })
+    .catch(error => {
+      window.location.href = '/login';
+    });
+  });
 </script>
 
 
@@ -310,3 +334,6 @@ h1 {
   font-size: 14px;
 }
   </style>
+  <script src="/utils/navbar.js"></script>
+</body>
+</html>

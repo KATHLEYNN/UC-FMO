@@ -1,66 +1,114 @@
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mysql = require('mysql2/promise');
+const pool = require('../config/database');
 const User = require('../models/user');
 
 const authController = {
     async register(req, res) {
-        try {
-            const { username, email, password, role } = req.body;
+        const { username, email, password, role } = req.body;
 
-            // Check if user already exists
-            const existingUser = await User.findByEmail(email);
-            if (existingUser) {
-                return res.status(400).json({ message: 'User already exists' });
+        try {
+            const [existingUsers] = await pool.execute(
+                'SELECT * FROM users WHERE email = ? OR username = ?',
+                [email, username]
+            );
+
+            if (existingUsers.length > 0) {
+                return res.status(400).json({ 
+                    message: 'Email or username already exists' 
+                });
             }
 
-            // Create new user
-            const userId = await User.create({ username, email, password, role });
-            
+            const salt = await bcrypt.genSalt(8);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            const [result] = await pool.execute(
+                'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
+                [username, email, hashedPassword, role]
+            );
+
             res.status(201).json({ 
                 message: 'User registered successfully',
-                userId 
+                userId: result.insertId
             });
         } catch (error) {
-            console.error('Registration error:', error);
-            res.status(500).json({ message: 'Error registering user' });
+            res.status(500).json({ message: 'Error during registration' });
         }
     },
 
     async login(req, res) {
+        const { email, password } = req.body;
+
         try {
-            const { email, password } = req.body;
+            const [rows] = await pool.execute(
+                'SELECT * FROM users WHERE email = ?',
+                [email]
+            );
 
-            // Find user
-            const user = await User.findByEmail(email);
-            if (!user) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+            if (rows.length === 0) {
+                return res.status(401).json({ message: 'Invalid email or password' });
             }
 
-            // Verify password
-            const isValidPassword = await User.verifyPassword(password, user.password);
-            if (!isValidPassword) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+            const user = rows[0];
+            const validPassword = await bcrypt.compare(password, user.password);
+
+            if (!validPassword) {
+                return res.status(401).json({ message: 'Invalid email or password' });
             }
 
-            // Generate JWT token
             const token = jwt.sign(
-                { userId: user.id, role: user.role },
+                { 
+                    id: user.id, 
+                    email: user.email, 
+                    role: user.role,
+                    username: user.username
+                },
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' }
             );
 
-            res.json({
-                message: 'Login successful',
+            res.json({ 
                 token,
                 user: {
                     id: user.id,
-                    username: user.username,
                     email: user.email,
-                    role: user.role
+                    role: user.role,
+                    username: user.username
                 }
             });
         } catch (error) {
-            console.error('Login error:', error);
             res.status(500).json({ message: 'Error during login' });
+        }
+    },
+
+    async logout(req, res) {
+        res.json({ message: 'Logged out successfully' });
+    },
+
+    async verify(req, res) {
+        try {
+            const token = req.headers.authorization?.split(' ')[1];
+            
+            if (!token) {
+                return res.status(401).json({ message: 'No token provided' });
+            }
+
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            
+            const [rows] = await pool.execute(
+                'SELECT id, email, role, username FROM users WHERE id = ?',
+                [decoded.id]
+            );
+
+            if (rows.length === 0) {
+                return res.status(401).json({ message: 'User not found' });
+            }
+
+            const user = rows[0];
+            res.json({ user });
+        } catch (error) {
+            res.status(401).json({ message: 'Invalid token' });
         }
     }
 };

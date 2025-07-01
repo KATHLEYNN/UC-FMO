@@ -3,19 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Reservation Options</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="/utils/navbar.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="logo">
-      <img src="/images/UC_LOGO.png" alt="uc logo">
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="/user/home.html">Home</a></li>
-      <li><a href="inquire.html">Inquire</a></li>
-      <li><a href="reservation.html" class="active">Reservation</a></li>
-    </ul>
-  </nav>
+  <!-- Navbar Container -->
+  <div id="navbar-container"></div>
 
   <main class="reservation-selection">
     <h1>Select Reservation Type</h1>
@@ -130,5 +124,41 @@ nav {
 }
   </style>
 
+  <script>
+    // Initialize navbar and check authentication
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      // Verify user role and initialize navbar
+      fetch('/api/auth/verify', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.user) {
+          window.location.href = '/login';
+          return;
+        }
+
+        if (data.user.role === 'admin') {
+          window.location.href = '/admin/admin';
+        } else if (data.user.role === 'student' || data.user.role === 'external') {
+          initializeNavbar('user', 'reservation', data.user.role);
+        } else {
+          window.location.href = '/login';
+        }
+      })
+      .catch(error => {
+        window.location.href = '/login';
+      });
+    });
+  </script>
+  <script src="/utils/navbar.js"></script>
 </body>
 </html>

@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const { login, register, verify, logout } = require('../controllers/authController');
+const { auth, checkRole } = require('../middleware/auth');
 
-// Register route
-router.post('/register', authController.register);
+// Public routes
+router.post('/register', register);
+router.post('/login', login);
+router.post('/logout', auth, logout);
 
-// Login route
-router.post('/login', authController.login);
+// Protected routes
+router.get('/verify', auth, verify);
+
+// Admin-specific routes
+router.get('/admin/verify', [auth, checkRole(['admin'])], verify);
 
 module.exports = router; 

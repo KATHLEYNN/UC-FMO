@@ -3,28 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UC Campus</title>
+    <title>UC Campus - Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/utils/navbar.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-
-    <body>
     <style>
-    /* General */
-        * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+        .main-content {
+            display: none;
+        }
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background-image: url('file:///D:/Downloads/home%20image.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
-  flex-direction: column;
-}
+        .main-content.show {
+            display: block;
+        }
+
+        #auth-error {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 80%;
+            width: 400px;
+            z-index: 1000;
+        }
+
+        #auth-error h3 {
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        #auth-error p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        #auth-error button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #auth-error button:hover {
+            background-color: #0056b3;
+        }
+
+        /* General */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e8f5e9;
+            min-height: 100vh;
+            flex-direction: column;
+        }
         .rankings-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -129,19 +173,6 @@ body {
             margin-top: 5px;
         }
     </style>
-    
-    <!-- Navigation Bar -->
-     <nav class="navbar">
-    <div class="logo">
-      <img src="/images/UC_LOGO.png" alt="uc logo">
-    </div>
-    <ul class="nav-links" id="navLinks">
-    <li><a href="/user/home.html">Home</a></li>
-      <li><a href="/admin/admin.html" class="active">Generate Report</a></li>
-      <li><a href="/admin/calendar.html">Calendar</a></li>
-      <li><a href="">Pending</a></li>
-    </ul>
-  </nav>
 
     <style>
     /* Navigation Bar */
@@ -180,10 +211,16 @@ body {
   color: #a5d6a7; 
 }
 
-.home {
-  text-align: center;
-  padding: 1rem 2rem;
-  background-color: #e8f5e9;
+.logout-btn {
+  color: #fff !important;
+  background-color: #d32f2f;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.logout-btn:hover {
+  background-color: #b71c1c;
+  color: #fff !important;
 }
 
     /* Dropdown */
@@ -224,31 +261,31 @@ body {
         }
     </style>
 
-    <script>
-        function toggleDropdown() {
-            var dropdownContent = document.querySelector(".dropdown-content");
-            dropdownContent.classList.toggle("show");
-        }
-        function handleLogout() {
-            if (confirm('Are you sure you want to log out?')) {
-                window.location.href = 'auth/logout.php';
-            }
-        }
-    </script>
+</head>
+<body>
+    <!-- Auth Error Dialog -->
+    <div id="auth-error">
+        <h3>Authentication Error</h3>
+        <p>You need to be logged in as an admin to access this page.</p>
+        <button onclick="window.location.href='/login'">Go to Login</button>
+    </div>
 
+    <div class="main-content">
+        <!-- Navbar Container -->
+        <div id="navbar-container"></div>
 
     <div class="explore-container">
         <div class="stats-container">
             <div class="stat-card">
-                <div class="stat-number"><?php echo $total_posts; ?></div>
+                <div class="stat-number" id="total-reservations">0</div>
                 <div class="stat-label">Total Reservation</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number"><?php echo $top_element; ?></div>
+                <div class="stat-number" id="top-reservation-type">N/A</div>
                 <div class="stat-label">Most Selected Reservation Type</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number"><?php echo $top_style; ?></div>
+                <div class="stat-number" id="total-clients">0</div>
                 <div class="stat-label">Clients</div>
             </div>
         </div>
@@ -293,6 +330,7 @@ body {
         </div>
 
     </div>
+    </div> <!-- End main-content -->
 
   <style>
     /* Post container */
@@ -543,6 +581,113 @@ body {
     }
   </style>
 
+    <script src="/js/auth.js"></script>
+    <script>
+        // Get token from URL parameters or localStorage
+        function getToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token') || localStorage.getItem('token');
+            
+            // If token was in URL, store it and clean the URL
+            if (urlParams.has('token')) {
+                localStorage.setItem('token', token);
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            return token;
+        }
+
+        // Immediately check authentication when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const token = getToken();
+
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+
+                // First verify the token
+                const response = await fetch('/api/auth/admin/verify', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Authentication failed');
+                }
+
+                const data = await response.json();
+
+                if (!data.user || data.user.role !== 'admin') {
+                    throw new Error('Insufficient privileges');
+                }
+
+                // Initialize navbar
+                initializeNavbar('admin', 'dashboard');
+
+                // Show the page content
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.classList.add('show');
+                }
+                document.getElementById('auth-error').style.display = 'none';
+
+                // Load dashboard stats
+                await loadDashboardStats();
+
+            } catch (error) {
+                document.getElementById('auth-error').style.display = 'block';
+
+                // Clear token if it's invalid
+                if (error.message.includes('token')) {
+                    localStorage.removeItem('token');
+                }
+            }
+        });
+
+        // Function to load dashboard statistics
+        async function loadDashboardStats() {
+            try {
+                const token = getToken();
+                const response = await fetch('/api/admin/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard stats');
+                }
+
+                const stats = await response.json();
+
+                // Update the stat cards
+                document.getElementById('total-reservations').textContent = stats.totalReservations;
+                document.getElementById('top-reservation-type').textContent = stats.topReservationType;
+                document.getElementById('total-clients').textContent = stats.totalClients;
+
+            } catch (error) {
+                // Set default values on error
+                document.getElementById('total-reservations').textContent = '0';
+                document.getElementById('top-reservation-type').textContent = 'N/A';
+                document.getElementById('total-clients').textContent = '0';
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    </script>
+    <script src="/utils/navbar.js"></script>
+    <script src="/js/admin.js"></script>
 </body>
-</head>
 </html>

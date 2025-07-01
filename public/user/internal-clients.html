@@ -4,6 +4,8 @@
   <head>
     <meta charset="utf-8" />
     <title>Internal Clients Registration Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/utils/navbar.css">
     <style>
       @page {
         size: 8.5in 13in;
@@ -175,20 +177,8 @@
     }
   </script>
   <body>
-    <nav class="navbar">
-      <div class="logo">
-        <img
-          alt="uc logo"
-          src="images\uc official logo.png"
-          style="height: 75px; width: auto"
-        />
-      </div>
-      <ul class="nav-links" id="navLinks">
-        <li><a class="active" href="home.html">Home</a></li>
-        <li><a href="#">Inquire</a></li>
-        <li><a href="reservation.html">Reservation</a></li>
-      </ul>
-    </nav>
+    <!-- Navbar Container -->
+    <div id="navbar-container"></div>
     <form
       class="form-container"
       id="combinedForm"
@@ -827,6 +817,42 @@
           pageInfo.textContent = `Page ${pageNumber} of ${pages}`;
         }
       });
+
+      // Initialize navbar and check authentication
+      document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+          return;
+        }
+
+        // Verify user role and initialize navbar
+        fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.user) {
+            window.location.href = '/login';
+            return;
+          }
+
+          // Allow admin, student, and external users to access this page
+          if (data.user.role === 'admin') {
+            initializeNavbar('user', 'reservation', 'student'); // Show as student for admin
+          } else if (data.user.role === 'student' || data.user.role === 'external') {
+            initializeNavbar('user', 'reservation', data.user.role);
+          } else {
+            window.location.href = '/login';
+          }
+        })
+        .catch(error => {
+          window.location.href = '/login';
+        });
+      });
     </script>
+    <script src="/utils/navbar.js"></script>
   </body>
 </html>

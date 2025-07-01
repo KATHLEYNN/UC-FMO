@@ -14,7 +14,6 @@ class User {
 
     static async create(userData) {
         const { username, email, password, role } = userData;
-        // Using a lower salt round for faster hashing
         const hashedPassword = await bcrypt.hash(password, 8);
         
         const [result] = await db.query(

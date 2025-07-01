@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UC Campus</title>
+    <title>UC Campus - Sign Up</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/utils/navbar.css">
     <style>
         /* General */
         * {
@@ -15,9 +16,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-image: url('file:///D:/Downloads/home%20image.jpg');
-            background-size: cover;
-            background-position: center;
+            background-color: #e8f5e9;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -26,15 +25,8 @@
 </head>
 <body>
 
-    <nav class="navbar">
-    <div class="logo">
-      <img src="/images/uc official logo.png" alt="uc logo">
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="/" class="active">Home</a></li>
-      <li><a href="/login" class="active">Login</a></li>
-    </ul>
-  </nav>
+    <!-- Navbar Container -->
+    <div id="navbar-container"></div>
 
     <style>
     nav {
@@ -315,68 +307,8 @@
        }
    </style>
 
-   <script>
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirm_password');
-        const matchRequirement = document.getElementById('match');
-
-        function validatePassword() {
-            const pass = password.value;
-            const confirm = confirmPassword.value;
-
-            // Only check if passwords match
-            matchRequirement.classList.toggle('valid', pass === confirm && pass !== '');
-
-            return pass === confirm && pass !== '';
-        }
-
-        password.addEventListener('input', validatePassword);
-        confirmPassword.addEventListener('input', validatePassword);
-
-        async function handleSignup(event) {
-            event.preventDefault();
-            
-            if (!validatePassword()) {
-                document.getElementById('general-error').textContent = 'Passwords must match';
-                document.getElementById('general-error').style.display = 'block';
-                return;
-            }
-
-            const form = event.target;
-            const formData = {
-                email: form.email.value,
-                username: form.username.value,
-                password: form.password.value,
-                role: form.role.value
-            };
-
-            try {
-                const response = await fetch('/api/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Registration successful
-                    alert('Registration successful! Please log in.');
-                    window.location.href = '/login';
-                } else {
-                    // Show error message
-                    document.getElementById('general-error').textContent = data.message;
-                    document.getElementById('general-error').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Signup error:', error);
-                document.getElementById('general-error').textContent = 'An error occurred during registration';
-                document.getElementById('general-error').style.display = 'block';
-            }
-        }
-    </script>
+   <script src="/js/auth.js"></script>
+   <script src="/js/signup.js"></script>
 
     <style>
         /* Keep all existing styles */
@@ -411,5 +343,13 @@
             content: "\f00c"; /* Font Awesome check icon */
         }
     </style>
+
+    <script>
+        // Initialize navbar
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNavbar('public', 'signup');
+        });
+    </script>
+    <script src="/utils/navbar.js"></script>
 </body>
 </html>

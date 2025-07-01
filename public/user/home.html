@@ -5,21 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UC Campus</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/utils/navbar.css">
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="logo">
-      <img src="/images/UC_LOGO.png" alt="uc logo">
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="/admin/admin.html">Admin</a></li>
-      <li><a href="/user/home.html" class="active">Home</a></li>
-      <li><a href="">Inquire</a></li>
-      <li><a href="/user/reservation.html">Reservation</a></li>
-      <!-- <li><a href="/login.html">Login</a></li> -->
-    </ul>
-  </nav>
+  <!-- Navbar Container -->
+  <div id="navbar-container"></div>
 
   <main class="home">
     <section class="welcome">
@@ -27,7 +18,7 @@
       <p>Effortlessly book classrooms, laboratories, and university facilities anytime, anywhere.</p>
     </section>
     <section class="home-image">
-      <img src="file:///D:/Downloads/home%20image.jpg" alt="Campus Image">
+      <!-- Campus image removed - replace with proper web-accessible image if needed -->
     </section>
   </main>
 
@@ -143,6 +134,62 @@
     });
 
     displayEvents();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        fetch('/api/auth/verify', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.user) {
+                window.location.href = '/login';
+                return;
+            }
+
+            if (data.user.role === 'admin') {
+                window.location.href = '/admin/admin';
+            } else if (data.user.role !== 'student' && data.user.role !== 'external') {
+                window.location.href = '/login';
+            } else {
+                initializeNavbar('user', 'home', data.user.role);
+            }
+        })
+        .catch(error => {
+            window.location.href = '/login';
+        });
+    });
+
+    async function handleLogout() {
+        if (confirm('Are you sure you want to log out?')) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                } else {
+                    alert('Error logging out. Please try again.');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Error logging out. Please try again.');
+            }
+        }
+    }
   </script>
 
   <div class="get-connected">
@@ -411,7 +458,20 @@ nav {
   padding: 20px;
   font-size: 14px;
 }
+
+.logout-btn {
+    color: #fff !important;
+    background-color: #d32f2f;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+.logout-btn:hover {
+    background-color: #b71c1c;
+    color: #fff !important;
+}
   </style>
 
+  <script src="/utils/navbar.js"></script>
 </body>
 </html>
