@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS reservations (
 CREATE TABLE IF NOT EXISTS events (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
-    description TEXT,
     date DATE NOT NULL,
     time VARCHAR(50) NOT NULL,
     location VARCHAR(100) NOT NULL,

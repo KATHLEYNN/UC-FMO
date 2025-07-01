@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (!data.user || data.user.role !== 'admin') {
             if (data.user && (data.user.role === 'student' || data.user.role === 'external')) {
-                window.location.href = '/user/home';
+                window.location.href = '/home';
             } else {
                 window.location.href = '/login';
             }

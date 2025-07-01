@@ -59,10 +59,10 @@ async function handleLogin(event) {
             if (data.user.role === 'admin') {
                 form.action = '/admin/admin';
             } else if (data.user.role === 'student' || data.user.role === 'external') {
-                form.action = '/user/home';
+                form.action = '/home';
             } else {
                 // Default fallback
-                form.action = '/user/home';
+                form.action = '/home';
             }
 
             // Add a hidden input for the token

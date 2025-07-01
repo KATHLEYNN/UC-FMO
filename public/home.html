@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UC Campus - Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/utils/navbar.css">
+</head>
+<body>
+
+  <!-- Navbar Container -->
+  <div id="navbar-container"></div>
+
+  <main class="home">
+    <section class="welcome">
+      <h1>Welcome to the UC Campus Management Office</h1>
+      <p>Effortlessly book classrooms, laboratories, and university facilities anytime, anywhere.</p>
+    </section>
+    <section class="home-image">
+      <!-- Campus image removed - replace with proper web-accessible image if needed -->
+    </section>
+  </main>
+
+  <main class="home">
+    <h1>UC Campus</h1>
+    <div class="uc-campuses">
+      <a href="/user/main-campus" class="option-card">Main Campus</a>
+      <a href="/user/legarda-campus" class="option-card">Legarda Campus</a>
+      <a href="#" class="option-card">Libertad Campus</a>
+    </div>
+  </main>
+
+   <div class="container">
+    <h1>Upcoming Events</h1>
+    <div id="events" class="events-grid"></div>
+
+    <div class="pagination">
+      <button id="prevBtn"><i class="fas fa-chevron-left"></i> Previous</button>
+      <span id="pageInfo" class="page-info">Page 1 of 1</span>
+      <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <script>
+    let eventsData = [];
+    let currentPage = 1;
+    const eventsPerPage = 3;
+
+    // Fetch events from database
+    async function fetchEvents() {
+      try {
+        const response = await fetch('/api/events');
+        if (response.ok) {
+          eventsData = await response.json();
+        } else {
+          console.error('Failed to fetch events');
+          eventsData = [];
+        }
+        displayEvents();
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        eventsData = [];
+        displayEvents();
+      }
+    }
+
+    function displayEvents() {
+      const eventsContainer = document.getElementById('events');
+      const startIndex = (currentPage - 1) * eventsPerPage;
+      const endIndex = startIndex + eventsPerPage;
+      const currentEvents = eventsData.slice(startIndex, endIndex);
+
+      if (currentEvents.length === 0) {
+        eventsContainer.innerHTML = `<div class="no-events">
+          <img src="/images/NoEventsShowcase.png" alt="No Events" style="width: 150px; max-width: 400px; display: block; margin: 0 auto 20px auto;" />
+          <p>No upcoming events at the moment.</p>
+        </div>`;
+        updatePaginationButtons();
+        return;
+      }
+
+      eventsContainer.innerHTML = currentEvents.map(event => `
+        <div class="event-card">
+          <img src="${event.image_url || '/images/WhiteSpace.png'}" alt="${event.title}" class="event-image" onerror="this.src='/images/WhiteSpace.png'">
+          <div class="event-content">
+            <h3 class="event-title">${event.title}</h3>
+            <p class="event-date"><i class="fas fa-calendar"></i> ${formatDate(event.date)}</p>
+            <p class="event-time"><i class="fas fa-clock"></i> ${event.time}</p>
+            <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</p>
+          </div>
+        </div>
+      `).join('');
+
+      updatePaginationButtons();
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit'
+      });
+    }
+
+    function updatePaginationButtons() {
+      const totalPages = Math.ceil(eventsData.length / eventsPerPage);
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const pageInfo = document.getElementById('pageInfo');
+
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+
+      if (totalPages > 0) {
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      } else {
+        pageInfo.textContent = 'No events';
+      }
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        displayEvents();
+      }
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      const totalPages = Math.ceil(eventsData.length / eventsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        displayEvents();
+      }
+    });
+
+    // Initialize navbar and check authentication
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      fetch('/api/auth/verify', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.user) {
+          window.location.href = '/login';
+          return;
+        }
+        
+        // Initialize navbar based on user role
+        if (data.user.role === 'admin') {
+          initializeNavbar('admin', 'home');
+        } else if (data.user.role === 'student' || data.user.role === 'external') {
+          initializeNavbar('user', 'home', data.user.role);
+        } else {
+          window.location.href = '/login';
+        }
+
+        // Fetch and display events
+        fetchEvents();
+      })
+      .catch(error => {
+        window.location.href = '/login';
+      });
+    });
+  </script>
+
+  <div class="get-connected">
+  <h2>Get Connected</h2>
+  <div class="social-icons">
+    <a href="https://www.facebook.com/UCjaguars" target="_blank" class="social-link">
+      <i class="fab fa-facebook-f"></i>
+      <span>Like us<br>on Facebook</span>
+    </a>
+    <a href="https://x.com/UCJaguars" target="_blank" class="social-link">
+      <i class="fab fa-twitter"></i>
+      <span>Follow us<br>on Twitter</span>
+    </a>
+    <a href="https://www.youtube.com/@UCJaguars" target="_blank" class="social-link">
+      <i class="fab fa-youtube"></i>
+      <span>Subscribe to our<br>YouTube channel</span>
+    </a>
+  </div>
+</div>
+
+<footer class="footer">
+  © 2025 University of the Cordilleras. All Rights Reserved.
+</footer>
+
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.home {
+  text-align: center;
+  padding: 1rem 2rem;
+  background-color: #e8f5e9;
+}
+
+.welcome h1 {
+  font-size: 2.5rem;
+  color: #1b5e20;
+  margin-bottom: 1rem;
+}
+
+.welcome p {
+  font-size: 1.2rem;
+  color: #4e944f;
+  margin-bottom: 0.5rem;
+}
+
+.home-image img {
+  margin-top: 1rem;
+  width: 60%;
+  max-width: 1000px;
+}
+
+.home h1 {
+      font-size: 2.2rem;
+      margin-bottom: 2px;
+      color: #1b5e20;
+    }
+
+.uc-campuses {
+  display: flex;
+  flex-direction: row; 
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+.option-card {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  width: 250px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #1b5e20;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #c5e1a5;
+}
+
+.option-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(67, 160, 71, 0.2);
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.container h1 {
+  text-align: center;
+  color: #1b5e20;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.event-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.event-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.event-content {
+  padding: 20px;
+}
+
+.event-title {
+  color: #1b5e20;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.event-date, .event-time, .event-location {
+  color: #666;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.event-date i, .event-time i, .event-location i {
+  color: #2e7d32;
+  width: 16px;
+}
+
+.no-events {
+  text-align: center;
+  color: #666;
+  font-size: 1.2rem;
+  padding: 40px;
+  grid-column: 1 / -1;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.page-info {
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 1rem;
+  min-width: 120px;
+  text-align: center;
+}
+
+.pagination button {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+.pagination button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #1b5e20;
+}
+
+.get-connected {
+  background-color: #065F46; 
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+  font-family: Arial, sans-serif;
+}
+
+.get-connected h2 {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+}
+
+.social-link i {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.social-link:hover {
+  color: #A7F3D0; 
+  transform: scale(1.1);
+}
+
+.social-link:hover i {
+  color: #A7F3D0;
+}
+
+.footer {
+  background-color: #033E2E;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+}
+  </style>
+
+  <script src="/utils/navbar.js"></script>
+</body>
+</html>

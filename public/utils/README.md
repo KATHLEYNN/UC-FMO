@@ -113,3 +113,163 @@ The navbar uses Font Awesome icons. You can change icons by modifying the `<i cl
 
 - Font Awesome 6.0+ (for icons)
 - Modern browser with CSS Grid and Flexbox support
+
+---
+
+# Reusable Modal System
+
+The modal system provides confirmation, success, and error modals for user interactions.
+
+## Files
+
+- `modals.js` - JavaScript functions for modal management
+- `modals.css` - Styling for all modal types
+
+## Usage
+
+### 1. Include the required files in your HTML
+
+```html
+<head>
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Include modal CSS -->
+    <link rel="stylesheet" href="/utils/modals.css">
+</head>
+<body>
+    <!-- Your page content -->
+
+    <!-- Include modal JavaScript -->
+    <script src="/utils/modals.js"></script>
+</body>
+```
+
+### 2. Modal Functions
+
+#### Confirmation Modal
+```javascript
+// Basic confirmation
+showConfirmationModal({
+    title: 'Delete Event',
+    message: 'Are you sure you want to delete this event? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    type: 'danger'
+}).then(confirmed => {
+    if (confirmed) {
+        // User clicked confirm
+        deleteEvent();
+    }
+});
+
+// With callbacks
+showConfirmationModal({
+    title: 'Save Changes',
+    message: 'Do you want to save your changes?',
+    type: 'info',
+    onConfirm: () => saveData(),
+    onCancel: () => console.log('Cancelled')
+});
+```
+
+#### Success Modal
+```javascript
+// Basic success
+showSuccessModal({
+    title: 'Event Created!',
+    message: 'Your event has been successfully created and will appear on the home page.',
+    buttonText: 'Great!'
+});
+
+// Auto-close after 3 seconds
+showSuccessModal({
+    title: 'Saved!',
+    message: 'Your changes have been saved.',
+    autoClose: 3000,
+    onClose: () => window.location.reload()
+});
+```
+
+#### Error Modal
+```javascript
+showErrorModal({
+    title: 'Upload Failed',
+    message: 'The file could not be uploaded. Please check the file size and format.',
+    buttonText: 'Try Again'
+});
+```
+
+### 3. Modal Types
+
+- `danger` - Red theme for destructive actions
+- `warning` - Yellow theme for warnings
+- `info` - Blue theme for information (default)
+- `success` - Green theme for success messages
+
+### 4. Features
+
+- **Responsive design** - Works on all screen sizes
+- **Keyboard support** - ESC key closes modals
+- **Click outside to close** - Click overlay to dismiss
+- **Smooth animations** - CSS transitions and transforms
+- **Promise-based** - Easy async/await usage
+- **Auto-close option** - For success modals
+- **Accessibility** - Focus management and ARIA support
+
+### 5. Examples for UC Campus System
+
+#### Event Deletion
+```javascript
+async function deleteEvent(eventId) {
+    const confirmed = await showConfirmationModal({
+        title: 'Delete Event',
+        message: 'Are you sure you want to delete this event?',
+        confirmText: 'Delete',
+        type: 'danger'
+    });
+
+    if (confirmed) {
+        try {
+            await fetch(`/api/events/${eventId}`, { method: 'DELETE' });
+            await showSuccessModal({
+                title: 'Event Deleted',
+                message: 'The event has been successfully deleted.'
+            });
+            loadEvents(); // Refresh the list
+        } catch (error) {
+            showErrorModal({
+                title: 'Delete Failed',
+                message: 'Could not delete the event. Please try again.'
+            });
+        }
+    }
+}
+```
+
+#### Form Submission
+```javascript
+async function submitReservation(formData) {
+    try {
+        const response = await fetch('/api/reservations', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            await showSuccessModal({
+                title: 'Reservation Submitted!',
+                message: 'Your reservation request has been submitted successfully. You will receive a confirmation email shortly.',
+                autoClose: 5000
+            });
+            form.reset();
+        } else {
+            throw new Error('Submission failed');
+        }
+    } catch (error) {
+        showErrorModal({
+            title: 'Submission Failed',
+            message: 'Could not submit your reservation. Please check your connection and try again.'
+        });
+    }
+}
+```

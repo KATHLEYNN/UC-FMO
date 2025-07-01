@@ -7,6 +7,12 @@ function generateAdminNavbar(activePage = '') {
             </div>
             <ul class="navbar-nav">
                 <li class="nav-item">
+                    <a href="/home" class="nav-link ${activePage === 'home' ? 'active' : ''}">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="/admin/admin" class="nav-link ${activePage === 'dashboard' ? 'active' : ''}">
                         <i class="fas fa-chart-dashboard"></i>
                         <span>Dashboard</span>
@@ -18,16 +24,21 @@ function generateAdminNavbar(activePage = '') {
                         <span>Calendar</span>
                     </a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle ${activePage === 'reports' || activePage === 'events' ? 'active' : ''}" data-toggle="dropdown">
+                        <i class="fas fa-cog"></i>
+                        <span>Management</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" class="dropdown-link">Reports</a></li>
+                        <li><a href="/admin/events" class="dropdown-link">Events</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link ${activePage === 'pending' ? 'active' : ''}">
                         <i class="fas fa-clock"></i>
                         <span>Pending</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link ${activePage === 'reports' ? 'active' : ''}">
-                        <i class="fas fa-file-alt"></i>
-                        <span>Reports</span>
                     </a>
                 </li>
             </ul>
@@ -98,7 +109,7 @@ function generateUserNavbar(activePage = '', userRole = 'student') {
             </div>
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a href="/user/home" class="nav-link ${activePage === 'home' ? 'active' : ''}">
+                    <a href="/home" class="nav-link ${activePage === 'home' ? 'active' : ''}">
                         <i class="fas fa-home"></i>
                         <span>Home</span>
                     </a>

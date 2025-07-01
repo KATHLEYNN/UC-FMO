@@ -155,7 +155,7 @@
       }
 
       if (data.user.role === 'admin') {
-        window.location.href = '/admin/admin';
+        initializeNavbar('admin', 'campus');
       } else if (data.user.role === 'student' || data.user.role === 'external') {
         initializeNavbar('user', 'campus', data.user.role);
       } else {

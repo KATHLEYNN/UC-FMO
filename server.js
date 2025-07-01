@@ -24,17 +24,17 @@ const pool = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
-});
+}).promise();
 
 // Test database connection
-pool.getConnection((err, connection) => {
-    if (err) {
+pool.getConnection()
+    .then(connection => {
+        console.log('Successfully connected to the database');
+        connection.release();
+    })
+    .catch(err => {
         console.error('Error connecting to the database:', err);
-        return;
-    }
-    console.log('Successfully connected to the database');
-    connection.release();
-});
+    });
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -74,19 +74,98 @@ app.get('/api/admin/stats', [auth, checkRole(['admin'])], async (req, res) => {
     }
 });
 
-// User API endpoints - accessible by student and external users
 app.get('/api/user/profile', [auth, checkRole(['student', 'external'])], (req, res) => {
     res.json({ user: req.user });
 });
 
-// Reservations endpoint for users
 app.get('/api/user/reservations', [auth, checkRole(['student', 'external'])], async (req, res) => {
     try {
-        // TODO: Implement user reservations query
-        // const [reservations] = await pool.execute('SELECT * FROM reservations WHERE user_id = ?', [req.user.id]);
         res.json({ reservations: [] });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching user reservations' });
+    }
+});
+
+// Events API endpoints
+app.get('/api/events', async (req, res) => {
+    try {
+        const [events] = await pool.execute(
+            'SELECT id, title, date, time, location, image_url FROM events WHERE date >= CURDATE() ORDER BY date ASC, time ASC'
+        );
+        res.json(events);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Error fetching events', error: error.message });
+    }
+});
+
+app.post('/api/events', [auth, checkRole(['admin'])], async (req, res) => {
+    try {
+        const { title, date, time, location, image_url } = req.body;
+
+        if (!title || !date || !time || !location) {
+            return res.status(400).json({ message: 'Title, date, time, and location are required' });
+        }
+
+        const [result] = await pool.execute(
+            'INSERT INTO events (title, date, time, location, image_url) VALUES (?, ?, ?, ?, ?)',
+            [title, date, time, location, image_url || null]
+        );
+
+        res.status(201).json({
+            message: 'Event created successfully',
+            eventId: result.insertId
+        });
+    } catch (error) {
+        console.error('Error creating event:', error);
+        res.status(500).json({ message: 'Error creating event', error: error.message });
+    }
+});
+
+app.delete('/api/events/:id', [auth, checkRole(['admin'])], async (req, res) => {
+    try {
+        const eventId = req.params.id;
+
+        const [result] = await pool.execute(
+            'DELETE FROM events WHERE id = ?',
+            [eventId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        res.json({ message: 'Event deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({ message: 'Error deleting event', error: error.message });
+    }
+});
+
+// Test endpoint to check database connection and table structure
+app.get('/api/test/db', [auth, checkRole(['admin'])], async (req, res) => {
+    try {
+        // Test basic connection
+        const [tables] = await pool.execute('SHOW TABLES');
+        console.log('Available tables:', tables);
+
+        // Test events table structure
+        const [columns] = await pool.execute('DESCRIBE events');
+        console.log('Events table structure:', columns);
+
+        // Test simple query
+        const [events] = await pool.execute('SELECT COUNT(*) as count FROM events');
+        console.log('Total events in database:', events[0].count);
+
+        res.json({
+            message: 'Database connection successful',
+            tables: tables,
+            eventsTableStructure: columns,
+            totalEvents: events[0].count
+        });
+    } catch (error) {
+        console.error('Database test error:', error);
+        res.status(500).json({ message: 'Database test failed', error: error.message });
     }
 });
 
@@ -107,9 +186,14 @@ app.get('/forgot-password', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'forgot-password.html'));
 });
 
-// User routes - let client-side handle authentication
+// Home route - accessible by all authenticated users
+app.get('/home', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'home.html'));
+});
+
+// Legacy user home route - redirect to new home
 app.get('/user/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'user', 'home.html'));
+    res.redirect('/home');
 });
 
 app.get('/user/reservation', (req, res) => {
@@ -139,6 +223,10 @@ app.get('/admin/admin', (req, res) => {
 
 app.get('/admin/calendar', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin', 'calendar.html'));
+});
+
+app.get('/admin/events', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'events.html'));
 });
 
 // Handle 404
