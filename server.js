@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const mysql = require('mysql2');
 const authRoutes = require('./routes/auth');
+const sarfRoutes = require('./routes/sarfRoutes');
 const { auth, checkRole } = require('./middleware/auth');
 
 const app = express();
@@ -15,16 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use(express.static('public'));
 
-// Database connection
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-}).promise();
+// Database connections
+const { pool } = require('./config/database');
 
 // Test database connection
 pool.getConnection()
@@ -38,6 +30,10 @@ pool.getConnection()
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/sarf', sarfRoutes);
+
+// Serve PDF files (public access for preview)
+app.use('/uploads/pdfs', express.static(path.join(__dirname, 'uploads', 'pdfs')));
 
 // Admin verification endpoint
 app.get('/api/auth/verify', auth, (req, res) => {
@@ -214,6 +210,14 @@ app.get('/user/main-campus', (req, res) => {
 
 app.get('/user/legarda-campus', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'user', 'legarda-campus.html'));
+});
+
+app.get('/user/on-campus', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'user', 'on-campus.html'));
+});
+
+app.get('/user/my-sarf-forms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'user', 'my-sarf-forms.html'));
 });
 
 // Admin routes - protected for admin role only

@@ -152,7 +152,7 @@
     <form
       class="form-container"
       id="combinedForm"
-      onsubmit="event.preventDefault(); window.print();"
+      onsubmit="event.preventDefault(); submitSARFForm();"
     >
       <!-- PAGE 1 -->
       <!-- Header Section -->
@@ -1206,11 +1206,397 @@
           <div class="navigation">
             <button type="button" onclick="goToPage(1)">← Previous Page</button>
             <span>Page 2 of 2</span>
-            <button type="submit">Submit</button>
+            <button type="submit" id="submitBtn">
+              <i class="fas fa-eye"></i> Preview PDF
+            </button>
           </div>
         </div>
       </div>
     </form>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal" style="display: none;">
+      <div class="modal-content preview-modal">
+        <div class="modal-header">
+          <h2><i class="fas fa-file-pdf"></i> Preview Your SARF Form</h2>
+          <button class="close-btn" onclick="closePreviewModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="preview-info">
+            <div class="control-info">
+              <span class="control-label">Control Number:</span>
+              <span class="control-number" id="modalControlNo"></span>
+            </div>
+            <p class="preview-instruction">
+              <i class="fas fa-info-circle"></i>
+              Please review your form details below. If everything looks correct, click "Submit" to finalize your submission.
+            </p>
+          </div>
+
+          <div class="pdf-viewer-container">
+            <div class="pdf-toolbar">
+              <button onclick="downloadPreviewPDF()" class="toolbar-btn download-btn">
+                <i class="fas fa-download"></i> Download PDF
+              </button>
+              <button onclick="openPDFNewTab()" class="toolbar-btn">
+                <i class="fas fa-external-link-alt"></i> Open in New Tab
+              </button>
+            </div>
+            <div class="pdf-container">
+              <iframe id="pdfPreview" class="pdf-iframe" loading="lazy"></iframe>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button onclick="finalSubmit()" class="btn btn-submit">
+              <i class="fas fa-check"></i>
+              <span>Submit</span>
+            </button>
+            <button onclick="closePreviewModal()" class="btn btn-cancel">
+              <i class="fas fa-times"></i>
+              <span>Cancel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>✅ SARF Form Submitted Successfully!</h2>
+        </div>
+        <div class="modal-body">
+          <p><strong>Control Number:</strong> <span id="successControlNo"></span></p>
+          <p><strong>Status:</strong> Pending Review</p>
+          <p>Your Student Activity Request Form has been submitted to the database and is now pending review.</p>
+          <div class="modal-actions">
+            <button onclick="viewMyForms()" class="btn-primary">View My Forms</button>
+            <button onclick="closeSuccessModal()" class="btn-secondary">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-body" style="text-align: center;">
+          <div class="loading-spinner"></div>
+          <p>Submitting your SARF form and generating PDF...</p>
+          <p>Please wait, this may take a few moments.</p>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      .modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(2px);
+      }
+
+      .modal-content {
+        background-color: white;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        overflow: hidden;
+      }
+
+      .preview-modal {
+        max-width: 95vw;
+        width: 95vw;
+        height: 90vh;
+        max-height: 90vh;
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, #2e7d32, #4caf50);
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s;
+      }
+
+      .close-btn:hover {
+        background: rgba(255,255,255,0.3);
+      }
+
+      .modal-body {
+        padding: 0;
+        height: calc(90vh - 140px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .preview-info {
+        padding: 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .control-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .control-label {
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .control-number {
+        background: #e8f5e8;
+        color: #2e7d32;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .preview-instruction {
+        margin: 0;
+        color: #6c757d;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pdf-viewer-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .pdf-toolbar {
+        background: #f8f9fa;
+        padding: 10px 20px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .toolbar-btn {
+        background: white;
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+      }
+
+      .toolbar-btn:hover {
+        background: #e9ecef;
+        border-color: #adb5bd;
+      }
+
+      .download-btn {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+      }
+
+      .download-btn:hover {
+        background: #0056b3;
+        border-color: #0056b3;
+      }
+
+      .zoom-level {
+        font-weight: 600;
+        color: #495057;
+        min-width: 50px;
+        text-align: center;
+      }
+
+      .pdf-container {
+        flex: 1;
+        padding: 20px;
+        overflow: auto;
+        background: #f8f9fa;
+      }
+
+      .pdf-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: white;
+        min-height: 600px;
+      }
+
+      .modal-actions {
+        padding: 20px;
+        background: white;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+      }
+
+      .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .btn-submit {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+      }
+
+      .btn-submit:hover {
+        background: linear-gradient(135deg, #218838, #1ea085);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+      }
+
+      .btn-cancel {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+      }
+
+      .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #2e7d32;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px auto;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Regular modal styles for success modal */
+      .modal-content:not(.preview-modal) {
+        padding: 20px;
+        max-width: 500px;
+      }
+
+      .modal-content:not(.preview-modal) .modal-header h2 {
+        background: none;
+        color: #2e7d32;
+        margin: 0 0 15px 0;
+      }
+
+      .modal-content:not(.preview-modal) .modal-body p {
+        margin: 10px 0;
+      }
+
+      .modal-content:not(.preview-modal) .modal-actions {
+        margin-top: 20px;
+        padding: 0;
+        border: none;
+        background: none;
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background-color: #2e7d32;
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: #ccc;
+        color: #333;
+      }
+
+      /* Form submit button styling */
+      #submitBtn {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+      }
+
+      #submitBtn:hover {
+        background: linear-gradient(135deg, #0056b3, #004085);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+      }
+
+      #submitBtn:active {
+        transform: translateY(0);
+      }
+    </style>
 
     <script>
       function goToPage(pageNumber) {
@@ -1220,6 +1606,445 @@
         document.getElementById("page" + pageNumber).classList.add("active");
       }
       window.goToPage = goToPage;
+
+      let currentFormData = null;
+      let previewPdfUrl = null;
+
+      // Submit SARF Form (Preview Step)
+      async function submitSARFForm() {
+        try {
+          // Show loading modal
+          document.getElementById('loadingModal').style.display = 'flex';
+
+          // Collect form data
+          const formData = collectFormData();
+
+          // Validate required fields
+          if (!validateForm(formData)) {
+            document.getElementById('loadingModal').style.display = 'none';
+            return;
+          }
+
+          // Store form data for final submission
+          currentFormData = formData;
+
+          // Generate preview PDF
+          const token = localStorage.getItem('token');
+          const response = await fetch('/api/sarf/preview-pdf', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+
+          // Hide loading modal
+          document.getElementById('loadingModal').style.display = 'none';
+
+          if (result.success) {
+            // Store PDF URL for preview
+            previewPdfUrl = result.pdfUrl;
+
+            // Show preview modal
+            document.getElementById('modalControlNo').textContent = result.control || 'Auto-generated';
+            document.getElementById('pdfPreview').src = result.pdfUrl;
+            document.getElementById('previewModal').style.display = 'flex';
+          } else {
+            alert('Error generating preview: ' + result.message);
+          }
+
+        } catch (error) {
+          document.getElementById('loadingModal').style.display = 'none';
+          console.error('Error generating preview:', error);
+          alert('Failed to generate preview. Please try again.');
+        }
+      }
+
+      // Final submission to database
+      async function finalSubmit() {
+        try {
+          if (!currentFormData) {
+            alert('No form data available. Please try again.');
+            return;
+          }
+
+          // Show loading
+          document.getElementById('previewModal').style.display = 'none';
+          document.getElementById('loadingModal').style.display = 'flex';
+
+          // Submit to database
+          const token = localStorage.getItem('token');
+          const response = await fetch('/api/sarf/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(currentFormData)
+          });
+
+          const result = await response.json();
+
+          // Hide loading modal
+          document.getElementById('loadingModal').style.display = 'none';
+
+          if (result.success) {
+            // Show success modal
+            document.getElementById('successControlNo').textContent = result.data.control;
+            document.getElementById('successModal').style.display = 'flex';
+
+            // Reset form and data
+            document.getElementById('combinedForm').reset();
+            currentFormData = null;
+            previewPdfUrl = null;
+            goToPage(1);
+          } else {
+            console.error('Submission failed:', result);
+            let errorMessage = result.message || 'Unknown error occurred';
+
+            // Show detailed validation errors if available
+            if (result.errors && result.errors.length > 0) {
+              errorMessage += '\n\nValidation Errors:\n' + result.errors.join('\n');
+            }
+
+            if (result.warnings && result.warnings.length > 0) {
+              errorMessage += '\n\nWarnings:\n' + result.warnings.join('\n');
+            }
+
+            alert('Error submitting to database:\n' + errorMessage);
+            // Show preview modal again
+            document.getElementById('previewModal').style.display = 'flex';
+          }
+
+        } catch (error) {
+          document.getElementById('loadingModal').style.display = 'none';
+          console.error('Error submitting to database:', error);
+          alert('Failed to submit to database. Please try again.');
+          // Show preview modal again
+          document.getElementById('previewModal').style.display = 'flex';
+        }
+      }
+
+      // Collect form data - COMPLETE collection including empty fields
+      function collectFormData() {
+        const form = document.getElementById('combinedForm');
+
+        // Initialize data object with ALL possible fields set to default values
+        const data = {
+          // Page 1 - Basic Information
+          control: '',
+          received_date: '',
+          activity_type: '',
+          organization_name: '',
+          title: '',
+          nature: '',
+          start_time: '',
+          end_time: '',
+          location: '',
+          est_participants: '',
+          budget_source: '',
+          estimated_budget: '',
+          incharge_name: '',
+          incharge_designation: '',
+          incharge_contact: '',
+          incharge_email: '',
+          remarks: '',
+
+          // Page 2 - Technical Requirements (BMO Support)
+          venue: '',
+          wl_mic: '0',
+          wired_mic: '0',
+          mic_stands: '0',
+          lights: '0',
+          others_tech: '',
+
+          // Property Requirements (LMO Support)
+          long_table: '0',
+          teachers_tables: '0',
+          platforms: '0',
+          chairs: '0',
+          trashbins: '0',
+          others_req: '',
+
+          // ITSS Support
+          multimedia: '',
+          others_support: '',
+
+          // Administrative Support
+          guards: '0',
+          parking: '0',
+          transportation: '',
+          posting: '',
+
+          // FMO Charges
+          janitoring: '0',
+          houselights: '0',
+          technical: '0',
+          water: '0',
+          staff_ot: '0',
+          others_applicable: '0',
+          total: '0'
+        };
+
+        // Now collect actual values, preserving empty fields as empty strings or '0'
+        // Basic form fields
+        const controlField = document.getElementById('control');
+        if (controlField) data.control = controlField.value || '';
+
+        const receivedDateField = document.getElementById('received_date');
+        if (receivedDateField) data.received_date = receivedDateField.value || '';
+
+        const orgNameField = document.querySelector('input[name="organization_name"]');
+        if (orgNameField) data.organization_name = orgNameField.value || '';
+
+        const titleField = document.querySelector('input[name="title"]');
+        if (titleField) data.title = titleField.value || '';
+
+        const natureField = document.querySelector('input[name="nature"]');
+        if (natureField) data.nature = natureField.value || '';
+
+        const locationField = document.querySelector('input[name="location"]');
+        if (locationField) data.location = locationField.value || '';
+
+        // Time fields
+        const startTimeField = document.getElementById('start-time');
+        if (startTimeField) data.start_time = startTimeField.value || '';
+
+        const endTimeField = document.getElementById('end-time');
+        if (endTimeField) data.end_time = endTimeField.value || '';
+
+        // Participants
+        const participantsField = document.getElementById('est_participants');
+        if (participantsField) data.est_participants = participantsField.value || '';
+
+        // Budget
+        const budgetSourceField = document.querySelector('input[name="budget_source"]');
+        if (budgetSourceField) data.budget_source = budgetSourceField.value || '';
+
+        const estimatedBudgetField = document.querySelector('input[name="estimated_budget"]');
+        if (estimatedBudgetField) data.estimated_budget = estimatedBudgetField.value || '';
+
+        // Person in charge
+        const inchargeNameField = document.querySelector('input[name="incharge_name"]');
+        if (inchargeNameField) data.incharge_name = inchargeNameField.value || '';
+
+        const inchargeDesignationField = document.querySelector('input[name="incharge_designation"]');
+        if (inchargeDesignationField) data.incharge_designation = inchargeDesignationField.value || '';
+
+        const inchargeContactField = document.querySelector('input[name="incharge_contact"]');
+        if (inchargeContactField) data.incharge_contact = inchargeContactField.value || '';
+
+        const inchargeEmailField = document.querySelector('input[name="incharge_email"]');
+        if (inchargeEmailField) data.incharge_email = inchargeEmailField.value || '';
+
+        // Remarks (first textarea found)
+        const remarksField = document.querySelector('textarea[name="remarks"]');
+        if (remarksField) data.remarks = remarksField.value || '';
+
+        // Technical Requirements (BMO Support)
+        const venueField = document.querySelector('input[name="venue"]');
+        if (venueField) data.venue = venueField.value || '';
+
+        const wlMicField = document.getElementById('wl_mic');
+        if (wlMicField) data.wl_mic = wlMicField.value || '0';
+
+        const wiredMicField = document.getElementById('wired_mic');
+        if (wiredMicField) data.wired_mic = wiredMicField.value || '0';
+
+        const micStandsField = document.getElementById('mic_stands');
+        if (micStandsField) data.mic_stands = micStandsField.value || '0';
+
+        const lightsField = document.getElementById('lights');
+        if (lightsField) data.lights = lightsField.value || '0';
+
+        const othersTechField = document.querySelector('input[name="others_tech"]');
+        if (othersTechField) data.others_tech = othersTechField.value || '';
+
+        // Property Requirements (LMO Support)
+        const longTableField = document.getElementById('long_table');
+        if (longTableField) data.long_table = longTableField.value || '0';
+
+        const teachersTablesField = document.getElementById('teachers_tables');
+        if (teachersTablesField) data.teachers_tables = teachersTablesField.value || '0';
+
+        const platformsField = document.getElementById('platforms');
+        if (platformsField) data.platforms = platformsField.value || '0';
+
+        const chairsField = document.getElementById('chairs');
+        if (chairsField) data.chairs = chairsField.value || '0';
+
+        const trashbinsField = document.querySelector('input[name="trashbins"]');
+        if (trashbinsField) data.trashbins = trashbinsField.value || '0';
+
+        const othersReqField = document.querySelector('input[name="others_req"]');
+        if (othersReqField) data.others_req = othersReqField.value || '';
+
+        // ITSS Support
+        const multimediaField = document.querySelector('input[name="multimedia"]');
+        if (multimediaField) data.multimedia = multimediaField.value || '';
+
+        const othersSupportField = document.querySelector('input[name="others_support"]');
+        if (othersSupportField) data.others_support = othersSupportField.value || '';
+
+        // Administrative Support
+        const guardsField = document.getElementById('guards');
+        if (guardsField) data.guards = guardsField.value || '0';
+
+        const parkingField = document.getElementById('parking');
+        if (parkingField) data.parking = parkingField.value || '0';
+
+        const transportationField = document.querySelector('input[name="transportation"]');
+        if (transportationField) data.transportation = transportationField.value || '';
+
+        const postingField = document.querySelector('input[name="posting"]');
+        if (postingField) data.posting = postingField.value || '';
+
+        // FMO Charges
+        const janitoringField = document.getElementById('janitoring');
+        if (janitoringField) data.janitoring = janitoringField.value || '0';
+
+        const houselightsField = document.getElementById('houselights');
+        if (houselightsField) data.houselights = houselightsField.value || '0';
+
+        const technicalField = document.getElementById('technical');
+        if (technicalField) data.technical = technicalField.value || '0';
+
+        const waterField = document.getElementById('water');
+        if (waterField) data.water = waterField.value || '0';
+
+        const staffOtField = document.getElementById('staff_ot');
+        if (staffOtField) data.staff_ot = staffOtField.value || '0';
+
+        const othersApplicableField = document.getElementById('others_applicable');
+        if (othersApplicableField) data.others_applicable = othersApplicableField.value || '0';
+
+        const totalField = document.getElementById('total');
+        if (totalField) data.total = totalField.value || '0';
+
+        // Handle checkboxes for activity type
+        const activityTypeChecked = document.querySelector('input[name="activity-type"]:checked');
+        if (activityTypeChecked) {
+          data.activity_type = activityTypeChecked.value;
+        } else {
+          data.activity_type = ''; // Ensure it's always set
+        }
+
+        console.log('Collected COMPLETE form data (including empty fields):', data);
+        console.log('Total fields collected:', Object.keys(data).length);
+        return data;
+      }
+
+      // Basic form validation
+      function validateForm(data) {
+        const requiredFields = {
+          'organization_name': 'Organization/Office/College Name',
+          'title': 'Title of Activity/Program',
+          'nature': 'Nature of Activity',
+          'location': 'Venue/Location',
+          'incharge_name': 'Person in Charge Name',
+          'incharge_email': 'Person in Charge Email'
+        };
+
+        console.log('Validating form data:', data);
+
+        // Check required fields
+        for (let [field, label] of Object.entries(requiredFields)) {
+          if (!data[field] || data[field].toString().trim() === '') {
+            alert(`Please fill in the "${label}" field.`);
+            console.log(`Validation failed: ${field} is empty`);
+            return false;
+          }
+        }
+
+        // Check activity type
+        if (!data.activity_type || data.activity_type.trim() === '') {
+          alert('Please select an activity type.');
+          console.log('Validation failed: activity_type is empty');
+          return false;
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.incharge_email)) {
+          alert('Please enter a valid email address for the person in charge.');
+          console.log('Validation failed: invalid email format');
+          return false;
+        }
+
+        // Validate time fields (if both are provided)
+        if (data.start_time && data.end_time) {
+          const startTime = data.start_time;
+          const endTime = data.end_time;
+
+          // Simple time comparison (assumes same day)
+          if (startTime >= endTime) {
+            const confirmMultiDay = confirm(
+              'The end time appears to be before the start time.\n\n' +
+              'Is this a multi-day event?\n\n' +
+              'Click "OK" if this is a multi-day event, or "Cancel" to fix the times.'
+            );
+
+            if (!confirmMultiDay) {
+              console.log('Validation failed: user chose to fix time values');
+              return false;
+            } else {
+              console.log('User confirmed multi-day event');
+            }
+          }
+        }
+
+        console.log('Form validation passed');
+        return true;
+      }
+
+      // Download preview PDF
+      function downloadPreviewPDF() {
+        if (previewPdfUrl) {
+          const link = document.createElement('a');
+          link.href = previewPdfUrl;
+          link.download = `SARF-Preview-${Date.now()}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      }
+
+      // Open PDF in new tab
+      function openPDFNewTab() {
+        if (previewPdfUrl) {
+          window.open(previewPdfUrl, '_blank');
+        }
+      }
+
+      // Close preview modal
+      function closePreviewModal() {
+        document.getElementById('previewModal').style.display = 'none';
+        currentFormData = null;
+        previewPdfUrl = null;
+      }
+
+      // Close success modal
+      function closeSuccessModal() {
+        document.getElementById('successModal').style.display = 'none';
+      }
+
+      // View my forms
+      function viewMyForms() {
+        window.location.href = '/user/my-sarf-forms';
+      }
+
+      // Make functions global
+      window.submitSARFForm = submitSARFForm;
+      window.finalSubmit = finalSubmit;
+      window.downloadPreviewPDF = downloadPreviewPDF;
+      window.closePreviewModal = closePreviewModal;
+      window.closeSuccessModal = closeSuccessModal;
+      window.viewMyForms = viewMyForms;
+      window.zoomIn = zoomIn;
+      window.zoomOut = zoomOut;
 
       // Initialize navbar and check authentication
       document.addEventListener('DOMContentLoaded', function() {

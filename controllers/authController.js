@@ -1,8 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mysql = require('mysql2/promise');
-const pool = require('../config/database');
-const User = require('../models/user');
+const { pool } = require('../config/database');
 
 const authController = {
     async register(req, res) {

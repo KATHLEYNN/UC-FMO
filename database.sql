@@ -42,4 +42,18 @@ CREATE TABLE IF NOT EXISTS events (
     location VARCHAR(100) NOT NULL,
     image_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-); 
+);
+
+CREATE TABLE IF NOT EXISTS student_activity_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    reservation_type ENUM('campus', 'internal', 'external') NOT NULL,
+    pdf_url VARCHAR(255) NOT NULL,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    rejection_notes TEXT,
+    version INT DEFAULT 1,
+    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

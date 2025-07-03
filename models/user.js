@@ -1,26 +1,26 @@
-const db = require('../config/database');
+const { pool } = require('../config/database');
 const bcrypt = require('bcryptjs');
 
 class User {
     static async findByEmail(email) {
-        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
         return rows[0];
     }
 
     static async findById(id) {
-        const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
+        const [rows] = await pool.execute('SELECT * FROM users WHERE id = ?', [id]);
         return rows[0];
     }
 
     static async create(userData) {
         const { username, email, password, role } = userData;
         const hashedPassword = await bcrypt.hash(password, 8);
-        
-        const [result] = await db.query(
+
+        const [result] = await pool.execute(
             'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
             [username, email, hashedPassword, role]
         );
-        
+
         return result.insertId;
     }
 
