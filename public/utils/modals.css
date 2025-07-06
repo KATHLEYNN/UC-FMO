@@ -204,6 +204,39 @@
     box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
 }
 
+.info-btn {
+    background: #17a2b8;
+    color: white;
+}
+
+.info-btn:hover {
+    background: #138496;
+    box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+}
+
+.secondary-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background: #5a6268;
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+}
+
+/* PDF Actions Container */
+.pdf-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.pdf-actions .modal-btn {
+    min-width: 140px;
+}
+
 .danger-btn {
     background: #dc3545;
     color: white;

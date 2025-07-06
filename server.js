@@ -220,6 +220,10 @@ app.get('/user/my-sarf-forms', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'user', 'my-sarf-forms.html'));
 });
 
+app.get('/user/my-forms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'user', 'my-sarf-forms.html'));
+});
+
 // Admin routes - protected for admin role only
 app.get('/admin/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
@@ -231,6 +235,10 @@ app.get('/admin/calendar', (req, res) => {
 
 app.get('/admin/events', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin', 'events.html'));
+});
+
+app.get('/admin/request-forms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'request-forms.html'));
 });
 
 // Handle 404

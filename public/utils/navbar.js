@@ -36,9 +36,9 @@ function generateAdminNavbar(activePage = '') {
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link ${activePage === 'pending' ? 'active' : ''}">
-                        <i class="fas fa-clock"></i>
-                        <span>Pending</span>
+                    <a href="/admin/request-forms" class="nav-link ${activePage === 'request-forms' ? 'active' : ''}">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Request Forms</span>
                     </a>
                 </li>
             </ul>
@@ -61,7 +61,6 @@ function generatePublicNavbar(activePage = '') {
         <nav class="navbar">
             <div class="navbar-brand">
                 <img src="/images/UC_LOGO.png" alt="UC Logo" class="navbar-logo">
-                <span class="navbar-title">UC Campus</span>
             </div>
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -105,7 +104,6 @@ function generateUserNavbar(activePage = '', userRole = 'student') {
         <nav class="navbar">
             <div class="navbar-brand">
                 <img src="/images/UC_LOGO.png" alt="UC Logo" class="navbar-logo">
-                <span class="navbar-title">UC Campus</span>
             </div>
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -132,9 +130,9 @@ function generateUserNavbar(activePage = '', userRole = 'student') {
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link ${activePage === 'inquire' ? 'active' : ''}" onclick="alert('Inquire feature coming soon!')">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Inquire</span>
+                    <a href="/user/my-forms" class="nav-link ${activePage === 'my-forms' ? 'active' : ''}">
+                        <i class="fas fa-file-alt"></i>
+                        <span>My Forms</span>
                     </a>
                 </li>
             </ul>
