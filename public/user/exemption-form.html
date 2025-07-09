@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Curfew Form</title>
+    <style>
+      @page {
+        size: 8.5in 13in;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        margin-top: 1cm;
+        margin-bottom: 1cm;
+      }
+      @media print {
+        .form-page {
+          display: block !important;
+        }
+        .navbar,
+        .footer,
+        .navigation {
+          display: none !important;
+        }
+      }
+      body {
+        font-family: Century Gothic, sans-serif;
+        font-size: 11pt;
+        margin: 0;
+        padding: 0;
+      }
+      .navbar {
+        background-color: #2e7d32; /* dark green */
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        position: relative;
+      }
+      .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links li a {
+        text-decoration: none;
+        color: white;
+        font-weight: 500;
+        font-size: 16px;
+      }
+
+      .nav-links li a:hover {
+        color: #a5d6a7;
+      }
+      .footer {
+        background-color: #033e2e;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 14px;
+      }
+      .form-container {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+      }
+      td,
+      th {
+        border: 1px solid black;
+        padding: 5px;
+        vertical-align: top;
+      }
+      .no-border {
+        border: none !important;
+      }
+      .form-title {
+        background-color: #3535354d;
+        text-align: center;
+        font-weight: bold;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 2px solid black;
+        border-radius: 7px;
+      }
+      .two-columns {
+        display: flex;
+        gap: 10px;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .two-columns > div {
+        flex: 1;
+      }
+      .two-columns table {
+        width: 100%;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .section-title {
+        font-weight: bold;
+        background-color: #747272;
+      }
+      .small {
+        font-size: 10px;
+      }
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .header-row img {
+        height: 40px;
+      }
+      .form-page {
+        display: none;
+      }
+      .form-page.active {
+        display: block;
+      }
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
+      button {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+      .outer-border {
+        border: 1px solid black;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      .outer-border td,
+      .outer-border th {
+        border: none;
+        padding: 8px;
+      }
+      .full-form {
+        max-width: 600px;
+        margin: auto;
+        font-family: system-ui, sans-serif;
+      }
+      .full-form label {
+        display: block;
+        margin-bottom: 1.25rem;
+      }
+      .full-form input,
+      .full-form select {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        margin-top: 0.25rem;
+        box-sizing: border-box;
+      }
+
+      .step {
+        display: none;
+        animation: fade 0.25s linear forwards;
+      }
+      .step.active {
+        display: block;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @media screen {
+        #internalForm,
+        #combinedForm {
+          display: none;
+        }
+      }
+      @media print {
+        #userForm {
+          display: none !important;
+        }
+        .form-page,
+        #combinedForm {
+          display: block !important;
+        }
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>UC Campus</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <script>
+    function onlyOne(checkbox, groupName) {
+      const groupCheckboxes = document.querySelectorAll(
+        `input[name="${groupName}"]`
+      );
+      groupCheckboxes.forEach((cb) => {
+        if (cb !== checkbox) cb.checked = false;
+      });
+    }
+
+    function toggleLongTablesCount(checkbox) {
+      const countBox = document.getElementById("u_long_tables_count");
+      if (checkbox.value === "yes") {
+        countBox.disabled = !checkbox.checked;
+      } else if (checkbox.value === "no" && checkbox.checked) {
+        countBox.disabled = true;
+        countBox.value = "";
+      }
+    }
+  </script>
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <img
+          alt="UC Logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
+          style="height: 75px; width: auto"
+        />
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a class="active" href="home.html">Home</a></li>
+        <li><a href="#">Inquire</a></li>
+        <li><a href="reservation.html">Reservation</a></li>
+      </ul>
+    </nav>
+
+    <form id="userForm" class="full-form">
+      <h2>REQUEST FOR EXEMPTION FROM CURFEW</h2>
+
+      <label>
+  Date: <br>
+  <input
+    type="date"
+    id="u_form_date"
+    name="u_form_date"
+    data-target="form_date"
+    style="width: 100%" />
+</label><br />
+
+<label>
+  Requesting Office: <br>
+  <input
+    type="text"
+    id="u_requesting_office"
+    name="u_requesting_office"
+    data-target="requesting_office"
+    style="width: 100%" />
+</label><br />
+
+<label>
+  Venue: <br>
+  <input
+    type="text"
+    id="u_venue"
+    name="u_venue"
+    data-target="venue"
+    style="width: 100%" />
+</label><br />
+
+<label> 
+  Number of People: <br>
+  <input
+    type="text"
+    id="u_people"
+    name="u_people"
+    data-target="people"
+    style="width: 100%" />
+</label><br />
+
+<label>
+  Title/Nature of Activity: <br>
+  <input
+    type="text"
+    id="u_title"
+    name="u_title"
+    data-target="title"
+    style="width: 100%" />
+</label><br />
+
+<label>
+  Date of Activity: <br>
+  <input
+    type="date"
+    id="u_activity_date"
+    name="u_activity_date"
+    data-target="activity_date"
+    style="width: 100%" />
+</label><br />
+
+<label>
+  Time of Activity: <br>
+  <input
+    type="text"
+    id="u_activity_time"
+    name="u_activity_time"
+    data-target="activity_time"
+    style="width: 100%" />
+</label>
+
+      <fieldset>
+        <legend>
+          <strong>Attachment: Duly accomplished and approved -</strong>
+        </legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_activity_form"
+            value="yes"
+            data-target="activity_form"
+          />
+          Student Activity <br>Request Form *(UC-SDWO-FORM-106)
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_request_form"
+            value="yes"
+            data-target="request_form"
+          />
+          Facilities & Service Request Form <br>for Internal Clients
+          (UC-SDWO-FORM-22)
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_participants_list"
+            value="yes"
+            data-target="participants_list"
+          />
+          * List of Participants
+        </label>
+      </fieldset>
+
+      <button type="button" id="preparePrint">Submit &amp; Print</button>
+      
+    </form>
+
+    <footer class="footer">
+  © 2025 University of the Cordilleras. All Rights Reserved.
+</footer>
+
+    <form
+      class="form-container"
+      id="combinedForm"
+      onsubmit="event.preventDefault(); window.print();"
+    >
+      <!-- Header Section -->
+      <div class="form-page active">
+        <div class="header-row">
+          <img alt="University of the Cordilleras Logo" src="pending logo" />
+          <div style="text-align: right">
+            <strong>CAMPUS AND FACILITIES MANAGEMENT OFFICE</strong><br />
+          </div>
+        </div>
+
+        <table>
+          <tr>
+            <td>
+              <br />
+              <div style="text-align: center">
+                <strong>REQUEST FOR EXEMPTION FROM CURFEW</strong>
+              </div>
+              <label for="form_date">Date: </label>
+              <input
+                id="form_date"
+                name="form_date"
+                type="date"
+                style="width: 12%"
+              /><br />
+
+              <label for="requesting_office">Requesting Office: </label>
+              <input
+                id="requesting_office"
+                name="requesting_office"
+                type="text"
+                style="width: 15%"
+              />
+
+              <label for="venue">Venue: </label>
+              <input id="venue" name="venue" type="text" style="width: 20%" />
+
+              <label for="people">Number of People: </label>
+              <input
+                id="people"
+                name="people"
+                type="text"
+                style="width: 10%"
+              /><br />
+
+              <label for="title">Title/Nature of Activity: </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                style="width: 72%"
+              /><br />
+
+              <label for="activity_date">Date of Activity: </label>
+              <input
+                id="activity_date"
+                name="activity_date"
+                type="date"
+                style="width: 30%"
+              />
+
+              <label for="activity_time">Time of Activity: </label>
+              <input
+                id="activity_time"
+                name="activity_time"
+                type="text"
+                style="width: 30%"
+              /><br /><br /><br />
+
+              <table style="font-size: 10pt">
+                <tr>
+                  <td colspan="1">Requested by:</td>
+                  <td colspan="1">Noted by:</td>
+                  <td colspan="1">Noted by:</td>
+                </tr>
+                <tr>
+                  <td colspan="1" style="text-align: center; width: 33%">
+                    <br /><br /><br /><strong
+                      >____________________________</strong
+                    >
+                    <br /><strong>Personnel in Charge</strong><br />(Name |
+                    Signature | Date)
+                  </td>
+                  <td colspan="1" style="text-align: center; width: 34%">
+                    <br /><br /><br /><strong
+                      >____________________________</strong
+                    >
+                    <br /><strong>*Instructor/College Dean</strong><br />(Name |
+                    Signature | Date)
+                  </td>
+                  <td colspan="1" style="text-align: center; width: 33%">
+                    <br /><br /><br /><strong
+                      >____________________________</strong
+                    >
+                    <br /><strong>Occupational Safety and Health</strong
+                    ><br />(Name | Signature | Date)
+                  </td>
+                </tr>
+              </table>
+              <div>
+                <strong>Attachment: </strong>Duly accomplished and approved -<br />
+
+                <label>
+                  <input
+                    type="checkbox"
+                    id="activity_form"
+                    name="activity_form"
+                    value="free"
+                  />
+                  Student Activity Request Form *(UC-SDWO-FORM-106)<br />
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    id="request_form"
+                    name="request_form"
+                    value="free"
+                  />
+                  Facilities & Service Request Form for Internal Clients
+                  (UC-SDWO-FORM-22)<br />
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    id="participants_list"
+                    name="participants_list"
+                    value="free"
+                  />
+                  * List of Participants<br />
+                </label>
+              </div>
+              <table style="font-size: 10pt">
+                <tr>
+                  <td colspan="1">Verified by:</td>
+                  <td colspan="1">Approved by:</td>
+                  <td colspan="1">*Venue Requested by:</td>
+                </tr>
+                <tr>
+                  <td colspan="1" style="text-align: center; width: 33%">
+                    <br /><br /><br /><strong
+                      >____________________________</strong
+                    >
+                    <br /><strong>Facilities Admin Staff</strong><br />(Name |
+                    Signature | Date)
+                  </td>
+                  <td colspan="1" style="text-align: center; width: 34%">
+                    <br /><br /><br /><strong
+                      >____________________________</strong
+                    >
+                    <br /><strong>*VP for Admin & Students Services</strong
+                    ><br />(Name | Signature | Date)
+                  </td>
+                  <td colspan="1" style="text-align: center; width: 33%">
+                    <br /><br /><br /><strong
+                      >____________________________</strong
+                    >
+                    <br /><strong>CFMO, Director</strong><br />(Name | Signature
+                    | Date)
+                  </td>
+                </tr>
+              </table>
+              <div>
+                <strong>*Note: </strong> Accomplish 3 copies of this form and
+                submit to Campus and Facilities Management Office 2 weeks prior
+                to the date event
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <div>
+          <label>UC-CFMO-FORM-40</label>
+        </div>
+
+        <div class="navigation" style="text-align: center">
+          <button type="submit">Submit</button>
+        </div>
+      </div>
+    </form>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("preparePrint");
+  if (!btn) return;
+
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const openerWin = window.opener && !window.opener.closed ? window.opener : null;
+    if (!openerWin) {          // stand‑alone: just print this page
+      window.print();
+      return;
+    }
+
+    const opDoc = openerWin.document;
+
+    /* copy plain inputs / textarea / select */
+    document
+      .querySelectorAll('[data-target]:not([type="checkbox"]):not([type="radio"])')
+      .forEach(src => {
+        const dst = opDoc.getElementById(src.dataset.target);
+        if (dst) { dst.value = src.value; dst.textContent = src.value; }
+      });
+
+    /* copy checked checkbox / radio */
+    document
+      .querySelectorAll('input[type="checkbox"][data-target], input[type="radio"][data-target]')
+      .forEach(src => {
+        if (!src.checked) return;
+        const name = src.dataset.target;
+        const val  = src.dataset.value;
+        const dst  = val !== undefined
+          ? opDoc.querySelector(`#combinedForm input[name="${name}"][value="${val}"]`)
+          : opDoc.getElementById(name);
+        if (dst) dst.checked = true;
+      });
+
+    /* flag curfew requirement */
+    const flag = opDoc.getElementById("curfew_required");
+    if (flag) flag.value = "Yes";
+    openerWin.curfewCompleted = true;
+
+    openerWin.focus();
+    window.close();
+  });
+});
+</script>
+
+
+
+
+
+  </body>
+</html>
