@@ -338,7 +338,7 @@
       <label>
         Time Start:
         <input
-          type="text"
+          type="time"
           id="u_time_start"
           name="u_time_start"
           data-target="time_start"
@@ -349,7 +349,7 @@
       <label>
         Time End:
         <input
-          type="text"
+          type="time"
           id="u_time_end"
           name="u_time_end"
           data-target="time_end"
@@ -1027,6 +1027,9 @@
       id="combinedForm"
       onsubmit="event.preventDefault(); window.print();"
     >
+
+    <input type="hidden" id="curfew_required" name="curfew_required" />
+
       <!-- PAGE 1 -->
       <!-- Header Section -->
       <div id="page1" class="form-page active">
@@ -2049,11 +2052,6 @@
           </tr>
         </table>
 
-        <div class="navigation">
-          <button type="button" onclick="goToPage(1)">← Previous Page</button>
-          <span>Page 2 of 2</span>
-          <button type="submit">Submit</button>
-        </div>
       </div>
     </form>
 
@@ -2077,12 +2075,65 @@
     </script>
 
     <script>
-  document.getElementById("preparePrint").addEventListener("click", () => {
-    document
-      .querySelectorAll(
-        '#userForm [data-target]:not([type="checkbox"]):not([type="radio"])'
-      )
-      .forEach((src) => {
+document.addEventListener("DOMContentLoaded", () => {
+  /* For editing */
+  const HOLIDAYS   = ["2025-01-01", "2025-04-09", "2025-12-25"]; /* sample holidates */
+  const EARLIEST   = "07:30";
+  const LATEST     = "19:30";
+  const MAX_HOURS  = 4;
+  const CURFEW_URL = "exemption-form.html";
+
+  const btnPrint   = document.getElementById("preparePrint");
+  if (!btnPrint) { console.error("preparePrint button not found"); return; }
+
+  /* Time string to total minutes */
+  const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+
+  /* Determine if curfew rules are triggered */
+  function curfewReasons() {
+  const date  = document.getElementById("u_reserve_date") ?.value;
+  const start = document.getElementById("u_time_start")?.value;
+  const end   = document.getElementById("u_time_end")  ?.value;
+  
+  // Track reasoning
+  const reasons = [];
+
+  // uses from YYYY-MM-DD
+  if (date) {
+    const [year, month, day] = date.split("-").map(Number);
+    const d = new Date(year, month - 1, day);
+
+    const isSunday = d.getDay() === 0;
+    if (isSunday) reasons.push("• Event is on a **Sunday**.");
+
+    if (HOLIDAYS.includes(date)) {
+      reasons.push("• Event is on a **holiday**.");
+    }
+  }
+
+  // Exit early if no time inputs
+  if (!start || !end) return reasons;
+
+  if (toMin(start) < toMin(EARLIEST)) {
+    reasons.push("• Starts **before 7:30-AM**.");
+  }
+
+  if (toMin(end) > toMin(LATEST)) {
+    reasons.push("• Ends **after 7:30-PM**.");
+  }
+
+  // Check duration
+  if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
+    reasons.push("• Duration **exceeds 4 hours**.");
+  }
+
+  return reasons;
+}
+
+  /* Copy values from user form to internal form */
+  function copyUserValues() {
+    document.querySelectorAll('#userForm [data-target]:not([type="checkbox"]):not([type="radio"])')
+      .forEach(src => {
         const dst = document.getElementById(src.dataset.target);
         if (dst) {
           dst.value = src.value;
@@ -2090,30 +2141,68 @@
         }
       });
 
-    document
-      .querySelectorAll(
-        '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
-      )
-      .forEach((src) => {
-        if (!src.checked) return;
+    // checkboxes / radios
+    document.querySelectorAll(
+      '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
+    ).forEach(src => {
+      if (!src.checked) return;
 
-        const tgtName = src.dataset.target;
-        const tgtValue = src.dataset.value;
+      const tgtName = src.dataset.target;
+      const tgtValue = src.dataset.value;
 
-        let dst;
-        if (tgtValue !== undefined) {
-          dst = document.querySelector(
-            `#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`
-          );
-        } else {
-          dst = document.getElementById(tgtName);
-        }
+      let dst = tgtValue !== undefined
+        ? document.querySelector(`#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`)
+        : document.getElementById(tgtName);
 
-        if (dst) dst.checked = true;
-      });
+      if (dst) dst.checked = true;
+    });
+  }
 
+  /* Handle submit/print with curfew check */
+  let curfewAcknowledged = false;
+
+  btnPrint.addEventListener("click", () => {
+    const reasons = curfewReasons();
+
+    // If curfew rules are triggered and not yet acknowledged
+    if (reasons.length && !curfewAcknowledged) {
+      const msg =
+        "This booking triggers curfew rules:\n\n" +
+        reasons.join("\n") +
+        "\n\nDo you want to open the Curfew/Exemption form now?";
+      if (confirm(msg)) {
+        window.open(CURFEW_URL, "_blank");
+        curfewAcknowledged = true;
+
+        // Let internal form know curfew form was needed
+        const flag = document.getElementById("curfew_required");
+        if (flag) flag.value = "Yes";
+      }
+      return; // Cancel actual print until confirmation next time
+    }
+
+    copyUserValues();
     window.print();
   });
+
+  /* Update header info before printing */
+  window.addEventListener("beforeprint", () => {
+    const subDate = document.getElementById("submission-date");
+    if (subDate) {
+      subDate.textContent = new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    const ctrlIn = document.getElementById("control");
+    const ctrlOut = document.getElementById("control-display");
+    if (ctrlIn && ctrlOut) {
+      ctrlOut.textContent = ctrlIn.value || "___________";
+    }
+  });
+});
 </script>
 
     <footer class="footer">
