@@ -1,11 +1,9 @@
 <!DOCTYPE html>
+
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <title>External Clients Registration Form</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/utils/navbar.css">
-    <link rel="stylesheet" href="/utils/modals.css">
+    <meta charset="utf-8" />
+    <title>Internal Clients Registration Form</title>
     <style>
       @page {
         size: 8.5in 13in;
@@ -15,15 +13,17 @@
         margin-bottom: 1cm;
       }
       @media print {
-        .form-page {
-          display: block !important;
-        }
-        .navbar,
-        .footer,
-        .navigation {
-          display: none !important;
-        }
-      }
+  .form-page {
+    display: block !important;
+  }
+
+  .navbar,
+  .footer,
+  .navigation {         
+    display: none !important;
+  }
+}
+
       body {
         font-family: Century Gothic, sans-serif;
         font-size: 11px;
@@ -148,513 +148,677 @@
         border: none;
         padding: 8px;
       }
+      .no-border {
+        border-collapse: collapse;
+        border: none;
+      }
+      .no-border td,
+      .no-border th {
+        border: none;
+        padding: 5px;
+      }
+
+      .full-form {
+        max-width: 600px;
+        margin: auto;
+        font-family: system-ui, sans-serif;
+      }
+      .full-form label {
+        display: block;
+        margin-bottom: 1.25rem;
+      }
+      .full-form input,
+      .full-form select {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        margin-top: 0.25rem;
+        box-sizing: border-box;
+      }
+
+      .step {
+        display: none;
+        animation: fade 0.25s linear forwards;
+      }
+      .step.active {
+        display: block;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @media screen {
+        #internalForm,
+        #combinedForm {
+          display: none;
+        }
+      }
+      @media print {
+        #userForm {
+          display: none !important;
+        }
+        .form-page,
+        #combinedForm {
+          display: block !important;
+        }
+      }
     </style>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>UC Campus</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
   </head>
   <script>
-    function onlyOne(checkbox) {
-      const checkboxes = document.getElementsByName("activity-type");
-      checkboxes.forEach((cb) => {
+    function onlyOne(checkbox, groupName) {
+      const groupCheckboxes = document.querySelectorAll(
+        `input[name="${groupName}"]`
+      );
+      groupCheckboxes.forEach((cb) => {
         if (cb !== checkbox) cb.checked = false;
       });
     }
+
+    function toggleLongTablesCount(checkbox) {
+      const countBox = document.getElementById("u_long_tables_count");
+      if (checkbox.value === "yes") {
+        countBox.disabled = !checkbox.checked;
+      } else if (checkbox.value === "no" && checkbox.checked) {
+        countBox.disabled = true;
+        countBox.value = "";
+      }
+    }
   </script>
+
   <body>
-    <!-- Navbar Container -->
-    <div id="navbar-container"></div>
+    <nav class="navbar">
+      <div class="logo">
+        <img
+          alt="UC Logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
+          style="height: 75px; width: auto"
+        />
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a class="active" href="home.html">Home</a></li>
+        <li><a href="#">Inquire</a></li>
+        <li><a href="reservation.html">Reservation</a></li>
+      </ul>
+    </nav>
+
+    <form id="userForm" class="full-form">
+      <h2>Internal Clients Request Form</h2>
+
+      <label
+        >College / Office / Department
+        <input
+          type="text"
+          name="u_org"
+          data-target="organization_name"
+          required
+        />
+      </label>
+
+      <label
+        >Contact Number / Email
+        <input type="text" name="u_contact" data-target="contact" required />
+      </label>
+
+      <label
+        >Function / Event
+        <input type="text" name="u_event" data-target="event_name" required />
+      </label>
+
+      <label
+        >Requested Venue / Room
+        <select name="u_room" data-target="requested_room" required>
+          <option value="">— Select —</option>
+          <option>Auditorium</option>
+          <option>AV Room</option>
+          <option>Function Hall</option>
+        </select>
+      </label>
+
+      <label
+        >Number of Attendees
+        <input
+          type="number"
+          name="u_attend"
+          data-target="attendees"
+          min="1"
+          required
+        />
+      </label>
+
+      <label
+        >Day / Date of Event
+        <input type="date" id="u_date" name="u_date" data-target="event_date" required />
+      </label>
+
+      <label
+        >Time Start
+        <input type="time" id="u_start" name="u_start" data-target="time_start" required />
+      </label>
+
+      <label
+        >Time End
+        <input type="time" id="u_end" name="u_end" data-target="time_end" required />
+      </label>
+
+      <label
+        >Budget Source
+        <input type="text" name="u_budget" data-target="budget_source" />
+      </label>
+
+      <label
+        >Admission Fee
+        <input type="text" name="u_fee" data-target="admission_fee" />
+      </label>
+
+      <label
+        >Other Fees (please indicate)
+        <input type="text" name="u_other_fees" data-target="other_fees" />
+      </label>
+
+      <label
+        >Scope of Activity
+        <input type="text" name="u_scope" data-target="audience_type" />
+      </label>
+
+      <fieldset>
+        <legend>With Food / Canteen Service?</legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_food"
+            value="yes"
+            onclick="onlyOne(this, 'u_food')"
+            data-target="food_service"
+            data-value="yes"
+          />
+          Yes
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_food"
+            value="no"
+            onclick="onlyOne(this, 'u_food')"
+            data-target="food_service"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Audio-Visual Requirements</legend>
+        <label
+          ><input
+            type="checkbox"
+            name="mic"
+            value="Microphones"
+            data-target="mic_checkbox"
+          />
+          Microphones</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="mic_stand"
+            value="Mic_Stands"
+            data-target="mic_stands_checkbox"
+          />
+          Microphone Stands</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="projector"
+            value="Projector"
+            data-target="projector_checkbox"
+          />
+          Projector</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="pa_system"
+            value="PA_System"
+            data-target="pa_system_checkbox"
+          />
+          PA System</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="laptop"
+            value="Laptop"
+            data-target="laptop_checkbox"
+          />
+          Laptop</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="lights"
+            value="Lights"
+            data-target="lights_checkbox"
+          />
+          Lights</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="wifi_connection"
+            value="WiFi_Connection"
+            data-target="wifi_checkbox"
+          />
+          WiFi Connection</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="podium_monitor"
+            value="Podium_Monitor"
+            data-target="podium_checkbox"
+          />
+          Podium Monitor Board</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="live_streaming"
+            value="Live_Streaming"
+            data-target="stream_checkbox"
+          />
+          Live Streaming</label
+        >
+
+        <label
+          >Other AV needs:
+          <input type="text" name="u_av_other" data-target="others_AV" />
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Medical Team Needed?</legend>
+        <label>
+          <input
+            type="checkbox"
+            name="u_medical"
+            value="yes"
+            onclick="onlyOne(this, 'u_medical')"
+            data-target="medical_team"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_medical"
+            value="no"
+            onclick="onlyOne(this, 'u_medical')"
+            data-target="medical_team"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Security Guards Needed?</legend>
+        <label>
+          <input
+            type="checkbox"
+            name="u_security"
+            value="yes"
+            onclick="onlyOne(this, 'u_security')"
+            data-target="security_guards"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_security"
+            value="no"
+            onclick="onlyOne(this, 'u_security')"
+            data-target="security_guards"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Property / Equipment Needs (from LMO)</legend>
+
+        <!-- Air Cooler -->
+        <label>Air Cooler:</label><br />
+        <label>
+          <input
+            type="checkbox"
+            name="u_air_cooler"
+            value="yes"
+            onclick="onlyOne(this, 'u_air_cooler')"
+            data-target="air_cooler"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_air_cooler"
+            value="no"
+            onclick="onlyOne(this, 'u_air_cooler')"
+            data-target="air_cooler"
+            data-value="no"
+          />
+          No
+        </label>
+
+        <br /><br />
+
+        <!-- Long Tables -->
+        <fieldset>
+          <legend>Long Tables:</legend>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_long_tables"
+              value="yes"
+              onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
+              data-target="long_tables"
+              data-value="yes"
+            />
+            Yes </label
+          ><br />
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_long_tables"
+              value="no"
+              onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
+              data-target="long_tables"
+              data-value="no"
+            />
+            No </label
+          ><br /><br />
+
+          <label>
+            If Yes, how many?
+            <input
+              type="number"
+              name="u_long_tables_count"
+              id="u_long_tables_count"
+              data-target="long_tables_count"
+              min="0"
+              style="width: 60px"
+              disabled
+            />
+          </label>
+        </fieldset>
+
+        <br /><br />
+
+        <!-- Flags -->
+        <label>Philippine Flag and UC Flag:</label><br />
+        <label>
+          <input
+            type="checkbox"
+            name="u_flags"
+            value="yes"
+            onclick="onlyOne(this, 'u_flags')"
+            data-target="flags"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_flags"
+            value="no"
+            onclick="onlyOne(this, 'u_flags')"
+            data-target="flags"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <button type="button" id="preparePrint">Submit &amp; Print</button>
+    </form>
+<footer class="footer">
+  © 2025 University of the Cordilleras. All Rights Reserved.
+</footer>
     <form
       class="form-container"
       id="combinedForm"
+      onsubmit="event.preventDefault(); window.print();"
     >
+
+    <input type="hidden" id="curfew_required" name="curfew_required" />
+
       <!-- PAGE 1 -->
       <!-- Header Section -->
-      <div id="page1" class="form-page active">
+      <div class="form-page active" id="page1">
         <div class="header-row">
-          <img src="../images/UC_LOGO.png" alt="uc logo" />
+          <img alt="University of the Cordilleras Logo" src="pending logo" />
           <div style="text-align: right">
             <strong>CAMPUS MANAGEMENT OFFICE</strong><br />
             <strong>Facilities Management Operations Unit</strong>
           </div>
         </div>
-
         <!-- Second Section -->
         <div style="text-align: center">
-          <strong style="font-size: 15px"
-            >FACILITIES AND SERVICES REQUEST FORM FOR EXTERNAL CLIENTS</strong
+          <strong style="font-size: 14px"
+            >FACILITIES AND SERVICES REQUEST FORM FOR INTERNAL CLIENTS</strong
           ><br />
-          <span style="font-size: 13px"
-            >(Please read House Rules / Policy before filing out this
-            form.)</span
-          >
         </div>
         <br />
-
+        <strong
+          >NOTE: Submit two (2) copies of this form at least two (2) weeks prior
+          to your event.</strong
+        >
         <table>
           <tr>
             <td colspan="2" style="width: 50%">
-              <strong>Name of Agency/Organization:</strong>
+              <strong>College/ Office/ Department/ Organization:</strong>
               <input
-                type="text"
-                id="organization"
+                id="organization_name"
                 name="organization_name"
                 style="width: 98%"
+                type="text"
               />
             </td>
-            <td colspan="1" style="width: 30%">
-              <strong>Contact Person:</strong>
+            <td colspan="1" style="width: 25%">
+              <strong>Contact Number/ *Email:</strong>
               <input
+                id="contact"
+                name="contact"
+                style="width: 98%"
                 type="text"
-                id="contact_person"
-                name="contact_person"
-                style="width: 97%"
+              />
+            </td>
+            <td colspan="1" style="width: 25%">
+              <strong>Budget Source:</strong>
+              <input
+                id="budget_source"
+                name="budget_source"
+                style="width: 98%"
+                type="text"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <strong>Function/Event:</strong>
+              <input
+                id="event_name"
+                name="event_name"
+                style="width: 98%"
+                type="text"
+              />
+            </td>
+            <td colspan="2">
+              <strong>Date/Day of Event</strong>
+              <input
+                id="event_date"
+                name="event_date"
+                style="width: 98%"
+                type="date"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" style="width: 35%">
+              <strong>Requested Venue/Room</strong>
+              <input
+                id="requested_room"
+                name="requested_room"
+                style="width: 98%"
+                type="text"
+              />
+            </td>
+            <td colspan="1" style="width: 25%">
+              <strong>Number of Attendees</strong>
+              <input
+                id="attendees"
+                name="attendees"
+                style="width: 96%"
+                type="text"
               />
             </td>
             <td colspan="1" style="width: 20%">
-              <strong>Contact No.:</strong>
-              <input
-                type="text"
-                id="contact_number"
-                name="contact_number"
-                style="width: 96%"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <strong>Address of Agency/Organization:</strong>
-              <input
-                type="text"
-                id="agency_org"
-                name="address"
-                style="width: 99%"
-              />
-            </td>
-            <td colspan="2">
-              <strong>Contact Number/ *Email:</strong>
-              <input
-                type="text"
-                id="contact_info"
-                name="contact_info"
-                style="width: 99%"
-                placeholder="Phone / Email"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <strong>Title/Theme of Activity:</strong>
-              <input
-                type="text"
-                id="title_theme"
-                name="title_theme"
-                style="width: 99%"
-              />
-            </td>
-            <td colspan="2">
-              <strong>Purpose of Activity:</strong>
-              <input
-                type="text"
-                id="purpose"
-                name="purpose"
-                style="width: 99%"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <strong>Requested Venue/Room:</strong>
-              <input
-                type="text"
-                id="requested_venue"
-                name="requested_venue"
-                style="width: 99%"
-              />
-            </td>
-            <td colspan="2">
-              <strong>Date being reserved:</strong>
-              <input
-                type="date"
-                id="reserve_date"
-                name="reserve_date"
-                style="width: 99%"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="1" style="width: 25%">
-              <strong>Number of Participants</strong>
-              <input
-                type="text"
-                id="participants"
-                name="attendees"
-                style="width: 96%"
-              />
-            </td>
-            <td colspan="1" style="width: 25%">
               <strong>Time Start:</strong>
               <input
-                type="text"
                 id="time_start"
                 name="time_start"
                 style="width: 95%"
+                type="text"
               />
             </td>
-            <td colspan="1" style="width: 25%">
+            <td colspan="1" style="width: 20%">
               <strong>Time End:</strong>
               <input
-                type="text"
                 id="time_end"
                 name="time_end"
                 style="width: 96%"
+                type="text"
               />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" style="width: 35%">
+              <strong>Admission Fee:</strong>
+              <div style="text-align: center">
+                <label style="margin-right: 15px">
+                  <input
+                    type="checkbox"
+                    name="admission_fee"
+                    value="free"
+                    onclick="onlyOne(this, 'admission_fee')"
+                  />
+                  Free
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="admission_fee"
+                    value="php"
+                    onclick="onlyOne(this, 'admission_fee')"
+                  />
+                  PHP
+                  <input
+                    type="text"
+                    name="admission_amount"
+                    style="width: 60px"
+                  />
+                </label>
+              </div>
+              <div style="margin-top: 3px; font-style: italic; font-size: 9px">
+                ***for other fees, please indicate
+                <input
+                  id="indicated_fees"
+                  name="organization_name"
+                  style="width: 30%"
+                  type="text"
+                />
+              </div>
             </td>
             <td colspan="1" style="width: 25%">
-              <strong>Facilities Details:</strong>
-              <input
-                type="text"
-                id="facilities_details"
-                name="facilities_details"
-                style="width: 96%"
-                placeholder="Setup requirements"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <strong>Admission Fee:</strong><br />
-              <div style="text-align: center;">
-                <label>
-                  <input type="radio" name="admission_fee" value="free" /> Free
-                </label>
-                &nbsp;&nbsp;&nbsp;
-                <label>
-                  <input type="radio" name="admission_fee" value="php" /> PHP
-                  <input type="number" name="admission_amount" style="width: 80px;" min="0" step="0.01" />
-                </label>
-              </div>
-              <div style="margin-top: 3px; font-style: italic; font-size: 9px;">
-                ***for other fees, please indicate:
-                <input type="text" name="other_fees_details" style="width: 60%;" />
-              </div>
-            </td>
-            <td colspan="2">
-              <strong>Scope of Activity:</strong><br />
-              <label>
-                <input type="radio" name="scope" value="general" /> General Public
-              </label><br />
-              <label>
-                <input type="radio" name="scope" value="exclusive" /> Exclusive
-              </label>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="4">
-  <div style="display: flex; justify-content: space-between;">
-    <div style="width: 50%;">
-      <strong>*With Food/Canteen Services?</strong>&nbsp;&nbsp;
-      <label>
-        <input
-          type="checkbox"
-          name="food_service"
-          value="yes"
-          onclick="onlyOne(this)"
-        />
-        Yes
-      </label>
-      &nbsp;&nbsp;
-      <label>
-        <input
-          type="checkbox"
-          name="food_service"
-          value="no"
-          onclick="onlyOne(this)"
-        />
-        No
-      </label>
-    </div>
-
-    <div style="width: 50%; text-align: center;">
-      <strong>Canteen</strong><br />
-      <strong>___________________</strong><br />
-      <strong>(Name | Signature | Date)</strong>
-    </div>
-  </div>
-</td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <strong>Facilities Needed</strong><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="facility_type"
-                  value="classroom"
-                  onclick="onlyOne(this)" />
-                Classroom (Max Capacity = 45) Room No. &nbsp;<input
-                  type="text"
-                  id="classroom_number"
-                  name="classroom_number"
-                  style="width: 10%" /></label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="facility_type"
-                  value="gym"
-                  onclick="onlyOne(this)"
-                />
-                Gymnasium (Max Capacity = 1,500)</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="facility_type"
-                  value="auditorium"
-                  onclick="onlyOne(this)"
-                />
-                Auditorium (Max Capacity = 250)</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="facility_type"
-                  value="theater"
-                  onclick="onlyOne(this)"
-                />
-                Theater (Max Capacity = 600)</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="facility_type"
-                  value="review_center"
-                  onclick="onlyOne(this)"
-                />
-                G311-G312- Review Center (Max Capacity = 100)</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="facility_type"
-                  value="training"
-                  onclick="onlyOne(this)"
-                />
-                Training Center (Max Capacity = 40)</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="facility_type"
-                  value="other_facilities"
-                  onclick="onlyOne(this)" />
-                Others, Specify &nbsp;<input
-                  type="text"
-                  id="others_number"
-                  name="others_number"
-                  style="width: 70%" /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Max Capacity:
-                &nbsp;<input
-                  type="text"
-                  id="others_max"
-                  name="others_max"
-                  style="width: 10%"
-              /></label>
-            </td>
-            <td colspan="2">
-              <strong>Type of Activity</strong><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="play_presentation"
-                  onclick="onlyOne(this)"
-                />
-                Play Presentation</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="convention"
-                  onclick="onlyOne(this)"
-                />
-                Convention</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="seminar"
-                  onclick="onlyOne(this)"
-                />
-                Training/ Seminar/ Conference</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="graduiation"
-                  onclick="onlyOne(this)"
-                />
-                Graduation/ Convocation</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="fellowship"
-                  onclick="onlyOne(this)"
-                />
-                Fellowship</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="basketball_volleyball"
-                  onclick="onlyOne(this)"
-                />
-                Basketball/ Volleyball</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="sportsfest"
-                  onclick="onlyOne(this)"
-                />
-                Sportsfest</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="review"
-                  onclick="onlyOne(this)"
-                />
-                Review</label
-              ><br />
-              <label
-                ><input
-                  type="checkbox"
-                  name="activity-type"
-                  value="other_activity"
-                  onclick="onlyOne(this)" />
-                Others, Specify:&nbsp;
+              <strong>Scope of Activity:</strong>
+              <div>
                 <input
-                  type="text"
-                  id="activity_specify"
-                  name="activity_specify"
-                  style="width: 75%"
-              /></label>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="1">
-              <strong>Equipment Needed</strong><br /><br />
-              <label>&nbsp;&nbsp;•&nbsp;&nbsp;Furniture<br /></label>
-              <label><input type="checkbox" />Whiteboard:</label><br />
-              <label
-                ><input type="checkbox" />Chairs: &nbsp;<input
-                  type="number"
-                  id="chairs"
-                  name="chairs"
-                  min="0"
-                  step="1"
-                  style="width: 10%" /></label
-              ><br />
-              <label
-                ><input type="checkbox" />Long/Short Table: &nbsp;<input
-                  type="number"
-                  id="ls_tables"
-                  name="ls_tables"
-                  min="0"
-                  step="1"
-                  style="width: 10%" /></label
-              ><br />
-              <label><input type="checkbox" />Rosirum:</label><br />
-              <label
-                ><input type="checkbox" />Round Table: &nbsp;<input
-                  type="number"
-                  id="round_tables"
-                  name="round_tables"
-                  min="0"
-                  step="1"
-                  style="width: 10%" /></label
-              ><br />
-              <label
-                >&nbsp;&nbsp;•&nbsp;&nbsp;Others, Specify:
-                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
-                  type="text"
-                  name="others_equipment"
-                  style="width: 75%" /></label
-              ><br />
-            </td>
-            <td colspan="3">
-              <strong>*Audio-Visual Requirements</strong><br /><br />
-
-              <div style="display: flex; justify-content: space-between">
-                <div style="width: 58%">
-                  <label>
-                    <input type="checkbox" name="av_microphones" value="yes" /> Microphones:
-                    <input
-                      type="number"
-                      id="microphones_count"
-                      name="microphones_count"
-                      min="0"
-                      step="1"
-                      style="width: 60px"
-                    />
-                    pcs </label
-                  ><br />
-
-                  <label>
-                    <input type="checkbox" name="av_mic_stands" value="yes" /> Microphone Stands:
-                    <input
-                      type="number"
-                      id="mic_stands_count"
-                      name="mic_stands_count"
-                      min="0"
-                      step="1"
-                      style="width: 60px"
-                    />
-                    pcs </label
-                  ><br />
-                  <label><input type="checkbox" name="av_projector" value="yes" /> Projector</label><br />
-                  <label><input type="checkbox" name="av_pa_system" value="yes" /> PA System</label>
-                </div>
-                <div style="width: 40%">
-                  <label><input type="checkbox" name="av_wifi" value="yes" /> WiFi Connection</label><br />
-                  <label><input type="checkbox" name="av_podium_monitor" value="yes" /> Podium Monitor Board</label
-                  ><br />
-                  <label><input type="checkbox" name="av_live_streaming" value="yes" /> Live Streaming</label><br />
-                  <label
-                    ><input type="checkbox" name="av_other" value="yes" /> Other AV needs:<br /><input
-                      name="av_other_details"
-                      style="width: 75%"
-                      type="text" /></label
-                  ><br />
-                </div>
+                  type="checkbox"
+                  name="audience_type"
+                  value="general"
+                  onclick="onlyOne(this, 'audience_type')"
+                />
+                General Public
+                <br />
+                <input
+                  type="checkbox"
+                  name="audience_type"
+                  value="exclusive"
+                  onclick="onlyOne(this, 'audience_type')"
+                />
+                Exclusive
               </div>
-              <div style="display: flex; flex-wrap: wrap">
-                <strong>Lights &nbsp;</strong>
-                <label
-                  ><input type="checkbox" /> House Lights / Par
-                  Lights&nbsp;</label
-                ><br />
-                <label><input type="checkbox" /> Follow Spotlights&nbsp;</label>
-                <label><input type="checkbox" /> Stage Lights&nbsp;</label>
-              </div>
-              <label><input type="checkbox" /> Other AV needs:</label><br />
-              <input type="text" name="others_AV" style="width: 50%" />
-              <br /><br />
-              <div style="display: flex; justify-content: space-between">
+            </td>
+            <td colspan="2" style="width: 40%">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                "
+              >
+                <!-- Left side: Food Service Yes/No -->
                 <div style="text-align: center; width: 50%">
-                  <strong>*Maintenance Operation Unit:</strong><br /><br />
-                  <strong>____________________________</strong><br />
-                  <strong>(Name | Signature | Date)</strong>
+                  <strong>*With Food/Canteen Services?</strong><br />
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="food_service"
+                      value="yes"
+                      onclick="onlyOne(this, 'food_service')"
+                    />
+                    Yes
+                  </label>
+                  &nbsp;&nbsp;&nbsp;
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="food_service"
+                      value="no"
+                      onclick="onlyOne(this, 'food_service')"
+                    />
+                    No
+                  </label>
                 </div>
+
                 <div style="text-align: center; width: 50%">
-                  <strong>*Media Center:</strong><br /><br />
+                  <strong>Canteen:</strong><br /><br />
                   <strong>____________________________</strong><br />
                   <strong>(Name | Signature | Date)</strong>
                 </div>
@@ -662,7 +826,6 @@
             </td>
           </tr>
         </table>
-
         <table>
           <strong>*Facilities Services</strong>
           <td>
@@ -672,345 +835,502 @@
             </div>
           </td>
         </table>
-        <table>
-          <td>
-            <div>
-              If the activity will be cancelled, the client must inform the UC
-              *Campus Management Office at least three (3) days before the
-              scheduled date of activity.<br />
-              (Note: All activities are generakky cancelled whenever the school
-              is closed caused by inclement weather.)
-            </div>
-          </td>
-        </table>
-
         <table class="outer-border">
-          <strong>Billing Particulars</strong>
+          <strong>Audio-Visual Requirements</strong>
           <tr>
             <td colspan="1">
               <label
-                >Use of&nbsp;&nbsp;<input
-                  type="text"
-                  name="billing_use"
-                  style="width: 84%"
-                /><br />
-                Other Fees:&nbsp;&nbsp;<input
-                  type="text"
-                  name="billing_other1"
+                ><input type="checkbox" /> Microphones:&nbsp;<input
+                  id="mic"
+                  min="0"
+                  name="mic"
+                  step="1"
+                  style="width: 10%"
+                  type="number"
+                />
+                pcs</label
+              ><br />
+              <label
+                ><input type="checkbox" /> Microphone Stands:&nbsp;<input
+                  id="mic_stands"
+                  min="0"
+                  name="mic_stands"
+                  step="1"
+                  style="width: 10%"
+                  type="number"
+                />
+                pcs</label
+              ><br />
+              <label><input type="checkbox" /> Projector</label><br />
+              <label><input type="checkbox" /> PA System</label><br />
+            </td>
+            <td colspan="1">
+              <label><input type="checkbox" /> Laptop</label><br />
+              <label><input type="checkbox" /> Lights</label><br />
+              <label
+                ><input type="checkbox" /> Other AV needs:<br /><input
+                  name="others_AV"
                   style="width: 75%"
-                /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
-                  type="text"
-                  name="billing_other2"
-                  style="width: 75%"
-                /><br /><br />
-                Full Payment<br /><br />
-                Less Deposit/Payment<br /><br />
-                Balance<br /><br />
-                Additional
-              </label>
+                  type="text" /></label
+              ><br />
             </td>
             <td colspan="1">
-              <label
-                >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
-                &nbsp;<input
-                  type="number"
-                  id="php_use"
-                  name="php_use"
-                  min="0"
-                  step="1"
-                  style="width: 25%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
-                &nbsp;<input
-                  type="number"
-                  id="php_fees1"
-                  name="php_fees1"
-                  min="0"
-                  step="1"
-                  style="width: 25%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
-                &nbsp;<input
-                  type="number"
-                  id="php_fees2"
-                  name="php_fees2"
-                  min="0"
-                  step="1"
-                  style="width: 25%"
-                /><br /><br />
-                <strong>TOTAL</strong>&nbsp;&nbsp;PhP &nbsp;<input
-                  type="number"
-                  id="php_full"
-                  name="php_full"
-                  min="0"
-                  step="1"
-                  style="width: 25%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
-                &nbsp;<input
-                  type="number"
-                  id="php_less"
-                  name="php_less"
-                  min="0"
-                  step="1"
-                  style="width: 25%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
-                &nbsp;<input
-                  type="number"
-                  id="php_bal"
-                  name="php_bal"
-                  min="0"
-                  step="1"
-                  style="width: 25%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP
-                &nbsp;<input
-                  type="number"
-                  id="php_additional"
-                  name="php_additional"
-                  min="0"
-                  step="1"
-                  style="width: 25%"
-                /><br />
-              </label>
-            </td>
-            <td colspan="1">
-              <label
-                ><br /><br /><br /><br /><br /><br /><strong>TOTAL</strong
-                >&nbsp;&nbsp;O.R. # &nbsp;<input
-                  type="number"
-                  id="OR_full"
-                  name="OR_full"
-                  min="0"
-                  step="1"
-                  style="width: 50%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O.R.
-                # &nbsp;<input
-                  type="number"
-                  id="OR_less"
-                  name="OR_less"
-                  min="0"
-                  step="1"
-                  style="width: 50%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O.R.
-                # &nbsp;<input
-                  type="number"
-                  id="OR_bal"
-                  name="OR_bal"
-                  min="0"
-                  step="1"
-                  style="width: 50%"
-                /><br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O.R.
-                # &nbsp;<input
-                  type="number"
-                  id="OR_additional"
-                  name="OR_additional"
-                  min="0"
-                  step="1"
-                  style="width: 50%"
-                /><br />
-              </label>
-            </td>
-          </tr>
-        </table>
-
-        <table style="width: 100%; table-layout: fixed">
-          <colgroup>
-            <col style="width: 33%" />
-            <col style="width: 33%" />
-            <col style="width: 34%" />
-            <!-- adds up to 100% -->
-          </colgroup>
-          <tr>
-            <td style="background-color: #918f8f">
-              <strong>Concurred with</strong><br />
-            </td>
-            <td style="background-color: #918f8f">
-              <strong>Venue Reserved by</strong>
-            </td>
-            <td style="background-color: #918f8f">
-              <strong>*Approved by</strong>
+              <label><input type="checkbox" /> WiFi Connection</label><br />
+              <label><input type="checkbox" /> Podium Monitor Board</label
+              ><br />
+              <label><input type="checkbox" /> Live Streaming</label><br />
             </td>
           </tr>
           <tr>
-            <td><br /><br /></td>
-            <td><br /><br /></td>
-            <td><br /><br /></td>
-          </tr>
-          <tr>
-            <td style="text-align: center"><strong>Contact Person</strong></td>
-            <td style="text-align: center">
-              <strong>Director, *Campus Management Office</strong>
-            </td>
-            <td style="text-align: center">
-              <strong>VP for Administration & Student Services</strong>
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align: center">
+            <td style="text-align: center; width: 33%">
+              <strong>*Maintenance Operation Unit:</strong><br />
+              <strong>____________________________</strong><br />
               <strong>(Name | Signature | Date)</strong>
             </td>
-            <td style="text-align: center">
+            <td style="text-align: center; width: 33%">
+              <strong>*Media Center:</strong><br />
+              <strong>____________________________</strong><br />
               <strong>(Name | Signature | Date)</strong>
             </td>
-            <td style="text-align: center">
+            <td style="text-align: center; width: 34%">
+              <strong>iTSS:</strong><br />
+              <strong>____________________________</strong><br />
               <strong>(Name | Signature | Date)</strong>
             </td>
           </tr>
         </table>
+        <table class="outer-border">
+          <strong>Medical/ Safety and Security Services</strong>
+          <tr>
+            <td style="text-align: center; width: 50%">
+              <strong>Medical Team Needed?</strong><br />
+              <strong
+                ><input
+                  type="checkbox"
+                  name="medical_team"
+                  value="yes"
+                  onclick="onlyOne(this, 'medical_team')"
+                />
+                Yes</strong
+              >&nbsp;&nbsp;&nbsp;&nbsp;
+              <strong
+                ><input
+                  type="checkbox"
+                  name="medical_team"
+                  value="no"
+                  onclick="onlyOne(this, 'medical_team')"
+                />
+                No</strong
+              ><br />
+            </td>
+            <td style="text-align: center; width: 50%">
+              <strong>Security Guards Needed?</strong><br />
+              <strong
+                ><input
+                  type="checkbox"
+                  name="security_guards"
+                  value="yes"
+                  onclick="onlyOne(this, 'security_guards')"
+                />
+                Yes</strong
+              >&nbsp;&nbsp;&nbsp;&nbsp;
+              <strong
+                ><input
+                  type="checkbox"
+                  name="security_guards"
+                  value="no"
+                  onclick="onlyOne(this, 'security_guards')"
+                />
+                No</strong
+              ><br />
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; width: 50%">
+              <strong>Medical Clinic:</strong><br />
+              <strong>____________________________</strong><br />
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+            <td style="text-align: center; width: 50%">
+              <strong>*Occupational Safety and Health Office:</strong><br />
+              <strong>____________________________</strong><br />
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+          </tr>
+        </table>
+        <table class="no-border">
+          <strong>Property/ Equipment Needs (from LMO)</strong>
+          <tr>
+            <td style="text-align: center; width: 33%">
+              <label>Air Cooler</label>
+            </td>
+            <td style="text-align: center; width: 33%">
+              <label>Long Tables</label>
+            </td>
+            <td style="text-align: center; width: 34%">
+              <label>Philippine Flag and UC Flag</label>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; width: 33%">
+              <strong>
+                <input
+                  type="checkbox"
+                  name="air_cooler"
+                  value="yes"
+                  onclick="onlyOne(this, 'air_cooler')"
+                />
+                Yes
+              </strong>
+              &nbsp;&nbsp;
+              <strong>
+                <input
+                  type="checkbox"
+                  name="air_cooler"
+                  value="no"
+                  onclick="onlyOne(this, 'air_cooler')"
+                />
+                No
+              </strong>
+            </td>
 
-        <!-- Pg 1 nav -->
-        <div class="navigation">
-          <span>Page 1 of 2</span>
-          <button type="button" onclick="goToPage(2)">Next Page →</button>
-        </div>
+            <td style="text-align: center; width: 33%">
+              <strong>
+                <input
+                  type="checkbox"
+                  name="long_tables"
+                  value="yes"
+                  onclick="onlyOne(this, 'long_tables')"
+                />
+                Yes, How many?
+                <input
+                  id="long_tables_count"
+                  min="0"
+                  name="long_tables"
+                  step="1"
+                  style="width: 15%"
+                  type="number"
+                /><br />
+              </strong>
+              &nbsp;&nbsp;
+              <strong>
+                <input
+                  type="checkbox"
+                  name="long_tables"
+                  value="no"
+                  onclick="onlyOne(this, 'long_tables')"
+                />
+                No
+              </strong>
+            </td>
+
+            <td style="text-align: center; width: 34%">
+              <strong>
+                <input
+                  type="checkbox"
+                  name="flags"
+                  value="yes"
+                  onclick="onlyOne(this, 'flags')"
+                />
+                Yes
+              </strong>
+              &nbsp;&nbsp;
+              <strong>
+                <input
+                  type="checkbox"
+                  name="flags"
+                  value="no"
+                  onclick="onlyOne(this, 'flags')"
+                />
+                No
+              </strong>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center; width: 33%">
+              <strong>Logistic Management Office:</strong><br />
+              <strong>____________________________</strong><br />
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+          </tr>
+        </table>
+        <table class="outer-border">
+          <tr>
+            <td colspan="2">
+              I have read and discussed with the Director of *Campus Management
+              Office the policies and guidelines and accept personal
+              responsibility to abide by them. I understand that the use of UC
+              Facilities is contingent upon the approval of the concerned
+              Offices.
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1">
+              I understand there may be additional charges for:
+              <ul>
+                <li>Set-up/ take-down/ if overtime is required</li>
+                <li>Technician</li>
+                <li>Electricity Needs</li>
+                <li>Parking arrangements for large events</li>
+              </ul>
+            </td>
+            <td colspan="1">
+              <br />
+              <ul>
+                <li>Rental additional equipment, if any</li>
+                <li>Cleaning, damage, repair of facilities or grounds</li>
+                <li>Security personnel beyond regularly scheduled guards</li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              By signing this form, I acknowledge responsibility for the care
+              and condition of facilities and equipment used by our department/
+              organization.
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align: center">
+              <div
+                style="
+                  display: inline-block;
+                  text-align: center;
+                  margin-right: 40px;
+                "
+              >
+                <strong>_________________________________</strong><br />
+                <strong>Name and Signature of Contact Person</strong>
+              </div>
+              <div style="display: inline-block; text-align: center">
+                <strong>___________</strong><br />
+                <strong>Date</strong>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td style="width: 50%">
+              <strong>For Facilities Management Office Use Only</strong><br />
+              <p>
+                &nbsp;&nbsp;Catering Clean up to be completed by<br />
+                &nbsp;&nbsp;<input
+                  name="catering"
+                  style="width: 50%"
+                  type="text"
+                />&nbsp;&nbsp;&nbsp;Date: ___________<br />
+                &nbsp;&nbsp;Retrieval of Audio-Visual Equipment to be done by
+                &nbsp;&nbsp;<input
+                  name="AV_retrieval"
+                  style="width: 50%"
+                  type="text"
+                />&nbsp;&nbsp;&nbsp;Date: ___________
+              </p>
+            </td>
+            <td style="width: 50%">
+              <br />
+              <strong>With Payment?</strong
+              >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="payment"
+                  value="yes"
+                  onclick="onlyOne(this, 'payment')"
+                />
+                Yes
+              </label>
+
+              &nbsp;&nbsp;&nbsp;&nbsp;
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="payment"
+                  value="no"
+                  onclick="onlyOne(this, 'payment')"
+                />
+                No </label
+              ><br />
+              <ul>
+                <li>
+                  <strong>
+                    Rental Fees&nbsp;
+                    <input name="rental_fees" style="width: 20%" type="text" />
+                    &nbsp;O.R. # &nbsp;
+                    <input name="rental_or" style="width: 20%" type="text" />
+                  </strong>
+                </li>
+                <li>
+                  <strong>
+                    Other Fees&nbsp;&nbsp;
+                    <input name="other_fees" style="width: 20%" type="text" />
+                    &nbsp;O.R. # &nbsp;
+                    <input name="other_or" style="width: 20%" type="text" />
+                  </strong>
+                </li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #918f8f">
+              <strong>Approved By</strong><br />
+            </td>
+            <td style="background-color: #918f8f">
+              <strong>Health &amp; Safety Protocol Approved By</strong>
+            </td>
+          </tr>
+          <tr>
+            <td><br /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">
+              <strong>Director, *Campus Management Office</strong><br />
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+            <td style="text-align: center">
+              <strong>VP for Administration &amp; Student Services</strong
+              ><br />
+              <strong>(Name | Signature | Date)</strong>
+            </td>
+          </tr>
+        </table>
       </div>
-      <div class="navigation">
-      <button type="button" onclick="goToPage(1)">← Previous Page</button>
-      <span>Page 2 of 2</span>
-      <button type="submit">Submit</button>
-    </div>
     </form>
-    
 
     <script>
-      function goToPage(pageNumber) {
-        document
-          .querySelectorAll(".form-page")
-          .forEach((p) => p.classList.remove("active"));
-        document.getElementById("page" + pageNumber).classList.add("active");
-      }
-    </script>
-    <footer class="footer">
-      © 2025 University of the Cordilleras. All Rights Reserved.
-    </footer>
+document.addEventListener("DOMContentLoaded", () => {
+  /* For editing */
+  const HOLIDAYS   = ["2025-01-01", "2025-04-09", "2025-12-25"]; /* sample holidates */
+  const EARLIEST   = "07:30";
+  const LATEST     = "19:30";
+  const MAX_HOURS  = 4;
+  const CURFEW_URL = "exemption-form.html";
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          window.location.href = '/login';
-          return;
+  const btnPrint   = document.getElementById("preparePrint");
+  if (!btnPrint) { console.error("preparePrint button not found"); return; }
+
+  /* Time string to total minutes */
+  const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+
+  /* Determine if curfew rules are triggered */
+  function curfewReasons() {
+  const date  = document.getElementById("u_date") ?.value;
+  const start = document.getElementById("u_start")?.value;
+  const end   = document.getElementById("u_end")  ?.value;
+  
+  // Track reasoning
+  const reasons = [];
+
+  // uses from YYYY-MM-DD
+  if (date) {
+    const [year, month, day] = date.split("-").map(Number);
+    const d = new Date(year, month - 1, day);
+
+    const isSunday = d.getDay() === 0;
+    if (isSunday) reasons.push("• Event is on a **Sunday**.");
+
+    if (HOLIDAYS.includes(date)) {
+      reasons.push("• Event is on a **holiday**.");
+    }
+  }
+
+  // Exit early if no time inputs
+  if (!start || !end) return reasons;
+
+  if (toMin(start) < toMin(EARLIEST)) {
+    reasons.push("• Starts **before 7:30-AM**.");
+  }
+
+  if (toMin(end) > toMin(LATEST)) {
+    reasons.push("• Ends **after 7:30-PM**.");
+  }
+
+  // Check duration
+  if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
+    reasons.push("• Duration **exceeds 4 hours**.");
+  }
+
+  return reasons;
+}
+
+  /* Copy values from user form to internal form */
+  function copyUserValues() {
+    document.querySelectorAll('#userForm [data-target]:not([type="checkbox"]):not([type="radio"])')
+      .forEach(src => {
+        const dst = document.getElementById(src.dataset.target);
+        if (dst) {
+          dst.value = src.value;
+          dst.textContent = src.value;
         }
-
-        fetch('/api/auth/verify', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.user) {
-            window.location.href = '/login';
-            return;
-          }
-
-          if (data.user.role === 'admin') {
-            initializeNavbar('user', 'reservation', 'external'); // Show as external for admin
-          } else if (data.user.role === 'student' || data.user.role === 'external') {
-            initializeNavbar('user', 'reservation', data.user.role);
-          } else {
-            window.location.href = '/login';
-          }
-        })
-        .catch(error => {
-          window.location.href = '/login';
-        });
       });
-    </script>
-    <script src="/utils/navbar.js"></script>
-    <script src="/utils/modals.js"></script>
-    <script src="/js/utils/form-submission-handler.js"></script>
-    <script>
-        // Global form handler
-        let formHandler;
 
-        // Initialize form submission handler
-        function initializeFormHandler() {
-            formHandler = new FormSubmissionHandler('external', {
-                formId: 'combinedForm',
-                confirmationTitle: 'Submit External Client Form',
-                confirmationMessage: 'Are you sure you want to submit this external client form? Once submitted, a PDF will be generated and saved to the database.',
-                successTitle: 'External Client Form Submitted Successfully!',
-                successMessage: 'Your external client form has been submitted successfully. A PDF has been generated and saved.'
-            });
+    // checkboxes / radios
+    document.querySelectorAll(
+      '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
+    ).forEach(src => {
+      if (!src.checked) return;
 
-            formHandler.init();
-        }
+      const tgtName = src.dataset.target;
+      const tgtValue = src.dataset.value;
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
+      let dst = tgtValue !== undefined
+        ? document.querySelector(`#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`)
+        : document.getElementById(tgtName);
 
-            // Verify user role and initialize navbar
-            fetch('/api/auth/verify', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.user) {
-                    window.location.href = '/login';
-                    return;
-                }
+      if (dst) dst.checked = true;
+    });
+  }
 
-                // Allow admin, student, and external users
-                if (['admin', 'student', 'external'].includes(data.user.role)) {
-                    initializeNavbar('user', 'external-clients', data.user.role);
-                    initializeFormHandler();
-                } else {
-                    window.location.href = '/login';
-                }
-            })
-            .catch(error => {
-                window.location.href = '/login';
-            });
-        });
+  /* Handle submit/print with curfew check */
+  let curfewAcknowledged = false;
 
-        // Utility functions for PDF operations
-        function previewPDF(pdfUrl) {
-            window.open(pdfUrl, '_blank');
-        }
+  btnPrint.addEventListener("click", () => {
+    const reasons = curfewReasons();
 
-        async function downloadFormPDF(formId, formType) {
-            try {
-                const token = localStorage.getItem('token');
-                let downloadUrl = `/api/sarf/external/download/${formId}`;
+    // If curfew rules are triggered and not yet acknowledged
+    if (reasons.length && !curfewAcknowledged) {
+      const msg =
+        "This booking triggers curfew rules:\n\n" +
+        reasons.join("\n") +
+        "\n\nDo you want to open the Curfew/Exemption form now?";
+      if (confirm(msg)) {
+        window.open(CURFEW_URL, "_blank");
+        curfewAcknowledged = true;
 
-                const response = await fetch(downloadUrl, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+        // Let internal form know curfew form was needed
+        const flag = document.getElementById("curfew_required");
+        if (flag) flag.value = "Yes";
+      }
+      return; // Cancel actual print until confirmation next time
+    }
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `External-Client-Form-${formId}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                } else {
-                    const error = await response.json();
-                    alert('Error downloading PDF: ' + error.message);
-                }
-            } catch (error) {
-                console.error('Error downloading PDF:', error);
-                alert('Failed to download PDF. Please try again.');
-            }
-        }
-    </script>
+    copyUserValues();
+    window.print();
+  });
+
+  /* Update header info before printing */
+  window.addEventListener("beforeprint", () => {
+    const subDate = document.getElementById("submission-date");
+    if (subDate) {
+      subDate.textContent = new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    const ctrlIn = document.getElementById("control");
+    const ctrlOut = document.getElementById("control-display");
+    if (ctrlIn && ctrlOut) {
+      ctrlOut.textContent = ctrlIn.value || "___________";
+    }
+  });
+});
+</script>
+
+
   </body>
 </html>
