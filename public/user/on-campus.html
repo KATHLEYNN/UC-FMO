@@ -2,9 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Combined On-Campus Registration Form</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/utils/navbar.css">
+    <title>On-Campus Registration Form</title>
     <style>
       .navbar {
         background-color: #2e7d32; /* dark green */
@@ -50,7 +48,7 @@
           display: block !important;
         }
         .navbar,
-        .footer
+        .footer,
         .navigation {
           display: none !important;
         }
@@ -78,7 +76,14 @@
         vertical-align: top;
       }
       .no-border {
-        border: none !important;
+        border: none;
+        border-collapse: collapse;
+      }
+
+      .no-border td,
+      .no-border th {
+        border: none;
+        padding: 5px;
       }
       .form-title {
         background-color: #3535354d;
@@ -93,11 +98,14 @@
         display: flex;
         gap: 10px;
         padding: 0;
-        box-sizing: border-box;
+        align-items: stretch;
       }
+
       .two-columns > div {
         flex: 1;
+        min-width: 0;
       }
+
       .two-columns table {
         width: 100%;
       }
@@ -106,7 +114,7 @@
       }
       .section-title {
         font-weight: bold;
-        background-color: #eee;
+        background-color: #3535354d;
       }
       .small {
         font-size: 10px;
@@ -136,29 +144,1164 @@
         padding: 6px 12px;
         font-size: 14px;
       }
+      .full-form {
+        max-width: 600px;
+        margin: auto;
+        font-family: system-ui, sans-serif;
+      }
+      .full-form label {
+        display: block;
+        margin-bottom: 1.25rem;
+      }
+      .full-form input,
+      .full-form select {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        margin-top: 0.25rem;
+        box-sizing: border-box;
+      }
+
+      .step {
+        display: none;
+        animation: fade 0.25s linear forwards;
+      }
+      .step.active {
+        display: block;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media screen {
+        #internalForm,
+        #combinedForm {
+          display: none;
+        }
+      }
+      @media print {
+        #userForm {
+          display: none !important;
+        }
+        .form-page,
+        #combinedForm {
+          display: block !important;
+        }
+        .section-title {
+          background-color: #3535354d;
+          border: 1px solid black;
+        }
+      }
     </style>
   </head>
+
   <script>
-    function onlyOne(checkbox) {
-      const checkboxes = document.getElementsByName("activity-type");
-      checkboxes.forEach((cb) => {
+    function onlyOne(checkbox, groupName) {
+      const groupCheckboxes = document.querySelectorAll(
+        `input[name="${groupName}"]`
+      );
+      groupCheckboxes.forEach((cb) => {
         if (cb !== checkbox) cb.checked = false;
       });
     }
+
+    function toggleDependentInput(checkbox) {
+      const targetId = checkbox.dataset.toggleTarget;
+      if (!targetId) return;
+
+      const target = document.getElementById(targetId);
+      if (!target) return;
+
+      if (checkbox.checked) {
+        target.disabled = false;
+      } else {
+        target.disabled = true;
+        if ("value" in target) target.value = "";
+      }
+    }
   </script>
+
   <body>
-    <!-- Navbar Container -->
-    <div id="navbar-container"></div>
+    <nav class="navbar">
+      <div class="logo">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
+          alt="UC Logo"
+          style="height: 75px; width: auto"
+        />
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="home.html" class="active">Home</a></li>
+        <li><a href="#">Inquire</a></li>
+        <li><a href="reservation.html">Reservation</a></li>
+      </ul>
+    </nav>
+
+    <form id="userForm" class="full-form">
+      <h2>On Campus Clients Request Form</h2>
+
+      <label>
+        Name of Organization/Office/College:
+        <input
+          type="text"
+          name="u_organization"
+          data-target="organization"
+          style="width: 97%"
+        />
+      </label>
+      <fieldset>
+        <legend>Type of Activity</legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_activity_type"
+            value="academic"
+            onclick="onlyOne(this, 'u_activity_type')"
+            data-target="activity_type"
+            data-value="academic"
+          />
+          Academic </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_activity_type"
+            value="Non-Academic"
+            onclick="onlyOne(this, 'u_activity_type')"
+            data-target="activity_type"
+            data-value="Non-Academic"
+          />
+          Non-Academic </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_activity_type"
+            value="College/Institutional"
+            onclick="onlyOne(this, 'u_activity_type')"
+            data-target="activity_type"
+            data-value="College/Institutional"
+          />
+          College/Institutional
+        </label>
+      </fieldset>
+
+      <label>
+        Title of Activity/Program:
+        <input
+          type="text"
+          name="u_title"
+          data-target="title"
+          style="width: 97%"
+        />
+      </label>
+
+      <label>
+        Nature of Activity:
+        <input
+          type="text"
+          name="u_nature"
+          data-target="nature"
+          style="width: 97%"
+        />
+      </label>
+
+      <label>
+        Activity Start Time:
+        <input type="time" name="u_start_time" data-target="start-time" />
+      </label>
+
+      <label>
+        Activity End Time:
+        <input type="time" name="u_end_time" data-target="end-time" />
+      </label>
+
+      <label>
+        Venue/Location:
+        <input
+          type="text"
+          name="u_location"
+          data-target="location"
+          style="width: 97%"
+        />
+      </label>
+
+      <fieldset>
+        <legend>Participants</legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_participants"
+            value="participants"
+            onclick="onlyOne(this, 'u_participants')"
+            data-target="activity-type"
+            data-value="participants"
+          />
+          Members / Office Staff Only </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_participants"
+            value="members_staff"
+            onclick="onlyOne(this, 'u_participants')"
+            data-target="activity-type"
+            data-value="members_staff"
+          />
+          With other UC Students / Employees </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_participants"
+            value="other_employees"
+            onclick="onlyOne(this, 'u_participants')"
+            data-target="activity-type"
+            data-value="other_employees"
+          />
+          Open to Public / Outsiders </label
+        ><br /><br />
+
+        <label>
+          Estimated Total No. of Participants:
+          <input
+            type="number"
+            name="u_est_participants"
+            min="0"
+            step="1"
+            data-target="est_participants"
+            style="width: 80px"
+          />
+        </label>
+      </fieldset>
+
+      <label>
+        Remarks / Conditions:
+        <textarea
+          name="u_remarks"
+          data-target="remarks"
+          style="width: 100%; height: 110px; resize: vertical"
+        ></textarea>
+      </label>
+
+      <fieldset>
+        <legend>Checklist (For Review Use Only)</legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="invitation"
+            data-target="checklist_invitation"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Copy of Letter of Invitation / MOA (if with outside partner) </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="resume"
+            data-target="checklist_resume"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Speaker / Facilitator Resume </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="committee"
+            data-target="checklist_committee"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Organizing Committee </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="budget"
+            data-target="checklist_budget"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Budget Request Form </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="resolutions"
+            data-target="checklist_resolutions"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Copy of USC / CSC / Alternative Resolutions </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="program"
+            data-target="checklist_program"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Copy of Program / Schedule of Activities </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="posters"
+            data-target="checklist_posters"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Copy of Promotional Material / Posters </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="excuse_letter"
+            data-target="checklist_excuse_letter"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Excuse Letter of Students </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="participants_list"
+            data-target="checklist_participants_list"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          List of Participants </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="floor_plan"
+            data-target="checklist_floor_plan"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Venue Floor Plan / Physical Set-up </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_checklist"
+            value="curfew_form"
+            data-target="checklist_curfew_form"
+            onclick="syncCheckboxToTarget(this)"
+          />
+          Curfew Form (if applicable)
+        </label>
+      </fieldset>
+
+      <label>
+        Source of Budget:
+        <input
+          type="text"
+          name="u_budget_source"
+          data-target="budget_source"
+          style="width: 100%"
+        />
+      </label>
+
+      <label>
+        Estimated Total Budget:
+        <input
+          type="text"
+          name="u_estimated_budget"
+          data-target="estimated_budget"
+          style="width: 100%"
+        />
+      </label>
+
+      <p><strong>In-Charge of Activity</strong></p>
+
+      <label>
+        Name:
+        <input
+          type="text"
+          name="u_incharge_name"
+          data-target="incharge_name"
+          style="width: 100%"
+        />
+      </label>
+
+      <label>
+        Designation:
+        <input
+          type="text"
+          name="u_incharge_designation"
+          data-target="incharge_designation"
+          style="width: 100%"
+        />
+      </label>
+
+      <label>
+        Contact No.:
+        <input
+          type="text"
+          name="u_incharge_contact"
+          data-target="incharge_contact"
+          style="width: 100%"
+        />
+      </label>
+
+      <label>
+        Email Address:
+        <input
+          type="email"
+          name="u_incharge_email"
+          data-target="incharge_email"
+          style="width: 100%"
+        />
+      </label>
+
+      <fieldset>
+        <legend><strong>Technical Requirements</strong></legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_wl_mic"
+            value="yes"
+            data-toggle-target="u_wl_mic_qty"
+            data-target="wl_mic_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_wl_mic_qty"
+            name="u_wl_mic_qty"
+            data-target="wl_mic"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of WL microphones </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_wired_mic"
+            value="yes"
+            data-toggle-target="u_wired_mic_qty"
+            data-target="wired_mic_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_wired_mic_qty"
+            name="u_wired_mic_qty"
+            data-target="wired_mic"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of wired microphones </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_mic_stands"
+            value="yes"
+            data-toggle-target="u_mic_stands_qty"
+            data-target="mic_stands_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_mic_stands_qty"
+            name="u_mic_stands_qty"
+            data-target="mic_stands"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of microphone stands </label
+        ><br />
+
+        <label
+          ><input
+            type="checkbox"
+            name="u_laptop"
+            value="yes"
+            data-target="laptops"
+          />
+          Laptop</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            name="u_projector"
+            value="yes"
+            data-target="projectors"
+          />
+          Projector</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            name="u_pa_system"
+            value="yes"
+            data-target="pa_systems"
+          />
+          PA System</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            name="u_va_mixer"
+            value="yes"
+            data-target="va_mixers"
+          />
+          VA mixer</label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_lights"
+            value="yes"
+            data-toggle-target="u_lights_qty"
+            data-target="lights_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_lights_qty"
+            name="u_lights_qty"
+            data-target="lights"
+            disabled
+            style="width: 10%"
+          />
+          Par lights </label
+        ><br />
+
+        <label
+          ><input
+            type="checkbox"
+            name="u_moving_lights"
+            value="yes"
+            data-target="moving_lights"
+          />
+          Moving intelligent lights</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            name="u_follow_spot"
+            value="yes"
+            data-target="follow_spots"
+          />
+          Follow Spot</label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_others_tech"
+            value="yes"
+            data-toggle-target="u_others_tech_desc"
+            data-target="other_lights"
+            onclick="toggleDependentInput(this)"
+          />
+          Others
+        </label>
+        <input
+          type="text"
+          id="u_others_tech_desc"
+          name="u_others_tech_desc"
+          data-target="others_tech"
+          disabled
+          style="width: 90%"
+        /><br />
+        <label>
+          Other Requirements:<br />
+          <textarea
+            id="u_other_requirements_tech"
+            name="u_other_requirements_tech"
+            data-target="other_requirements_tech"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea>
+        </label>
+
+        <label>
+          Remarks:<br />
+          <textarea
+            id="u_remarks_tech"
+            name="u_remarks_tech"
+            data-target="remarks_tech"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><strong>Property Requirements</strong></legend>
+
+        <label
+          ><input type="checkbox" name="u_podium" data-target="podium" />
+          Podium</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            name="u_philippine_flag"
+            data-target="philippine_flag"
+          />
+          Philippine Flag</label
+        ><br />
+        <label
+          ><input type="checkbox" name="u_uc_flag" data-target="uc_flag" /> UC
+          Flag</label
+        ><br />
+        <label
+          ><input type="checkbox" name="u_flagpoles" data-target="flagpoles" />
+          Flagpoles</label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_long_table"
+            data-toggle-target="u_long_table"
+            data-target="long_table_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_long_table"
+            name="u_long_table_count"
+            data-target="long_table"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of long tables </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_teachers_tables"
+            data-toggle-target="u_teachers_tables"
+            data-target="teachers_tables_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_teachers_tables"
+            name="u_teachers_tables_count"
+            data-target="teachers_tables"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of teachers tables </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_platforms"
+            data-toggle-target="u_platforms"
+            data-target="platforms_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_platforms"
+            name="u_platforms_count"
+            data-target="platforms"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of platforms </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_chairs"
+            data-toggle-target="u_chairs"
+            data-target="chairs_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_chairs"
+            name="u_chairs_count"
+            data-target="chairs"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of chairs </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_trashbins"
+            data-toggle-target="u_trashbins"
+            data-target="trashbins_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_trashbins"
+            name="u_trashbins_count"
+            data-target="trashbins"
+            disabled
+            style="width: 10%"
+          />
+          Pcs of trashbins </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_other_property_check"
+            data-toggle-target="u_others_req_property"
+            data-target="other_property_check"
+            onclick="toggleDependentInput(this)"
+          />
+          Others
+        </label>
+        <input
+          type="text"
+          id="u_others_req_property"
+          name="u_others_req_property"
+          data-target="others_req_property"
+          disabled
+          style="width: 90%"
+        /><br />
+
+        <label>
+          Other Requirements:<br />
+          <textarea
+            id="u_other_requirements_property"
+            name="u_other_requirements_property"
+            data-target="other_requirements_property"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea>
+        </label>
+
+        <label>
+          Remarks:<br />
+          <textarea
+            id="u_remarks_property"
+            name="u_remarks_property"
+            data-target="remarks_property"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><strong>Support Requirements</strong></legend>
+
+        <label
+          ><input
+            type="checkbox"
+            name="u_internet_connection"
+            value="yes"
+            data-target="internet_connection"
+          />
+          Internet Connection</label
+        ><br />
+
+        <label
+          ><input
+            type="checkbox"
+            name="u_desktop_stations"
+            value="yes"
+            data-target="desktop_stations"
+          />
+          Desktop stations</label
+        ><br />
+
+        <label
+          ><input
+            type="checkbox"
+            name="u_network_support"
+            value="yes"
+            data-target="network_support"
+          />
+          Internet network support</label
+        ><br />
+
+        <label
+          ><input
+            type="checkbox"
+            name="u_web_fb_posting"
+            value="yes"
+            data-target="web_fb_posting"
+          />
+          Web/FB posting</label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_multimedia_check"
+            value="yes"
+            data-target="multimedia_check"
+            data-toggle-target="u_multimedia"
+            onclick="toggleDependentInput(this)"
+          />
+          Additional multimedia equipment
+        </label>
+        <input
+          type="text"
+          id="u_multimedia"
+          name="u_multimedia"
+          data-target="multimedia"
+          disabled
+          style="width: 90%"
+        /><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_others_support_check"
+            value="yes"
+            data-target="others_support_check"
+            data-toggle-target="u_others_support"
+            onclick="toggleDependentInput(this)"
+          />
+          Others
+        </label>
+        <input
+          type="text"
+          id="u_others_support"
+          name="u_others_support"
+          data-target="others_support"
+          disabled
+          style="width: 90%"
+        /><br /><br /><br />
+
+        <label
+          >Other Requirements:<br />
+          <textarea
+            id="u_other_requirements_support1"
+            name="u_other_requirements_support1"
+            data-target="other_requirements_support"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea></label
+        ><br /><br />
+
+        <label
+          >Remarks:<br />
+          <textarea
+            id="u_remarks_support1"
+            name="u_remarks_support1"
+            data-target="remarks_support"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><strong>Support Requirements</strong></legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_medical_first_aid"
+            value="yes"
+            data-target="medical_first_aid"
+          />
+          Medical/first-aid </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_guards_check"
+            value="yes"
+            data-toggle-target="u_guards"
+            data-target="guards_check"
+            onclick="toggleDependentInput(this)"
+          />
+          <input
+            type="text"
+            id="u_guards"
+            name="u_guards"
+            data-target="guards"
+            disabled
+            style="width: 10%"
+          />
+          Security guards </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_parking_check"
+            value="yes"
+            data-toggle-target="u_parking"
+            data-target="parking_check"
+            onclick="toggleDependentInput(this)"
+          />
+          Parking for
+          <input
+            type="text"
+            id="u_parking"
+            name="u_parking"
+            data-target="parking"
+            disabled
+            style="width: 10%"
+          />
+          vehicles </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_personnel_staff_check"
+            value="yes"
+            data-toggle-target="u_personnel_staff"
+            data-target="personnel_staff_check"
+            onclick="toggleDependentInput(this)"
+          />
+          Other personnel/staff<br />
+          <input
+            type="text"
+            id="u_personnel_staff"
+            name="u_personnel_staff"
+            data-target="personnel_staff"
+            disabled
+            style="width: 90%"
+          /> </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_transportation_check"
+            value="yes"
+            data-toggle-target="u_transportation"
+            data-target="transportation_check"
+            onclick="toggleDependentInput(this)"
+          />
+          Transportation:
+          <input
+            type="text"
+            id="u_transportation"
+            name="u_transportation"
+            data-target="transportation"
+            disabled
+            style="width: 50%"
+          /> </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_green_board_posting"
+            value="yes"
+            data-target="green_board_posting"
+          />
+          Green board posting: </label
+        ><br />
+
+        <p>(write text below, all subject to approval and editing)</p>
+        <input
+          type="text"
+          id="u_posting"
+          name="u_posting"
+          data-target="posting"
+          style="width: 97%; height: 60px"
+        /><br /><br />
+
+        <label>
+          Other Requirements:<br />
+          <textarea
+            id="u_other_requirements_support2"
+            name="u_other_requirements_support2"
+            data-target="other_requirements_support2"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea></label
+        ><br /><br />
+
+        <label>
+          Remarks:<br />
+          <textarea
+            id="u_remarks_support2"
+            name="u_remarks_support2"
+            data-target="remarks_support2"
+            style="width: 98%; height: 110px; resize: vertical"
+          ></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><strong>Applicable Charges: (if any)</strong></legend>
+
+        <label>
+          <input
+            type="checkbox"
+            data-toggle-target="janitoring_input"
+            data-target="janitoring"
+            data-value="on"
+            onclick="toggleDependentInput(this)"
+          />
+          Janitorial PhP
+          <input
+            type="text"
+            id="janitoring_input"
+            name="u_janitoring"
+            data-target="janitoring_charge"
+            style="width: 30%"
+            disabled
+          /> </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            data-toggle-target="houselights_input"
+            data-target="houselights"
+            data-value="on"
+            onclick="toggleDependentInput(this)"
+          />
+          Houselights PhP
+          <input
+            type="text"
+            id="houselights_input"
+            name="u_houselights"
+            data-target="houselights_charge"
+            style="width: 30%"
+            disabled
+          /> </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            data-toggle-target="technical_input"
+            data-target="technical"
+            data-value="on"
+            onclick="toggleDependentInput(this)"
+          />
+          Technical PhP
+          <input
+            type="text"
+            id="technical_input"
+            name="u_technical"
+            data-target="technical_charge"
+            style="width: 30%"
+            disabled
+          /> </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            data-toggle-target="water_input"
+            data-target="water"
+            data-value="on"
+            onclick="toggleDependentInput(this)"
+          />
+          Water PhP
+          <input
+            type="text"
+            id="water_input"
+            name="u_water"
+            data-target="water_charge"
+            style="width: 30%"
+            disabled
+          /> </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            data-toggle-target="staff_ot_input"
+            data-target="staff_ot"
+            data-value="on"
+            onclick="toggleDependentInput(this)"
+          />
+          Staff OT PhP
+          <input
+            type="text"
+            id="staff_ot_input"
+            name="u_staff_ot"
+            data-target="staff_ot_charge"
+            style="width: 30%"
+            disabled
+          /> </label
+        ><br />
+
+        <label>
+          <input
+            type="checkbox"
+            data-toggle-target="others_applicable_input"
+            data-target="others_applicable"
+            data-value="on"
+            onclick="toggleDependentInput(this)"
+          />
+          Others PhP
+          <input
+            type="text"
+            id="others_applicable_input"
+            name="u_others_applicable"
+            data-target="others_applicable_charge"
+            style="width: 30%"
+            disabled
+          /> </label
+        ><br /><br /><br />
+
+        <strong>
+          Total: PhP
+          <input
+            type="text"
+            id="u_total_charge"
+            name="u_total"
+            data-target="total_charge"
+            style="width: 30%"
+          /> </strong
+        ><br /><br />
+      </fieldset>
+
+      <button type="button" id="preparePrint">Submit &amp; Print</button>
+    </form>
+
     <form
       class="form-container"
       id="combinedForm"
-      onsubmit="event.preventDefault(); submitSARFForm();"
+      onsubmit="event.preventDefault(); window.print();"
     >
       <!-- PAGE 1 -->
       <!-- Header Section -->
       <div id="page1" class="form-page active">
         <div class="header-row">
-          <img src="../images/UC_LOGO.png" alt="LOGO" />
+          <img src="pending logo" alt="University of the Cordilleras Logo" />
           <div style="text-align: right">
             <strong>VICE PRESIDENT FOR ACADEMICS AND RESEARCH</strong><br />
             <span
@@ -173,7 +1316,6 @@
         <div class="form-title">
           STUDENT ACTIVITY REQUEST FORM FOR ON-CAMPUS
         </div>
-
         <table>
           <tr>
             <td rowspan="2" style="width: 50%">
@@ -190,27 +1332,27 @@
               <label
                 ><input
                   type="checkbox"
-                  name="activity-type"
-                  value="Academic"
-                  onclick="onlyOne(this)"
+                  name="activity_type"
+                  value="academic"
+                  onclick="onlyOne(this, 'audience_type')"
                 />
                 Academic</label
               ><br />
               <label
                 ><input
                   type="checkbox"
-                  name="activity-type"
+                  name="activity_type"
                   value="Non-Academic"
-                  onclick="onlyOne(this)"
+                  onclick="onlyOne(this, 'audience_type')"
                 />
                 Non-Academic</label
               ><br />
               <label
                 ><input
                   type="checkbox"
-                  name="activity-type"
+                  name="activity_type"
                   value="College/Institutional"
-                  onclick="onlyOne(this)"
+                  onclick="onlyOne(this, 'audience_type')"
                 />
                 College/Institutional</label
               >
@@ -221,7 +1363,7 @@
                 type="text"
                 id="control"
                 name="control"
-                style="width: 99%"
+                style="width: 97%"
               />
             </td>
           </tr>
@@ -232,7 +1374,7 @@
                 type="date"
                 id="received_date"
                 name="received_date"
-                style="width: 99%"
+                style="width: 97%"
               />
             </td>
           </tr>
@@ -312,7 +1454,7 @@
                     ><input
                       type="checkbox"
                       name="activity-type"
-                      value="Academic"
+                      value="participants"
                       onclick="onlyOne(this)"
                     />
                     Members/Office Staff Only</label
@@ -321,7 +1463,7 @@
                     ><input
                       type="checkbox"
                       name="activity-type"
-                      value="Academic"
+                      value="members_staff"
                       onclick="onlyOne(this)"
                     />
                     With other UC Students/Employees</label
@@ -330,7 +1472,7 @@
                     ><input
                       type="checkbox"
                       name="activity-type"
-                      value="Academic"
+                      value="other_employees"
                       onclick="onlyOne(this)"
                     />
                     Open to Public/Outsiders</label
@@ -358,7 +1500,7 @@
                 <td>
                   <textarea
                     name="remarks"
-                    style="width: 98%; height: 110px; resize: vertical"
+                    style="width: 98%; height: 100px; resize: vertical"
                   ></textarea>
                 </td>
               </tr>
@@ -368,42 +1510,61 @@
               <tr>
                 <td>
                   <strong>Checklist (For Review Use Only)</strong><br />
-                  <label
-                    ><input type="checkbox" /> Copy of Letter of Invitation/MOA
-                    (if with outside partner)</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_invitation" />
+                    Copy of Letter of Invitation/MOA (if with outside partner) </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Speaker/Facilitator Resume</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_resume" />
+                    Speaker/Facilitator Resume </label
                   ><br />
-                  <label><input type="checkbox" /> Organizing Committee</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_committee" />
+                    Organizing Committee </label
                   ><br />
-                  <label><input type="checkbox" /> Budget Request Form</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_budget" />
+                    Budget Request Form </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Copy of USC/CSC/Alternative
-                    Resolutions</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_resolutions" />
+                    Copy of USC/CSC/Alternative Resolutions </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Copy of Program/Schedule of
-                    Activities</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_program" />
+                    Copy of Program/Schedule of Activities </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Copy of Promotional
-                    Material/Posters</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_posters" />
+                    Copy of Promotional Material/Posters </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Excuse Letter of Students</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_excuse_letter" />
+                    Excuse Letter of Students </label
                   ><br />
-                  <label><input type="checkbox" /> List of Participants</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_participants_list" />
+                    List of Participants </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Venue Floor Plan/Physical
-                    Set-up</label
+
+                  <label>
+                    <input type="checkbox" id="checklist_floor_plan" />
+                    Venue Floor Plan/Physical Set-up </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Curfew Form (if
-                    applicable)</label
-                  >
+
+                  <label>
+                    <input type="checkbox" id="checklist_curfew_form" />
+                    Curfew Form (if applicable)
+                  </label>
                 </td>
               </tr>
             </table>
@@ -417,7 +1578,12 @@
               <tr>
                 <td colspan="2">
                   <strong>Source of Budget:</strong>
-                  <input type="text" name="budget_source" style="width: 99%" />
+                  <input
+                    type="text"
+                    id="budget_source"
+                    name="budget_source"
+                    style="width: 97%"
+                  />
                 </td>
               </tr>
               <tr>
@@ -426,7 +1592,8 @@
                   <input
                     type="text"
                     name="estimated_budget"
-                    style="width: 99%"
+                    id="estimated_budget"
+                    style="width: 97%"
                   />
                 </td>
               </tr>
@@ -442,7 +1609,7 @@
               <tr>
                 <td style="width: 30%"><strong>Name:</strong></td>
                 <td>
-                  <input type="text" name="incharge_name" style="width: 99%" />
+                  <input type="text" name="incharge_name" style="width: 97%" />
                 </td>
               </tr>
               <tr>
@@ -451,7 +1618,8 @@
                   <input
                     type="text"
                     name="incharge_designation"
-                    style="width: 99%"
+                    id="incharge_designation"
+                    style="width: 97%"
                   />
                 </td>
               </tr>
@@ -461,7 +1629,8 @@
                   <input
                     type="text"
                     name="incharge_contact"
-                    style="width: 99%"
+                    id="incharge_contact"
+                    style="width: 97%"
                   />
                 </td>
               </tr>
@@ -471,7 +1640,8 @@
                   <input
                     type="email"
                     name="incharge_email"
-                    style="width: 99%"
+                    id="incharge_email"
+                    style="width: 97%"
                   />
                 </td>
               </tr>
@@ -479,12 +1649,12 @@
               <tr>
                 <td colspan="2" style="height: 100px">
                   <div style="text-align: center">
-                    <strong style="font-size: 14px">
+                    <strong style="font-size: 13px">
                       Liability Waiver<br />
                       [To be accomplished by the Adviser/Coordinator]
                     </strong>
                   </div>
-                  <p style="font-size: 13px; text-align: justify">
+                  <p style="font-size: 12px; text-align: justify">
                     I certify that the undersigned will stay with the students
                     and participants for the duration of the aforementioned
                     activity. Further, I acknowledge that as an Adviser of the
@@ -494,8 +1664,7 @@
                     in this Liability Waiver Form, and that I agree to abide by
                     this policy.
                   </p>
-                  <br /><br />
-                  <div style="height: 110px">
+                  <div style="height: 50x">
                     <strong>
                       <div
                         style="display: flex; justify-content: space-between"
@@ -517,62 +1686,80 @@
           </div>
 
           <!-- Right Column -->
-          <div>
-            <table>
+          <div style="border: 1px solid black; margin-bottom: 16px">
+            <table style="width: 90%; border-collapse: collapse">
               <tr>
                 <td
                   colspan="2"
                   class="section-title"
-                  style="text-align: center"
+                  style="text-align: center; border: none"
                 >
-                  <strong>SIGNATURES: Printed Name and Signature, Date</strong>
+                  SIGNATURES: Printed Name and Signature, Date
                 </td>
               </tr>
+
               <tr>
-                <td>
-                  <strong>&nbsp;&nbsp;Submitted By:</strong> <br />
-                  <br />
-                  <p>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
-                    ________________
-                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;President/Organizer
-                  </p>
-                  <br />
-                  <strong>&nbsp;&nbsp;Noted By:</strong> <br />
-                  <br />
-                  <p>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
-                    ________________
-                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adviser/Corrdinator
-                  </p>
-                  <br />
-                  <strong>&nbsp;&nbsp;Recommending Approval:</strong> <br />
-                  <br />
-                  <p>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
-                    ________________
-                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Academic
-                    Dean/Prog. Chair
-                  </p>
-                  <br />
-                  <strong>&nbsp;&nbsp;Approved By:</strong> <br />
-                  <br />
-                  <p>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
-                    ________________
-                    <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VP
-                    for Academics and Research
-                  </p>
-                  <br />
-                  <strong>&nbsp;&nbsp;Venue Reserved:</strong> <br />
-                  <br />
-                  <p>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:
-                    ________________ <br />&nbsp;&nbsp;&nbsp;Campus Facilities,
-                    Planning $ Dev't Officer
-                  </p>
-                  <br />
+                <td style="height: 32px; border: none" colspan="2"></td>
+              </tr>
+
+              <tr>
+                <td style="border: none">
+                  <div>_________________________________</div>
+                  <div>President / Organizer</div>
                 </td>
+                <td style="width: 35%; border: none">Date: ___________</td>
+              </tr>
+
+              <tr>
+                <td style="height: 32px; border: none" colspan="2"></td>
+              </tr>
+
+              <tr>
+                <td style="border: none">
+                  <div>_________________________________</div>
+                  <div>Adviser / Coordinator</div>
+                </td>
+                <td style="border: none">Date: ___________</td>
+              </tr>
+
+              <tr>
+                <td style="height: 32px; border: none" colspan="2"></td>
+              </tr>
+
+              <tr>
+                <td style="border: none">
+                  <div>_________________________________</div>
+                  <div>Academic Dean / Program Chair</div>
+                </td>
+                <td style="border: none">Date: ___________</td>
+              </tr>
+
+              <tr>
+                <td style="height: 32px; border: none" colspan="2"></td>
+              </tr>
+
+              <tr>
+                <td style="border: none">
+                  <div>_________________________________</div>
+                  <div>VP for Academics and Research</div>
+                </td>
+                <td style="border: none">Date: ___________</td>
+              </tr>
+
+              <tr>
+                <td style="height: 32px; border: none" colspan="2"></td>
+              </tr>
+
+              <tr>
+                <td style="border: none">
+                  <div>_________________________________</div>
+                  <div>Campus Facilities, Planning & Dev't Officer</div>
+                </td>
+                <td style="border: none">Date: ___________</td>
+              </tr>
+
+              <tr>
+                <td style="height: 2px; border: none" colspan="2"></td>
               </tr>
             </table>
           </div>
@@ -603,10 +1790,7 @@
         </table>
 
         <!-- Pg 1 nav -->
-        <div class="navigation">
-          <span>Page 1 of 2</span>
-          <button type="button" onclick="goToPage(2)">Next Page →</button>
-        </div>
+        <!-- old next page -->
       </div>
 
       <!-- PAGE 2 -->
@@ -625,73 +1809,80 @@
                 <td style="width: 50%">
                   <p>Technical Requirements:</p>
                   <label
-                    ><input type="checkbox" /><input
-                      type="number"
+                    ><input type="checkbox" id="wl_mic_check" /><input
+                      type="text"
                       id="wl_mic"
-                      name="wl_mic"
-                      min="0"
-                      step="1"
+                      name="wl_mic_check"
                       style="width: 20%"
                     />
                     pcs of WL microphones</label
                   ><br />
                   <label
-                    ><input type="checkbox" /><input
-                      type="number"
+                    ><input type="checkbox" id="wired_mic_check" /><input
+                      type="text"
                       id="wired_mic"
-                      name="wired_mic"
-                      min="0"
-                      step="1"
+                      name="wired_mic_check"
                       style="width: 20%"
                     />
                     pcs of wired microphones</label
                   ><br />
                   <label
-                    ><input type="checkbox" /><input
-                      type="number"
+                    ><input type="checkbox" id="mic_stands_check" /><input
+                      type="text"
                       id="mic_stands"
-                      name="mic_stands"
-                      min="0"
-                      step="1"
+                      name="mic_stands_check"
                       style="width: 20%"
                     />
                     pcs of microphone stands</label
                   ><br />
-                  <label><input type="checkbox" /> Laptop</label><br />
-                  <label><input type="checkbox" /> Projector</label><br />
-                  <label><input type="checkbox" /> PA System</label><br />
-                  <label><input type="checkbox" /> VA mixer</label><br />
+                  <label><input type="checkbox" id="laptops" /> Laptop</label
+                  ><br />
                   <label
-                    ><input type="checkbox" /><input
-                      type="number"
+                    ><input type="checkbox" id="projectors" /> Projector</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" id="pa_systems" /> PA System</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" id="va_mixers" /> VA mixer</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" id="lights_check" /><input
+                      type="text"
                       id="lights"
-                      name="lights"
-                      min="0"
-                      step="1"
+                      name="lights_check"
                       style="width: 20%"
                     />
                     par lights</label
                   ><br />
                   <label
-                    ><input type="checkbox" /> Moving intelligent lights</label
+                    ><input type="checkbox" id="moving_lights" /> Moving
+                    intelligent lights</label
                   ><br />
-                  <label><input type="checkbox" /> Follow Spot</label><br />
-                  <label><input type="checkbox" /> Others</label
+                  <label
+                    ><input type="checkbox" id="follow_spots" /> Follow
+                    Spot</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" id="other_lights" /> Others</label
                   ><input
                     type="text"
-                    name="others_tech"
+                    id="others_tech"
+                    name="others_tech_check"
                     style="width: 97%"
                   /><br />
                 </td>
                 <td>
                   <strong>Other Requirements:</strong><br />
                   <textarea
-                    name="remarks"
+                    id="other_requirements_tech"
+                    name="other_requirements"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
                   ><br /><br />
                   <strong>Remarks:</strong><br />
                   <textarea
+                    id="remarks_tech"
                     name="remarks"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
@@ -707,21 +1898,21 @@
                       margin-bottom: 5px;
                     "
                   >
-                    <div style="text-align: left; width: 48%">
-                      <strong>Noted and Prroved:</strong>
+                    <div style="text-align: left; width: 60%">
+                      <strong>Noted and Approved:</strong>
                     </div>
-                    <div style="text-align: center; width: 52%">
+                    <div style="text-align: left; width: 40%">
                       <strong>Date:</strong>
                     </div>
                   </div>
 
                   <div style="display: flex; justify-content: space-between">
-                    <div style="text-align: center; width: 60%">
-                      <strong>_____________________________</strong><br />
+                    <div style="text-align: center; width: 45%">
+                      <strong>___________________________</strong><br />
                       <strong>Head, LMO</strong>
                     </div>
-                    <div style="text-align: center; width: 35%">
-                      <strong>_______________________</strong>
+                    <div style="text-align: center; width: 55%">
+                      <strong>__________________</strong>
                     </div>
                   </div>
                 </td>
@@ -735,89 +1926,106 @@
               <td
                 colspan="2"
                 class="section-title"
-                style="text-align: center; height: 35px"
+                style="text-align: center; height: 55px"
               >
                 <strong>For LMO Support (if applicable)</strong><br />
               </td>
               <tr>
                 <td style="width: 50%">
                   <p>Property Requirements:</p>
-                  <label><input type="checkbox" /> Podium</label><br />
-                  <label><input type="checkbox" /> Philippine Flag</label><br />
-                  <label><input type="checkbox" /> UC Flag</label><br />
-                  <label><input type="checkbox" /> Flagpoles</label><br />
+
+                  <label><input type="checkbox" id="podium" /> Podium</label
+                  ><br />
                   <label
-                    ><input type="checkbox" /><input
-                      type="number"
+                    ><input type="checkbox" id="philippine_flag" /> Philippine
+                    Flag</label
+                  ><br />
+                  <label><input type="checkbox" id="uc_flag" /> UC Flag</label
+                  ><br />
+                  <label
+                    ><input type="checkbox" id="flagpoles" /> Flagpoles</label
+                  ><br />
+
+                  <label>
+                    <input type="checkbox" id="long_table_check" />
+                    <input
+                      type="text"
                       id="long_table"
                       name="long_table"
-                      min="0"
-                      step="1"
                       style="width: 20%"
                     />
-                    pcs of long tables</label
+                    Pcs of long tables </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /><input
-                      type="number"
+
+                  <label>
+                    <input type="checkbox" id="teachers_tables_check" />
+                    <input
+                      type="text"
                       id="teachers_tables"
                       name="teachers_tables"
-                      min="0"
-                      step="1"
                       style="width: 20%"
                     />
-                    pcs of teachers tables</label
+                    Pcs of teachers tables </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /><input
-                      type="number"
+
+                  <label>
+                    <input type="checkbox" id="platforms_check" />
+                    <input
+                      type="text"
                       id="platforms"
                       name="platforms"
-                      min="0"
-                      step="1"
                       style="width: 20%"
                     />
-                    pcs of platforms</label
+                    Pcs of platforms </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /><input
-                      type="number"
+
+                  <label>
+                    <input type="checkbox" id="chairs_check" />
+                    <input
+                      type="text"
                       id="chairs"
                       name="chairs"
-                      min="0"
-                      step="1"
                       style="width: 20%"
                     />
-                    pcs of chairs</label
+                    Pcs of chairs </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /><input
-                      type="number"
-                      id="participants"
+
+                  <label>
+                    <input type="checkbox" id="trashbins_check" />
+                    <input
+                      type="text"
+                      id="trashbins"
                       name="trashbins"
-                      min="0"
-                      step="1"
                       style="width: 20%"
                     />
-                    pcs of trashbins</label
+                    Pcs of trashbins </label
                   ><br />
-                  <label><input type="checkbox" /> Others</label
-                  ><input
+
+                  <label>
+                    <input type="checkbox" id="other_property_check" />
+                    Others
+                  </label>
+                  <input
                     type="text"
-                    name="others_req"
+                    id="others_req_property"
+                    name="others_req_property"
                     style="width: 87%"
                   /><br />
                 </td>
+
                 <td>
                   <strong>Other Requirements:</strong><br />
                   <textarea
-                    name="remarks"
+                    id="other_requirements_property"
+                    name="other_requirements_property"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
                   ><br /><br />
+
                   <strong>Remarks:</strong><br />
                   <textarea
-                    name="remarks"
+                    id="remarks_property"
+                    name="remarks_property"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
                   ><br />
@@ -832,21 +2040,21 @@
                       margin-bottom: 5px;
                     "
                   >
-                    <div style="text-align: left; width: 48%">
+                    <div style="text-align: left; width: 60%">
                       <strong>Noted and Prroved:</strong>
                     </div>
-                    <div style="text-align: center; width: 52%">
+                    <div style="text-align: left; width: 40%">
                       <strong>Date:</strong>
                     </div>
                   </div>
 
                   <div style="display: flex; justify-content: space-between">
-                    <div style="text-align: center; width: 60%">
-                      <strong>_____________________________</strong><br />
+                    <div style="text-align: center; width: 45%">
+                      <strong>___________________________</strong><br />
                       <strong>Head, LMO</strong>
                     </div>
-                    <div style="text-align: center; width: 35%">
-                      <strong>_______________________</strong>
+                    <div style="text-align: center; width: 55%">
+                      <strong>_____________________</strong>
                     </div>
                   </div>
                 </td>
@@ -866,48 +2074,75 @@
               <tr>
                 <td style="width: 50%">
                   <p>Support Requirements:</p>
-                  <label><input type="checkbox" /> Internet Connection</label
-                  ><br />
-                  <label><input type="checkbox" /> Deskstop stations</label
-                  ><br />
+
                   <label
-                    ><input type="checkbox" /> Internet network support</label
+                    ><input type="checkbox" id="internet_connection" /> Internet
+                    Connection</label
                   ><br />
-                  <label><input type="checkbox" /> Web/FB posting</label><br />
+
+                  <label
+                    ><input type="checkbox" id="desktop_stations" /> Desktop
+                    stations</label
+                  ><br />
+
+                  <label
+                    ><input type="checkbox" id="network_support" /> Internet
+                    network support</label
+                  ><br />
+
+                  <label
+                    ><input type="checkbox" id="web_fb_posting" /> Web/FB
+                    posting</label
+                  ><br />
+
                   <p>
-                    (attach material here or email it to *aopardo@uc-bcf.edu.ph
-                    all subject to approval and editing)
+                    (attach material here or email it to
+                    <em>aopardo@uc-bcf.edu.ph</em>
+                    — all subject to approval and editing)
                   </p>
-                  <label
-                    ><input type="checkbox" /> Additional multimedia
-                    equipment</label
-                  ><input
+
+                  <label>
+                    <input type="checkbox" id="multimedia_check" />
+                    Additional multimedia equipment
+                  </label>
+                  <input
                     type="text"
+                    id="multimedia"
                     name="multimedia"
                     style="width: 97%; height: 40px"
                   /><br />
-                  <label><input type="checkbox" /> Others</label
-                  ><input
+
+                  <label>
+                    <input type="checkbox" id="others_support_check" />
+                    Others
+                  </label>
+                  <input
                     type="text"
+                    id="others_support"
                     name="others_support"
                     style="width: 97%"
                   /><br /><br />
                 </td>
+
                 <td>
                   <strong>Other Requirements:</strong><br />
                   <textarea
-                    name="remarks"
+                    id="other_requirements_support"
+                    name="other_requirements_support"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
                   ><br /><br />
+
                   <strong>Remarks:</strong><br />
                   <textarea
-                    name="remarks"
+                    id="remarks_support"
+                    name="remarks_support"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
                   ><br />
                 </td>
               </tr>
+
               <tr>
                 <td colspan="2" style="text-align: center">
                   <div
@@ -917,21 +2152,21 @@
                       margin-bottom: 5px;
                     "
                   >
-                    <div style="text-align: left; width: 48%">
+                    <div style="text-align: left; width: 60%">
                       <strong>Noted and Approved:</strong>
                     </div>
-                    <div style="text-align: center; width: 52%">
+                    <div style="text-align: left; width: 40%">
                       <strong>Date:</strong>
                     </div>
                   </div>
 
                   <div style="display: flex; justify-content: space-between">
-                    <div style="text-align: center; width: 60%">
-                      <strong>_____________________________</strong><br />
+                    <div style="text-align: center; width: 45%">
+                      <strong>___________________________</strong><br />
                       <strong>Director</strong>
                     </div>
-                    <div style="text-align: center; width: 35%">
-                      <strong>_______________________</strong>
+                    <div style="text-align: center; width: 55%">
+                      <strong>_____________________</strong>
                     </div>
                   </div>
                 </td>
@@ -948,69 +2183,92 @@
               </td>
               <tr>
                 <td style="width: 50%">
-                  <p>Property Requirements:</p>
-                  <label><input type="checkbox" /> Medical/first-aid</label
+                  <p>Support Requirements:</p>
+
+                  <label>
+                    <input type="checkbox" id="medical_first_aid" />
+                    Medical/first-aid </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /><input
-                      type="number"
+
+                  <label>
+                    <input type="checkbox" id="guards_check" />
+                    <input
+                      type="text"
                       id="guards"
                       name="guards"
-                      min="0"
-                      step="1"
                       style="width: 20%"
                     />
-                    security guards</label
+                    security guards </label
                   ><br />
-                  <label
-                    ><input type="checkbox" />Parking for
+
+                  <label>
+                    <input type="checkbox" id="parking_check" />
+                    Parking for
                     <input
-                      type="number"
+                      type="text"
                       id="parking"
                       name="parking"
-                      min="0"
-                      step="1"
                       style="width: 20%"
                     />
-                    vehicles</label
+                    vehicles </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Other personnel/staff<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
-                      type="text"
-                      name="personnel/staff"
-                      style="width: 87%" /></label
-                  ><br />
-                  <label
-                    ><input type="checkbox" /> Transportation:
+
+                  <label>
+                    <input type="checkbox" id="personnel_staff_check" />
+                    Other personnel/staff<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <input
                       type="text"
+                      id="personnel_staff"
+                      name="personnel_staff"
+                      style="width: 87%"
+                    /> </label
+                  ><br />
+
+                  <label>
+                    <input type="checkbox" id="transportation_check" />
+                    Transportation:
+                    <input
+                      type="text"
+                      id="transportation"
                       name="transportation"
-                      style="width: 49%" /></label
+                      style="width: 49%"
+                    /> </label
                   ><br />
-                  <label><input type="checkbox" /> Green board posting:</label
+
+                  <label>
+                    <input type="checkbox" id="green_board_posting" />
+                    Green board posting: </label
                   ><br />
+
                   <p>(write text below, all subject to approval and editing)</p>
                   <input
                     type="text"
+                    id="posting"
                     name="posting"
                     style="width: 97%; height: 60px"
                   />
                 </td>
+
                 <td>
                   <strong>Other Requirements:</strong><br />
                   <textarea
-                    name="remarks"
+                    id="other_requirements_support2"
+                    name="other_requirements_support2"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
                   ><br /><br />
+
                   <strong>Remarks:</strong><br />
                   <textarea
-                    name="remarks"
+                    id="remarks_support2"
+                    name="remarks_support2"
                     style="width: 98%; height: 110px; resize: vertical"
                   ></textarea
                   ><br />
                 </td>
               </tr>
+
               <tr>
                 <td colspan="2" style="text-align: center">
                   <div
@@ -1020,21 +2278,21 @@
                       margin-bottom: 5px;
                     "
                   >
-                    <div style="text-align: left; width: 48%">
+                    <div style="text-align: left; width: 60%">
                       <strong>Noted and Prroved:</strong>
                     </div>
-                    <div style="text-align: center; width: 52%">
+                    <div style="text-align: left; width: 40%">
                       <strong>Date:</strong>
                     </div>
                   </div>
 
                   <div style="display: flex; justify-content: space-between">
-                    <div style="text-align: center; width: 60%">
-                      <strong>_____________________________</strong><br />
+                    <div style="text-align: center; width: 45%">
+                      <strong>___________________________</strong><br />
                       <strong>VP for Admin and Acad Services</strong>
                     </div>
-                    <div style="text-align: center; width: 35%">
-                      <strong>_______________________</strong>
+                    <div style="text-align: center; width: 55%">
+                      <strong>_____________________</strong>
                     </div>
                   </div>
                 </td>
@@ -1054,76 +2312,73 @@
               <tr>
                 <td style="width: 35%">
                   <p>Applicable Charges: (if any)</p>
-                  <label
-                    ><input type="checkbox" /> Janitorial
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
-                      type="number"
-                      id="janitoring"
+                  <label>
+                    <input type="checkbox" /> Janitorial PhP
+                    <input
+                      type="text"
+                      id="janitoring_charge"
                       name="janitoring"
-                      min="0"
-                      step="1"
-                      style="width: 50%" /></label
+                      style="width: 30%"
+                    /> </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Houselights
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
-                      type="number"
-                      id="houselights"
+
+                  <label>
+                    <input type="checkbox" /> Houselights PhP
+                    <input
+                      type="text"
+                      id="houselights_charge"
                       name="houselights"
-                      min="0"
-                      step="1"
-                      style="width: 50%" /></label
+                      style="width: 30%"
+                    /> </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Technical
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
-                      type="number"
-                      id="technical"
+
+                  <label>
+                    <input type="checkbox" /> Technical PhP
+                    <input
+                      type="text"
+                      id="technical_charge"
                       name="technical"
-                      min="0"
-                      step="1"
-                      style="width: 50%" /></label
+                      style="width: 30%"
+                    /> </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Water
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
-                      type="number"
-                      id="water"
+
+                  <label>
+                    <input type="checkbox" /> Water PhP
+                    <input
+                      type="text"
+                      id="water_charge"
                       name="water"
-                      min="0"
-                      step="1"
-                      style="width: 50%" /></label
+                      style="width: 30%"
+                    /> </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Staff OT
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
-                      type="number"
-                      id="staff_ot"
+
+                  <label>
+                    <input type="checkbox" /> Staff OT PhP
+                    <input
+                      type="text"
+                      id="staff_ot_charge"
                       name="staff_ot"
-                      min="0"
-                      step="1"
-                      style="width: 50%" /></label
+                      style="width: 30%"
+                    /> </label
                   ><br />
-                  <label
-                    ><input type="checkbox" /> Others
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
-                      type="number"
-                      id="others_applicable"
+
+                  <label>
+                    <input type="checkbox" /> Others PhP
+                    <input
+                      type="text"
+                      id="others_applicable_charge"
                       name="others_applicable"
-                      min="0"
-                      step="1"
-                      style="width: 50%"
+                      style="width: 30%"
                     /> </label
                   ><br /><br /><br />
-                  <strong
-                    >&nbsp;&nbsp;Total:
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PhP&nbsp;&nbsp;<input
-                      type="number"
-                      id="total"
+
+                  <strong>
+                    Total: PhP
+                    <input
+                      type="text"
+                      id="total_charge"
                       name="total"
-                      min="0"
-                      step="1"
-                      style="width: 50%"
+                      style="width: 30%"
                     /> </strong
                   ><br /><br />
                 </td>
@@ -1203,400 +2458,10 @@
           </div>
 
           <!-- Pg nav -->
-          <div class="navigation">
-            <button type="button" onclick="goToPage(1)">← Previous Page</button>
-            <span>Page 2 of 2</span>
-            <button type="submit" id="submitBtn">
-              <i class="fas fa-eye"></i> Preview PDF
-            </button>
-          </div>
+           <!-- old next page -->
         </div>
       </div>
     </form>
-
-    <!-- Preview Modal -->
-    <div id="previewModal" class="modal" style="display: none;">
-      <div class="modal-content preview-modal">
-        <div class="modal-header">
-          <h2><i class="fas fa-file-pdf"></i> Preview Your SARF Form</h2>
-          <button class="close-btn" onclick="closePreviewModal()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="preview-info">
-            <div class="control-info">
-              <span class="control-label">Control Number:</span>
-              <span class="control-number" id="modalControlNo"></span>
-            </div>
-            <p class="preview-instruction">
-              <i class="fas fa-info-circle"></i>
-              Please review your form details below. If everything looks correct, click "Submit" to finalize your submission.
-            </p>
-          </div>
-
-          <div class="pdf-viewer-container">
-            <div class="pdf-toolbar">
-              <button onclick="downloadPreviewPDF()" class="toolbar-btn download-btn">
-                <i class="fas fa-download"></i> Download PDF
-              </button>
-              <button onclick="openPDFNewTab()" class="toolbar-btn">
-                <i class="fas fa-external-link-alt"></i> Open in New Tab
-              </button>
-            </div>
-            <div class="pdf-container">
-              <iframe id="pdfPreview" class="pdf-iframe" loading="lazy"></iframe>
-            </div>
-          </div>
-
-          <div class="modal-actions">
-            <button onclick="finalSubmit()" class="btn btn-submit">
-              <i class="fas fa-check"></i>
-              <span>Submit</span>
-            </button>
-            <button onclick="closePreviewModal()" class="btn btn-cancel">
-              <i class="fas fa-times"></i>
-              <span>Cancel</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>✅ SARF Form Submitted Successfully!</h2>
-        </div>
-        <div class="modal-body">
-          <p><strong>Control Number:</strong> <span id="successControlNo"></span></p>
-          <p><strong>Status:</strong> Pending Review</p>
-          <p>Your Student Activity Request Form has been submitted to the database and is now pending review.</p>
-          <div class="modal-actions">
-            <button onclick="viewMyForms()" class="btn-primary">View My Forms</button>
-            <button onclick="closeSuccessModal()" class="btn-secondary">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Loading Modal -->
-    <div id="loadingModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-body" style="text-align: center;">
-          <div class="loading-spinner"></div>
-          <p>Submitting your SARF form and generating PDF...</p>
-          <p>Please wait, this may take a few moments.</p>
-        </div>
-      </div>
-    </div>
-
-    <style>
-      .modal {
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        backdrop-filter: blur(2px);
-      }
-
-      .modal-content {
-        background-color: white;
-        border-radius: 12px;
-        max-width: 500px;
-        width: 90%;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        overflow: hidden;
-      }
-
-      .preview-modal {
-        max-width: 95vw;
-        width: 95vw;
-        height: 90vh;
-        max-height: 90vh;
-      }
-
-      .modal-header {
-        background: linear-gradient(135deg, #2e7d32, #4caf50);
-        color: white;
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .modal-header h2 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: 600;
-      }
-
-      .close-btn {
-        background: rgba(255,255,255,0.2);
-        border: none;
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.3s;
-      }
-
-      .close-btn:hover {
-        background: rgba(255,255,255,0.3);
-      }
-
-      .modal-body {
-        padding: 0;
-        height: calc(90vh - 140px);
-        display: flex;
-        flex-direction: column;
-      }
-
-      .preview-info {
-        padding: 20px;
-        background: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
-      }
-
-      .control-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-
-      .control-label {
-        font-weight: 600;
-        color: #495057;
-      }
-
-      .control-number {
-        background: #e8f5e8;
-        color: #2e7d32;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      .preview-instruction {
-        margin: 0;
-        color: #6c757d;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .pdf-viewer-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      .pdf-toolbar {
-        background: #f8f9fa;
-        padding: 10px 20px;
-        border-bottom: 1px solid #e9ecef;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .toolbar-btn {
-        background: white;
-        border: 1px solid #dee2e6;
-        padding: 8px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.3s;
-      }
-
-      .toolbar-btn:hover {
-        background: #e9ecef;
-        border-color: #adb5bd;
-      }
-
-      .download-btn {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-      }
-
-      .download-btn:hover {
-        background: #0056b3;
-        border-color: #0056b3;
-      }
-
-      .zoom-level {
-        font-weight: 600;
-        color: #495057;
-        min-width: 50px;
-        text-align: center;
-      }
-
-      .pdf-container {
-        flex: 1;
-        padding: 20px;
-        overflow: auto;
-        background: #f8f9fa;
-      }
-
-      .pdf-iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        background: white;
-        min-height: 600px;
-      }
-
-      .modal-actions {
-        padding: 20px;
-        background: white;
-        border-top: 1px solid #e9ecef;
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-      }
-
-      .btn {
-        padding: 12px 30px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s;
-        min-width: 140px;
-        justify-content: center;
-      }
-
-      .btn-submit {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-      }
-
-      .btn-submit:hover {
-        background: linear-gradient(135deg, #218838, #1ea085);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
-      }
-
-      .btn-cancel {
-        background: #6c757d;
-        color: white;
-      }
-
-      .btn-cancel:hover {
-        background: #5a6268;
-        transform: translateY(-2px);
-      }
-
-      .loading-spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #2e7d32;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 20px auto;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-
-      /* Regular modal styles for success modal */
-      .modal-content:not(.preview-modal) {
-        padding: 20px;
-        max-width: 500px;
-      }
-
-      .modal-content:not(.preview-modal) .modal-header h2 {
-        background: none;
-        color: #2e7d32;
-        margin: 0 0 15px 0;
-      }
-
-      .modal-content:not(.preview-modal) .modal-body p {
-        margin: 10px 0;
-      }
-
-      .modal-content:not(.preview-modal) .modal-actions {
-        margin-top: 20px;
-        padding: 0;
-        border: none;
-        background: none;
-      }
-
-      .btn-primary, .btn-secondary {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-      }
-
-      .btn-primary {
-        background-color: #2e7d32;
-        color: white;
-      }
-
-      .btn-secondary {
-        background-color: #ccc;
-        color: #333;
-      }
-
-      /* Form submit button styling */
-      #submitBtn {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s;
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-      }
-
-      #submitBtn:hover {
-        background: linear-gradient(135deg, #0056b3, #004085);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
-      }
-
-      #submitBtn:active {
-        transform: translateY(0);
-      }
-    </style>
 
     <script>
       function goToPage(pageNumber) {
@@ -1606,482 +2471,48 @@
         document.getElementById("page" + pageNumber).classList.add("active");
       }
       window.goToPage = goToPage;
-
-      let currentFormData = null;
-      let previewPdfUrl = null;
-
-      // Submit SARF Form (Preview Step)
-      async function submitSARFForm() {
-        try {
-          // Show loading modal
-          document.getElementById('loadingModal').style.display = 'flex';
-
-          // Collect form data
-          const formData = collectFormData();
-
-          // Validate required fields
-          if (!validateForm(formData)) {
-            document.getElementById('loadingModal').style.display = 'none';
-            return;
-          }
-
-          // Store form data for final submission
-          currentFormData = formData;
-
-          // Generate preview PDF
-          const token = localStorage.getItem('token');
-          const response = await fetch('/api/sarf/preview-pdf', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(formData)
-          });
-
-          const result = await response.json();
-
-          // Hide loading modal
-          document.getElementById('loadingModal').style.display = 'none';
-
-          if (result.success) {
-            // Store PDF URL for preview
-            previewPdfUrl = result.pdfUrl;
-
-            // Show preview modal
-            document.getElementById('modalControlNo').textContent = result.control || 'Auto-generated';
-            document.getElementById('pdfPreview').src = result.pdfUrl;
-            document.getElementById('previewModal').style.display = 'flex';
-          } else {
-            alert('Error generating preview: ' + result.message);
-          }
-
-        } catch (error) {
-          document.getElementById('loadingModal').style.display = 'none';
-          console.error('Error generating preview:', error);
-          alert('Failed to generate preview. Please try again.');
-        }
-      }
-
-      // Final submission to database
-      async function finalSubmit() {
-        try {
-          if (!currentFormData) {
-            alert('No form data available. Please try again.');
-            return;
-          }
-
-          // Show loading
-          document.getElementById('previewModal').style.display = 'none';
-          document.getElementById('loadingModal').style.display = 'flex';
-
-          // Submit to database
-          const token = localStorage.getItem('token');
-          const response = await fetch('/api/sarf/submit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(currentFormData)
-          });
-
-          const result = await response.json();
-
-          // Hide loading modal
-          document.getElementById('loadingModal').style.display = 'none';
-
-          if (result.success) {
-            // Show success modal
-            document.getElementById('successControlNo').textContent = result.data.control;
-            document.getElementById('successModal').style.display = 'flex';
-
-            // Reset form and data
-            document.getElementById('combinedForm').reset();
-            currentFormData = null;
-            previewPdfUrl = null;
-            goToPage(1);
-          } else {
-            console.error('Submission failed:', result);
-            let errorMessage = result.message || 'Unknown error occurred';
-
-            // Show detailed validation errors if available
-            if (result.errors && result.errors.length > 0) {
-              errorMessage += '\n\nValidation Errors:\n' + result.errors.join('\n');
-            }
-
-            if (result.warnings && result.warnings.length > 0) {
-              errorMessage += '\n\nWarnings:\n' + result.warnings.join('\n');
-            }
-
-            alert('Error submitting to database:\n' + errorMessage);
-            // Show preview modal again
-            document.getElementById('previewModal').style.display = 'flex';
-          }
-
-        } catch (error) {
-          document.getElementById('loadingModal').style.display = 'none';
-          console.error('Error submitting to database:', error);
-          alert('Failed to submit to database. Please try again.');
-          // Show preview modal again
-          document.getElementById('previewModal').style.display = 'flex';
-        }
-      }
-
-      // Collect form data - COMPLETE collection including empty fields
-      function collectFormData() {
-        const form = document.getElementById('combinedForm');
-
-        // Initialize data object with ALL possible fields set to default values
-        const data = {
-          // Page 1 - Basic Information
-          control: '',
-          received_date: '',
-          activity_type: '',
-          organization_name: '',
-          title: '',
-          nature: '',
-          start_time: '',
-          end_time: '',
-          location: '',
-          est_participants: '',
-          budget_source: '',
-          estimated_budget: '',
-          incharge_name: '',
-          incharge_designation: '',
-          incharge_contact: '',
-          incharge_email: '',
-          remarks: '',
-
-          // Page 2 - Technical Requirements (BMO Support)
-          venue: '',
-          wl_mic: '0',
-          wired_mic: '0',
-          mic_stands: '0',
-          lights: '0',
-          others_tech: '',
-
-          // Property Requirements (LMO Support)
-          long_table: '0',
-          teachers_tables: '0',
-          platforms: '0',
-          chairs: '0',
-          trashbins: '0',
-          others_req: '',
-
-          // ITSS Support
-          multimedia: '',
-          others_support: '',
-
-          // Administrative Support
-          guards: '0',
-          parking: '0',
-          transportation: '',
-          posting: '',
-
-          // FMO Charges
-          janitoring: '0',
-          houselights: '0',
-          technical: '0',
-          water: '0',
-          staff_ot: '0',
-          others_applicable: '0',
-          total: '0'
-        };
-
-        // Now collect actual values, preserving empty fields as empty strings or '0'
-        // Basic form fields
-        const controlField = document.getElementById('control');
-        if (controlField) data.control = controlField.value || '';
-
-        const receivedDateField = document.getElementById('received_date');
-        if (receivedDateField) data.received_date = receivedDateField.value || '';
-
-        const orgNameField = document.querySelector('input[name="organization_name"]');
-        if (orgNameField) data.organization_name = orgNameField.value || '';
-
-        const titleField = document.querySelector('input[name="title"]');
-        if (titleField) data.title = titleField.value || '';
-
-        const natureField = document.querySelector('input[name="nature"]');
-        if (natureField) data.nature = natureField.value || '';
-
-        const locationField = document.querySelector('input[name="location"]');
-        if (locationField) data.location = locationField.value || '';
-
-        // Time fields
-        const startTimeField = document.getElementById('start-time');
-        if (startTimeField) data.start_time = startTimeField.value || '';
-
-        const endTimeField = document.getElementById('end-time');
-        if (endTimeField) data.end_time = endTimeField.value || '';
-
-        // Participants
-        const participantsField = document.getElementById('est_participants');
-        if (participantsField) data.est_participants = participantsField.value || '';
-
-        // Budget
-        const budgetSourceField = document.querySelector('input[name="budget_source"]');
-        if (budgetSourceField) data.budget_source = budgetSourceField.value || '';
-
-        const estimatedBudgetField = document.querySelector('input[name="estimated_budget"]');
-        if (estimatedBudgetField) data.estimated_budget = estimatedBudgetField.value || '';
-
-        // Person in charge
-        const inchargeNameField = document.querySelector('input[name="incharge_name"]');
-        if (inchargeNameField) data.incharge_name = inchargeNameField.value || '';
-
-        const inchargeDesignationField = document.querySelector('input[name="incharge_designation"]');
-        if (inchargeDesignationField) data.incharge_designation = inchargeDesignationField.value || '';
-
-        const inchargeContactField = document.querySelector('input[name="incharge_contact"]');
-        if (inchargeContactField) data.incharge_contact = inchargeContactField.value || '';
-
-        const inchargeEmailField = document.querySelector('input[name="incharge_email"]');
-        if (inchargeEmailField) data.incharge_email = inchargeEmailField.value || '';
-
-        // Remarks (first textarea found)
-        const remarksField = document.querySelector('textarea[name="remarks"]');
-        if (remarksField) data.remarks = remarksField.value || '';
-
-        // Technical Requirements (BMO Support)
-        const venueField = document.querySelector('input[name="venue"]');
-        if (venueField) data.venue = venueField.value || '';
-
-        const wlMicField = document.getElementById('wl_mic');
-        if (wlMicField) data.wl_mic = wlMicField.value || '0';
-
-        const wiredMicField = document.getElementById('wired_mic');
-        if (wiredMicField) data.wired_mic = wiredMicField.value || '0';
-
-        const micStandsField = document.getElementById('mic_stands');
-        if (micStandsField) data.mic_stands = micStandsField.value || '0';
-
-        const lightsField = document.getElementById('lights');
-        if (lightsField) data.lights = lightsField.value || '0';
-
-        const othersTechField = document.querySelector('input[name="others_tech"]');
-        if (othersTechField) data.others_tech = othersTechField.value || '';
-
-        // Property Requirements (LMO Support)
-        const longTableField = document.getElementById('long_table');
-        if (longTableField) data.long_table = longTableField.value || '0';
-
-        const teachersTablesField = document.getElementById('teachers_tables');
-        if (teachersTablesField) data.teachers_tables = teachersTablesField.value || '0';
-
-        const platformsField = document.getElementById('platforms');
-        if (platformsField) data.platforms = platformsField.value || '0';
-
-        const chairsField = document.getElementById('chairs');
-        if (chairsField) data.chairs = chairsField.value || '0';
-
-        const trashbinsField = document.querySelector('input[name="trashbins"]');
-        if (trashbinsField) data.trashbins = trashbinsField.value || '0';
-
-        const othersReqField = document.querySelector('input[name="others_req"]');
-        if (othersReqField) data.others_req = othersReqField.value || '';
-
-        // ITSS Support
-        const multimediaField = document.querySelector('input[name="multimedia"]');
-        if (multimediaField) data.multimedia = multimediaField.value || '';
-
-        const othersSupportField = document.querySelector('input[name="others_support"]');
-        if (othersSupportField) data.others_support = othersSupportField.value || '';
-
-        // Administrative Support
-        const guardsField = document.getElementById('guards');
-        if (guardsField) data.guards = guardsField.value || '0';
-
-        const parkingField = document.getElementById('parking');
-        if (parkingField) data.parking = parkingField.value || '0';
-
-        const transportationField = document.querySelector('input[name="transportation"]');
-        if (transportationField) data.transportation = transportationField.value || '';
-
-        const postingField = document.querySelector('input[name="posting"]');
-        if (postingField) data.posting = postingField.value || '';
-
-        // FMO Charges
-        const janitoringField = document.getElementById('janitoring');
-        if (janitoringField) data.janitoring = janitoringField.value || '0';
-
-        const houselightsField = document.getElementById('houselights');
-        if (houselightsField) data.houselights = houselightsField.value || '0';
-
-        const technicalField = document.getElementById('technical');
-        if (technicalField) data.technical = technicalField.value || '0';
-
-        const waterField = document.getElementById('water');
-        if (waterField) data.water = waterField.value || '0';
-
-        const staffOtField = document.getElementById('staff_ot');
-        if (staffOtField) data.staff_ot = staffOtField.value || '0';
-
-        const othersApplicableField = document.getElementById('others_applicable');
-        if (othersApplicableField) data.others_applicable = othersApplicableField.value || '0';
-
-        const totalField = document.getElementById('total');
-        if (totalField) data.total = totalField.value || '0';
-
-        // Handle checkboxes for activity type
-        const activityTypeChecked = document.querySelector('input[name="activity-type"]:checked');
-        if (activityTypeChecked) {
-          data.activity_type = activityTypeChecked.value;
-        } else {
-          data.activity_type = ''; // Ensure it's always set
-        }
-
-        console.log('Collected COMPLETE form data (including empty fields):', data);
-        console.log('Total fields collected:', Object.keys(data).length);
-        return data;
-      }
-
-      // Basic form validation
-      function validateForm(data) {
-        const requiredFields = {
-          'organization_name': 'Organization/Office/College Name',
-          'title': 'Title of Activity/Program',
-          'nature': 'Nature of Activity',
-          'location': 'Venue/Location',
-          'incharge_name': 'Person in Charge Name',
-          'incharge_email': 'Person in Charge Email'
-        };
-
-        console.log('Validating form data:', data);
-
-        // Check required fields
-        for (let [field, label] of Object.entries(requiredFields)) {
-          if (!data[field] || data[field].toString().trim() === '') {
-            alert(`Please fill in the "${label}" field.`);
-            console.log(`Validation failed: ${field} is empty`);
-            return false;
-          }
-        }
-
-        // Check activity type
-        if (!data.activity_type || data.activity_type.trim() === '') {
-          alert('Please select an activity type.');
-          console.log('Validation failed: activity_type is empty');
-          return false;
-        }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(data.incharge_email)) {
-          alert('Please enter a valid email address for the person in charge.');
-          console.log('Validation failed: invalid email format');
-          return false;
-        }
-
-        // Validate time fields (if both are provided)
-        if (data.start_time && data.end_time) {
-          const startTime = data.start_time;
-          const endTime = data.end_time;
-
-          // Simple time comparison (assumes same day)
-          if (startTime >= endTime) {
-            const confirmMultiDay = confirm(
-              'The end time appears to be before the start time.\n\n' +
-              'Is this a multi-day event?\n\n' +
-              'Click "OK" if this is a multi-day event, or "Cancel" to fix the times.'
-            );
-
-            if (!confirmMultiDay) {
-              console.log('Validation failed: user chose to fix time values');
-              return false;
-            } else {
-              console.log('User confirmed multi-day event');
-            }
-          }
-        }
-
-        console.log('Form validation passed');
-        return true;
-      }
-
-      // Download preview PDF
-      function downloadPreviewPDF() {
-        if (previewPdfUrl) {
-          const link = document.createElement('a');
-          link.href = previewPdfUrl;
-          link.download = `SARF-Preview-${Date.now()}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      }
-
-      // Open PDF in new tab
-      function openPDFNewTab() {
-        if (previewPdfUrl) {
-          window.open(previewPdfUrl, '_blank');
-        }
-      }
-
-      // Close preview modal
-      function closePreviewModal() {
-        document.getElementById('previewModal').style.display = 'none';
-        currentFormData = null;
-        previewPdfUrl = null;
-      }
-
-      // Close success modal
-      function closeSuccessModal() {
-        document.getElementById('successModal').style.display = 'none';
-      }
-
-      // View my forms
-      function viewMyForms() {
-        window.location.href = '/user/my-sarf-forms';
-      }
-
-      // Make functions global
-      window.submitSARFForm = submitSARFForm;
-      window.finalSubmit = finalSubmit;
-      window.downloadPreviewPDF = downloadPreviewPDF;
-      window.closePreviewModal = closePreviewModal;
-      window.closeSuccessModal = closeSuccessModal;
-      window.viewMyForms = viewMyForms;
-      window.zoomIn = zoomIn;
-      window.zoomOut = zoomOut;
-
-      // Initialize navbar and check authentication
-      document.addEventListener('DOMContentLoaded', function() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          window.location.href = '/login';
-          return;
-        }
-
-        // Verify user role and initialize navbar
-        fetch('/api/auth/verify', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.user) {
-            window.location.href = '/login';
-            return;
-          }
-
-          // Allow admin, student, and external users to access this page
-          if (data.user.role === 'admin') {
-            initializeNavbar('user', 'reservation', 'student'); // Show as student for admin
-          } else if (data.user.role === 'student' || data.user.role === 'external') {
-            initializeNavbar('user', 'reservation', data.user.role);
-          } else {
-            window.location.href = '/login';
-          }
-        })
-        .catch(error => {
-          window.location.href = '/login';
-        });
-      });
     </script>
-    <script src="/utils/navbar.js"></script>
+
+    <script>
+  document.getElementById("preparePrint").addEventListener("click", () => {
+    document
+      .querySelectorAll(
+        '#userForm [data-target]:not([type="checkbox"]):not([type="radio"])'
+      )
+      .forEach((src) => {
+        const dst = document.getElementById(src.dataset.target);
+        if (dst) {
+          dst.value = src.value;
+          dst.textContent = src.value;
+        }
+      });
+
+    document
+      .querySelectorAll(
+        '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
+      )
+      .forEach((src) => {
+        if (!src.checked) return;
+
+        const tgtName = src.dataset.target;
+        const tgtValue = src.dataset.value;
+
+        let dst;
+        if (tgtValue !== undefined) {
+          dst = document.querySelector(
+            `#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`
+          );
+        } else {
+          dst = document.getElementById(tgtName);
+        }
+
+        if (dst) dst.checked = true;
+      });
+
+    window.print();
+  });
+</script>
+
     <footer class="footer">
       © 2025 University of the Cordilleras. All Rights Reserved.
     </footer>
