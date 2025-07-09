@@ -556,14 +556,14 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const openerWin = window.opener && !window.opener.closed ? window.opener : null;
-    if (!openerWin) {          // stand‑alone: just print this page
+    if (!openerWin) {          
       window.print();
       return;
     }
 
     const opDoc = openerWin.document;
 
-    /* copy plain inputs / textarea / select */
+    /* input copier */
     document
       .querySelectorAll('[data-target]:not([type="checkbox"]):not([type="radio"])')
       .forEach(src => {
@@ -571,7 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (dst) { dst.value = src.value; dst.textContent = src.value; }
       });
 
-    /* copy checked checkbox / radio */
+    /* checkbox copier */
     document
       .querySelectorAll('input[type="checkbox"][data-target], input[type="radio"][data-target]')
       .forEach(src => {
@@ -584,7 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (dst) dst.checked = true;
       });
 
-    /* flag curfew requirement */
+    /* flags the curfew requirement */
     const flag = opDoc.getElementById("curfew_required");
     if (flag) flag.value = "Yes";
     openerWin.curfewCompleted = true;
