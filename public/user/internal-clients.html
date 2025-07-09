@@ -4,9 +4,6 @@
   <head>
     <meta charset="utf-8" />
     <title>Internal Clients Registration Form</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/utils/navbar.css">
-    <link rel="stylesheet" href="/utils/modals.css">
     <style>
       @page {
         size: 8.5in 13in;
@@ -16,15 +13,17 @@
         margin-bottom: 1cm;
       }
       @media print {
-        .form-page {
-          display: block !important;
-        }
-        .navbar,
-        .footer,
-        .navigation {
-          display: none !important;
-        }
-      }
+  .form-page {
+    display: block !important;
+  }
+
+  .navbar,
+  .footer,
+  .navigation {         
+    display: none !important;
+  }
+}
+
       body {
         font-family: Century Gothic, sans-serif;
         font-size: 11px;
@@ -150,13 +149,66 @@
         padding: 8px;
       }
       .no-border {
-        border-collapse: collapse; /* Prevents separate cell borders */
-        border: none; /* No outer table border */
+        border-collapse: collapse;
+        border: none;
       }
       .no-border td,
       .no-border th {
-        border: none; /* No borders on all cells */
-        padding: 5px; /* Optional: consistent spacing */
+        border: none;
+        padding: 5px;
+      }
+
+      .full-form {
+        max-width: 600px;
+        margin: auto;
+        font-family: system-ui, sans-serif;
+      }
+      .full-form label {
+        display: block;
+        margin-bottom: 1.25rem;
+      }
+      .full-form input,
+      .full-form select {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        margin-top: 0.25rem;
+        box-sizing: border-box;
+      }
+
+      .step {
+        display: none;
+        animation: fade 0.25s linear forwards;
+      }
+      .step.active {
+        display: block;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @media screen {
+        #internalForm,
+        #combinedForm {
+          display: none;
+        }
+      }
+      @media print {
+        #userForm {
+          display: none !important;
+        }
+        .form-page,
+        #combinedForm {
+          display: block !important;
+        }
       }
     </style>
     <meta charset="utf-8" />
@@ -176,20 +228,401 @@
         if (cb !== checkbox) cb.checked = false;
       });
     }
+
+    function toggleLongTablesCount(checkbox) {
+      const countBox = document.getElementById("u_long_tables_count");
+      if (checkbox.value === "yes") {
+        countBox.disabled = !checkbox.checked;
+      } else if (checkbox.value === "no" && checkbox.checked) {
+        countBox.disabled = true;
+        countBox.value = "";
+      }
+    }
   </script>
+
   <body>
-    <!-- Navbar Container -->
-    <div id="navbar-container"></div>
+    <nav class="navbar">
+      <div class="logo">
+        <img
+          alt="UC Logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
+          style="height: 75px; width: auto"
+        />
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a class="active" href="home.html">Home</a></li>
+        <li><a href="#">Inquire</a></li>
+        <li><a href="reservation.html">Reservation</a></li>
+      </ul>
+    </nav>
+
+    <form id="userForm" class="full-form">
+      <h2>Internal Clients Request Form</h2>
+
+      <label
+        >College / Office / Department
+        <input
+          type="text"
+          name="u_org"
+          data-target="organization_name"
+          required
+        />
+      </label>
+
+      <label
+        >Contact Number / Email
+        <input type="text" name="u_contact" data-target="contact" required />
+      </label>
+
+      <label
+        >Function / Event
+        <input type="text" name="u_event" data-target="event_name" required />
+      </label>
+
+      <label
+        >Requested Venue / Room
+        <select name="u_room" data-target="requested_room" required>
+          <option value="">— Select —</option>
+          <option>Auditorium</option>
+          <option>AV Room</option>
+          <option>Function Hall</option>
+        </select>
+      </label>
+
+      <label
+        >Number of Attendees
+        <input
+          type="number"
+          name="u_attend"
+          data-target="attendees"
+          min="1"
+          required
+        />
+      </label>
+
+      <label
+        >Day / Date of Event
+        <input type="date" id="u_date" name="u_date" data-target="event_date" required />
+      </label>
+
+      <label
+        >Time Start
+        <input type="time" id="u_start" name="u_start" data-target="time_start" required />
+      </label>
+
+      <label
+        >Time End
+        <input type="time" id="u_end" name="u_end" data-target="time_end" required />
+      </label>
+
+      <label
+        >Budget Source
+        <input type="text" name="u_budget" data-target="budget_source" />
+      </label>
+
+      <label
+        >Admission Fee
+        <input type="text" name="u_fee" data-target="admission_fee" />
+      </label>
+
+      <label
+        >Other Fees (please indicate)
+        <input type="text" name="u_other_fees" data-target="other_fees" />
+      </label>
+
+      <label
+        >Scope of Activity
+        <input type="text" name="u_scope" data-target="audience_type" />
+      </label>
+
+      <fieldset>
+        <legend>With Food / Canteen Service?</legend>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_food"
+            value="yes"
+            onclick="onlyOne(this, 'u_food')"
+            data-target="food_service"
+            data-value="yes"
+          />
+          Yes
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="u_food"
+            value="no"
+            onclick="onlyOne(this, 'u_food')"
+            data-target="food_service"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Audio-Visual Requirements</legend>
+        <label
+          ><input
+            type="checkbox"
+            name="mic"
+            value="Microphones"
+            data-target="mic_checkbox"
+          />
+          Microphones</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="mic_stand"
+            value="Mic_Stands"
+            data-target="mic_stands_checkbox"
+          />
+          Microphone Stands</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="projector"
+            value="Projector"
+            data-target="projector_checkbox"
+          />
+          Projector</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="pa_system"
+            value="PA_System"
+            data-target="pa_system_checkbox"
+          />
+          PA System</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="laptop"
+            value="Laptop"
+            data-target="laptop_checkbox"
+          />
+          Laptop</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="lights"
+            value="Lights"
+            data-target="lights_checkbox"
+          />
+          Lights</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="wifi_connection"
+            value="WiFi_Connection"
+            data-target="wifi_checkbox"
+          />
+          WiFi Connection</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="podium_monitor"
+            value="Podium_Monitor"
+            data-target="podium_checkbox"
+          />
+          Podium Monitor Board</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="live_streaming"
+            value="Live_Streaming"
+            data-target="stream_checkbox"
+          />
+          Live Streaming</label
+        >
+
+        <label
+          >Other AV needs:
+          <input type="text" name="u_av_other" data-target="others_AV" />
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Medical Team Needed?</legend>
+        <label>
+          <input
+            type="checkbox"
+            name="u_medical"
+            value="yes"
+            onclick="onlyOne(this, 'u_medical')"
+            data-target="medical_team"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_medical"
+            value="no"
+            onclick="onlyOne(this, 'u_medical')"
+            data-target="medical_team"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Security Guards Needed?</legend>
+        <label>
+          <input
+            type="checkbox"
+            name="u_security"
+            value="yes"
+            onclick="onlyOne(this, 'u_security')"
+            data-target="security_guards"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_security"
+            value="no"
+            onclick="onlyOne(this, 'u_security')"
+            data-target="security_guards"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Property / Equipment Needs (from LMO)</legend>
+
+        <!-- Air Cooler -->
+        <label>Air Cooler:</label><br />
+        <label>
+          <input
+            type="checkbox"
+            name="u_air_cooler"
+            value="yes"
+            onclick="onlyOne(this, 'u_air_cooler')"
+            data-target="air_cooler"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_air_cooler"
+            value="no"
+            onclick="onlyOne(this, 'u_air_cooler')"
+            data-target="air_cooler"
+            data-value="no"
+          />
+          No
+        </label>
+
+        <br /><br />
+
+        <!-- Long Tables -->
+        <fieldset>
+          <legend>Long Tables:</legend>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_long_tables"
+              value="yes"
+              onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
+              data-target="long_tables"
+              data-value="yes"
+            />
+            Yes </label
+          ><br />
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_long_tables"
+              value="no"
+              onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
+              data-target="long_tables"
+              data-value="no"
+            />
+            No </label
+          ><br /><br />
+
+          <label>
+            If Yes, how many?
+            <input
+              type="number"
+              name="u_long_tables_count"
+              id="u_long_tables_count"
+              data-target="long_tables_count"
+              min="0"
+              style="width: 60px"
+              disabled
+            />
+          </label>
+        </fieldset>
+
+        <br /><br />
+
+        <!-- Flags -->
+        <label>Philippine Flag and UC Flag:</label><br />
+        <label>
+          <input
+            type="checkbox"
+            name="u_flags"
+            value="yes"
+            onclick="onlyOne(this, 'u_flags')"
+            data-target="flags"
+            data-value="yes"
+          />
+          Yes
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="u_flags"
+            value="no"
+            onclick="onlyOne(this, 'u_flags')"
+            data-target="flags"
+            data-value="no"
+          />
+          No
+        </label>
+      </fieldset>
+
+      <button type="button" id="preparePrint">Submit &amp; Print</button>
+    </form>
+<footer class="footer">
+  © 2025 University of the Cordilleras. All Rights Reserved.
+</footer>
     <form
       class="form-container"
       id="combinedForm"
-      onsubmit="event.preventDefault(); handleFormSubmission();"
+      onsubmit="event.preventDefault(); window.print();"
     >
+
+    <input type="hidden" id="curfew_required" name="curfew_required" />
+
       <!-- PAGE 1 -->
       <!-- Header Section -->
       <div class="form-page active" id="page1">
         <div class="header-row">
-          <img alt="uc logo" src="images\uc official logo.png" />
+          <img alt="University of the Cordilleras Logo" src="pending logo" />
           <div style="text-align: right">
             <strong>CAMPUS MANAGEMENT OFFICE</strong><br />
             <strong>Facilities Management Operations Unit</strong>
@@ -326,7 +759,7 @@
                 ***for other fees, please indicate
                 <input
                   id="indicated_fees"
-                  name="indicated_fees"
+                  name="organization_name"
                   style="width: 30%"
                   type="text"
                 />
@@ -407,7 +840,7 @@
           <tr>
             <td colspan="1">
               <label
-                ><input type="checkbox" name="av_microphones" value="yes" /> Microphones:&nbsp;<input
+                ><input type="checkbox" /> Microphones:&nbsp;<input
                   id="mic"
                   min="0"
                   name="mic"
@@ -418,7 +851,7 @@
                 pcs</label
               ><br />
               <label
-                ><input type="checkbox" name="av_mic_stands" value="yes" /> Microphone Stands:&nbsp;<input
+                ><input type="checkbox" /> Microphone Stands:&nbsp;<input
                   id="mic_stands"
                   min="0"
                   name="mic_stands"
@@ -428,24 +861,24 @@
                 />
                 pcs</label
               ><br />
-              <label><input type="checkbox" name="av_projector" value="yes" /> Projector</label><br />
-              <label><input type="checkbox" name="av_pa_system" value="yes" /> PA System</label><br />
+              <label><input type="checkbox" /> Projector</label><br />
+              <label><input type="checkbox" /> PA System</label><br />
             </td>
             <td colspan="1">
-              <label><input type="checkbox" name="av_laptop" value="yes" /> Laptop</label><br />
-              <label><input type="checkbox" name="av_lights" value="yes" /> Lights</label><br />
+              <label><input type="checkbox" /> Laptop</label><br />
+              <label><input type="checkbox" /> Lights</label><br />
               <label
-                ><input type="checkbox" name="av_other_needs" value="yes" /> Other AV needs:<br /><input
+                ><input type="checkbox" /> Other AV needs:<br /><input
                   name="others_AV"
                   style="width: 75%"
                   type="text" /></label
               ><br />
             </td>
             <td colspan="1">
-              <label><input type="checkbox" name="av_wifi" value="yes" /> WiFi Connection</label><br />
-              <label><input type="checkbox" name="av_podium_monitor" value="yes" /> Podium Monitor Board</label
+              <label><input type="checkbox" /> WiFi Connection</label><br />
+              <label><input type="checkbox" /> Podium Monitor Board</label
               ><br />
-              <label><input type="checkbox" name="av_live_streaming" value="yes" /> Live Streaming</label><br />
+              <label><input type="checkbox" /> Live Streaming</label><br />
             </td>
           </tr>
           <tr>
@@ -573,11 +1006,11 @@
                 <input
                   id="long_tables_count"
                   min="0"
-                  name="long_tables_count"
+                  name="long_tables"
                   step="1"
                   style="width: 15%"
                   type="number"
-                />
+                /><br />
               </strong>
               &nbsp;&nbsp;
               <strong>
@@ -764,251 +1197,140 @@
             </td>
           </tr>
         </table>
-        <div class="navigation" style="text-align: right">
-          <button type="submit">Submit</button>
-        </div>
       </div>
     </form>
-    <footer
-      class="footer"
-      style="width: 100%; font-size: 11px; margin-top: 40px"
-    >
-      <div style="display: flex; justify-content: space-between; width: 100%">
-        <div style="text-align: left">
-          <div><strong>UC-CMO-FORM-62</strong></div>
-          <div id="submission-date">[DATE WHEN THIS WAS SUBMITTED]</div>
-        </div>
-
-        <div style="text-align: right">
-          <div id="page-number">Page ? of ?</div>
-          <div>
-            <strong>Control No.:</strong>
-            <span id="control-display">___________</span>
-          </div>
-        </div>
-      </div>
-    </footer>
 
     <script>
-      window.addEventListener("beforeprint", function () {
-        // Fill in date
-        const dateElement = document.getElementById("submission-date");
-        const today = new Date();
-        dateElement.textContent = today.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
+document.addEventListener("DOMContentLoaded", () => {
+  /* For editing */
+  const HOLIDAYS   = ["2025-01-01", "2025-04-09", "2025-12-25"]; /* sample holidates */
+  const EARLIEST   = "07:30";
+  const LATEST     = "19:30";
+  const MAX_HOURS  = 4;
+  const CURFEW_URL = "exemption-form.html";
 
-        // Fill in control number
-        const controlInput = document.getElementById("control");
-        const controlDisplay = document.getElementById("control-display");
-        if (controlInput && controlDisplay) {
-          controlDisplay.textContent = controlInput.value || "___________";
-        }
+  const btnPrint   = document.getElementById("preparePrint");
+  if (!btnPrint) { console.error("preparePrint button not found"); return; }
 
-        // Fill in page number if static total is known (replace with real logic if paginated)
-        const pageInfo = document.getElementById("page-number");
-        if (pageInfo) {
-          const currentPage = document.querySelector(".form-page.active");
-          const pages = document.querySelectorAll(".form-page").length;
-          const pageNumber = currentPage
-            ? currentPage.id.replace("page", "")
-            : "?";
-          pageInfo.textContent = `Page ${pageNumber} of ${pages}`;
+  /* Time string to total minutes */
+  const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+
+  /* Determine if curfew rules are triggered */
+  function curfewReasons() {
+  const date  = document.getElementById("u_date") ?.value;
+  const start = document.getElementById("u_start")?.value;
+  const end   = document.getElementById("u_end")  ?.value;
+  
+  // Track reasoning
+  const reasons = [];
+
+  // uses from YYYY-MM-DD
+  if (date) {
+    const [year, month, day] = date.split("-").map(Number);
+    const d = new Date(year, month - 1, day);
+
+    const isSunday = d.getDay() === 0;
+    if (isSunday) reasons.push("• Event is on a **Sunday**.");
+
+    if (HOLIDAYS.includes(date)) {
+      reasons.push("• Event is on a **holiday**.");
+    }
+  }
+
+  // Exit early if no time inputs
+  if (!start || !end) return reasons;
+
+  if (toMin(start) < toMin(EARLIEST)) {
+    reasons.push("• Starts **before 7:30-AM**.");
+  }
+
+  if (toMin(end) > toMin(LATEST)) {
+    reasons.push("• Ends **after 7:30-PM**.");
+  }
+
+  // Check duration
+  if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
+    reasons.push("• Duration **exceeds 4 hours**.");
+  }
+
+  return reasons;
+}
+
+  /* Copy values from user form to internal form */
+  function copyUserValues() {
+    document.querySelectorAll('#userForm [data-target]:not([type="checkbox"]):not([type="radio"])')
+      .forEach(src => {
+        const dst = document.getElementById(src.dataset.target);
+        if (dst) {
+          dst.value = src.value;
+          dst.textContent = src.value;
         }
       });
 
-      // Initialize navbar and check authentication
-      document.addEventListener('DOMContentLoaded', function() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          window.location.href = '/login';
-          return;
-        }
+    // checkboxes / radios
+    document.querySelectorAll(
+      '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
+    ).forEach(src => {
+      if (!src.checked) return;
 
-        // Verify user role and initialize navbar
-        fetch('/api/auth/verify', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.user) {
-            window.location.href = '/login';
-            return;
-          }
+      const tgtName = src.dataset.target;
+      const tgtValue = src.dataset.value;
 
-          // Allow admin, student, and external users to access this page
-          if (data.user.role === 'admin') {
-            initializeNavbar('user', 'reservation', 'student'); // Show as student for admin
-          } else if (data.user.role === 'student' || data.user.role === 'external') {
-            initializeNavbar('user', 'reservation', data.user.role);
-          } else {
-            window.location.href = '/login';
-          }
-        })
-        .catch(error => {
-          window.location.href = '/login';
-        });
+      let dst = tgtValue !== undefined
+        ? document.querySelector(`#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`)
+        : document.getElementById(tgtName);
+
+      if (dst) dst.checked = true;
+    });
+  }
+
+  /* Handle submit/print with curfew check */
+  let curfewAcknowledged = false;
+
+  btnPrint.addEventListener("click", () => {
+    const reasons = curfewReasons();
+
+    // If curfew rules are triggered and not yet acknowledged
+    if (reasons.length && !curfewAcknowledged) {
+      const msg =
+        "This booking triggers curfew rules:\n\n" +
+        reasons.join("\n") +
+        "\n\nDo you want to open the Curfew/Exemption form now?";
+      if (confirm(msg)) {
+        window.open(CURFEW_URL, "_blank");
+        curfewAcknowledged = true;
+
+        // Let internal form know curfew form was needed
+        const flag = document.getElementById("curfew_required");
+        if (flag) flag.value = "Yes";
+      }
+      return; // Cancel actual print until confirmation next time
+    }
+
+    copyUserValues();
+    window.print();
+  });
+
+  /* Update header info before printing */
+  window.addEventListener("beforeprint", () => {
+    const subDate = document.getElementById("submission-date");
+    if (subDate) {
+      subDate.textContent = new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
       });
-    </script>
-    <script src="/utils/navbar.js"></script>
-    <script src="/utils/modals.js"></script>
-    <script>
-      // Form submission handler
-      async function handleFormSubmission() {
-        try {
-          // Show confirmation modal
-          const confirmed = await showConfirmationModal({
-            title: 'Submit Internal Client Form',
-            message: 'Are you sure you want to submit this form? Once submitted, a PDF will be generated and saved to the database.',
-            confirmText: 'Submit',
-            cancelText: 'Cancel',
-            type: 'info'
-          });
+    }
 
-          if (!confirmed) {
-            return;
-          }
+    const ctrlIn = document.getElementById("control");
+    const ctrlOut = document.getElementById("control-display");
+    if (ctrlIn && ctrlOut) {
+      ctrlOut.textContent = ctrlIn.value || "___________";
+    }
+  });
+});
+</script>
 
-          // Collect form data
-          const formData = collectFormData();
-          console.log('Collected form data:', formData);
 
-          // Validate required fields
-          const validation = validateFormData(formData);
-          if (!validation.isValid) {
-            await showErrorModal({
-              title: 'Validation Error',
-              message: validation.message
-            });
-            return;
-          }
-
-          // Submit form
-          await submitInternalClientForm(formData);
-
-        } catch (error) {
-          console.error('Error submitting form:', error);
-          await showErrorModal({
-            title: 'Submission Error',
-            message: 'An error occurred while submitting the form. Please try again.'
-          });
-        }
-      }
-
-      // Collect form data from all inputs
-      function collectFormData() {
-        const form = document.getElementById('combinedForm');
-        const formData = {};
-
-        // Get all input elements
-        const inputs = form.querySelectorAll('input[name], select[name], textarea[name]');
-
-        inputs.forEach(input => {
-          const name = input.name;
-          if (!name) return;
-
-          if (input.type === 'checkbox') {
-            if (!formData[name]) {
-              formData[name] = [];
-            }
-            if (input.checked) {
-              formData[name].push(input.value);
-            }
-          } else if (input.type === 'radio') {
-            if (input.checked) {
-              formData[name] = input.value;
-            }
-          } else {
-            formData[name] = input.value;
-          }
-        });
-
-        // Convert single-item arrays to strings for radio-like checkboxes
-        Object.keys(formData).forEach(key => {
-          if (Array.isArray(formData[key]) && formData[key].length === 1) {
-            formData[key] = formData[key][0];
-          } else if (Array.isArray(formData[key]) && formData[key].length === 0) {
-            formData[key] = '';
-          }
-        });
-
-        return formData;
-      }
-
-      // Validate form data
-      function validateFormData(formData) {
-        const requiredFields = [
-          { field: 'organization_name', label: 'Organization Name' },
-          { field: 'event_name', label: 'Function/Event' },
-          { field: 'event_date', label: 'Event Date' },
-          { field: 'contact', label: 'Contact Information' }
-        ];
-
-        for (const required of requiredFields) {
-          if (!formData[required.field] || formData[required.field].trim() === '') {
-            return {
-              isValid: false,
-              message: `${required.label} is required.`
-            };
-          }
-        }
-
-        return { isValid: true };
-      }
-
-      // Submit form to backend
-      async function submitInternalClientForm(formData) {
-        try {
-          const token = localStorage.getItem('token');
-          if (!token) {
-            window.location.href = '/login';
-            return;
-          }
-
-          const response = await fetch('/api/sarf/internal/submit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(formData)
-          });
-
-          const result = await response.json();
-
-          if (result.success) {
-            await showSuccessModalWithPDF({
-              title: 'Form Submitted Successfully!',
-              message: 'Your internal client form has been submitted successfully. A PDF has been generated and saved.',
-              pdfUrl: result.data.pdfUrl,
-              pdfId: result.data.id,
-              controlNumber: result.data.control
-            });
-
-            // Reset form
-            document.getElementById('combinedForm').reset();
-
-            // Optionally redirect to forms list
-            // window.location.href = '/user/my-sarf-forms';
-          } else {
-            await showErrorModal({
-              title: 'Submission Failed',
-              message: result.message || 'Failed to submit form. Please try again.'
-            });
-          }
-
-        } catch (error) {
-          console.error('Error submitting form:', error);
-          await showErrorModal({
-            title: 'Network Error',
-            message: 'Unable to connect to the server. Please check your internet connection and try again.'
-          });
-        }
-      }
-    </script>
   </body>
 </html>
