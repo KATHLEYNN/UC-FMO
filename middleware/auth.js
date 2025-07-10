@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { isAdminRole, isUserRole, isValidRole } = require('../utils/roleUtils');
 require('dotenv').config();
 
 const auth = (req, res, next) => {
@@ -57,4 +58,38 @@ const checkRole = (roles) => {
     };
 };
 
-module.exports = { auth, checkRole }; 
+// Check if user has admin role (any admin role)
+const checkAdminRole = () => {
+    return (req, res, next) => {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Authentication required - No user context' });
+        }
+
+        if (!isAdminRole(req.user.role)) {
+            return res.status(403).json({
+                message: 'Access denied - Admin privileges required'
+            });
+        }
+
+        next();
+    };
+};
+
+// Check if user has user role (student or external)
+const checkUserRole = () => {
+    return (req, res, next) => {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Authentication required - No user context' });
+        }
+
+        if (!isUserRole(req.user.role)) {
+            return res.status(403).json({
+                message: 'Access denied - User privileges required'
+            });
+        }
+
+        next();
+    };
+};
+
+module.exports = { auth, checkRole, checkAdminRole, checkUserRole };

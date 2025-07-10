@@ -581,6 +581,7 @@
     }
   </style>
 
+    <script src="/js/roleUtils.js"></script>
     <script src="/js/auth.js"></script>
     <script>
         // Get token from URL parameters or localStorage
@@ -623,12 +624,12 @@
 
                 const data = await response.json();
 
-                if (!data.user || data.user.role !== 'admin') {
+                if (!data.user || !isAdminRole(data.user.role)) {
                     throw new Error('Insufficient privileges');
                 }
 
                 // Initialize navbar
-                initializeNavbar('admin', 'dashboard');
+                initializeNavbar('admin', 'dashboard', data.user.role);
 
                 // Show the page content
                 const mainContent = document.querySelector('.main-content');

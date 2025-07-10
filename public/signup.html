@@ -199,16 +199,14 @@
                 <div class="input-group">
                     <div class="input-wrapper">
                         <i class="fas fa-user-tag input-icon"></i>
-                        <select name="role" id="role" required>
-                            <option value="">Select your role</option>
-                            <option value="admin">Admin</option>
-                            <option value="student">Student</option>
-                            <option value="staff">Staff</option>
-                            <option value="external">External</option>
+                        <select name="user_type" id="user_type" required>
+                            <option value="">Select user type</option>
+                            <option value="student">Student (UC Affiliated)</option>
+                            <option value="external">External User</option>
                         </select>
                         <i class="fas fa-chevron-down select-arrow"></i>
                     </div>
-                    <div class="error-text" id="role-error"></div>
+                    <div class="error-text" id="user-type-error"></div>
                 </div>
 
                 <button type="submit" class="signup-btn">
@@ -636,6 +634,7 @@
         }
     </style>
 
+   <script src="/js/roleUtils.js"></script>
    <script src="/js/auth.js"></script>
    <script src="/js/signup.js"></script>
 
@@ -662,7 +661,7 @@
             const username = document.getElementById('username');
             const password = document.getElementById('password');
             const confirmPassword = document.getElementById('confirm_password');
-            const role = document.getElementById('role');
+            const userType = document.getElementById('user_type');
             let isValid = true;
 
             // Clear previous errors
@@ -718,10 +717,10 @@
                 isValid = false;
             }
 
-            // Role validation
-            if (!role.value) {
-                showSignupError('role-error', 'Please select a role');
-                role.classList.add('error');
+            // User type validation
+            if (!userType.value) {
+                showSignupError('user-type-error', 'Please select a user type');
+                userType.classList.add('error');
                 isValid = false;
             }
 
@@ -783,6 +782,10 @@
 
             const formData = new FormData(event.target);
             const userData = Object.fromEntries(formData.entries());
+
+            // Map user_type to role for backend compatibility
+            userData.role = userData.user_type;
+            delete userData.user_type;
 
             try {
                 const response = await fetch('/api/auth/signup', {

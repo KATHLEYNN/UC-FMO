@@ -637,6 +637,7 @@
       <!-- Header Section -->
       <div class="form-page active" id="page1">
         <div class="header-row">
+          <img alt="UC_LOGO" src="../images/UC_LOGO.png" />
           <img alt="University of the Cordilleras Logo" src="pending logo" />
           <div style="text-align: right">
             <strong>CAMPUS MANAGEMENT OFFICE</strong><br />
@@ -1302,7 +1303,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* Handle submit/print with curfew check */
   let curfewAcknowledged = false;
 
-  btnPrint.addEventListener("click", () => {
+  btnPrint.addEventListener("click", async () => {
     const reasons = curfewReasons();
 
     // If curfew rules are triggered and not yet acknowledged
@@ -1322,9 +1323,129 @@ document.addEventListener("DOMContentLoaded", () => {
       return; // Cancel actual print until confirmation next time
     }
 
-    copyUserValues();
-    window.print();
+    // Submit form to API and generate PDF
+    await submitInternalClientForm();
   });
+
+  /* Submit form to API */
+  async function submitInternalClientForm() {
+    try {
+      // Collect form data from user form
+      const formData = collectUserFormData();
+
+      // Validate required fields
+      if (!validateFormData(formData)) {
+        return;
+      }
+
+      // Show confirmation
+      if (!confirm('Are you sure you want to submit this internal client form? A PDF will be generated and saved to the database.')) {
+        return;
+      }
+
+      // Get auth token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to submit the form.');
+        window.location.href = '/login';
+        return;
+      }
+
+      // Submit to API
+      const response = await fetch('/api/sarf/internal/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Internal client form submitted successfully! PDF has been generated.');
+
+        // Optionally redirect to forms list or show download option
+        if (confirm('Would you like to download the generated PDF?')) {
+          window.open(result.data.pdfUrl, '_blank');
+        }
+
+        // Reset form or redirect
+        if (confirm('Would you like to submit another form?')) {
+          document.getElementById('userForm').reset();
+        } else {
+          window.location.href = '/user/my-forms.html';
+        }
+      } else {
+        alert('Error submitting form: ' + result.message);
+      }
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Error submitting form. Please try again.');
+    }
+  }
+
+  /* Collect form data from user form */
+  function collectUserFormData() {
+    const formData = {};
+
+    // Get all form inputs with data-target attributes
+    document.querySelectorAll('#userForm [data-target]:not([type="checkbox"]):not([type="radio"])')
+      .forEach(input => {
+        const targetField = input.dataset.target;
+        formData[targetField] = input.value;
+      });
+
+    // Handle checkboxes
+    document.querySelectorAll('#userForm input[type="checkbox"][data-target]')
+      .forEach(checkbox => {
+        const targetField = checkbox.dataset.target;
+        const targetValue = checkbox.dataset.value;
+
+        if (checkbox.checked) {
+          if (targetValue) {
+            formData[targetField] = targetValue;
+          } else {
+            // For multi-select checkboxes
+            if (!formData[targetField]) {
+              formData[targetField] = [];
+            }
+            if (Array.isArray(formData[targetField])) {
+              formData[targetField].push(checkbox.value);
+            } else {
+              formData[targetField] = [formData[targetField], checkbox.value];
+            }
+          }
+        }
+      });
+
+    return formData;
+  }
+
+  /* Validate form data */
+  function validateFormData(formData) {
+    const requiredFields = [
+      { field: 'organization_name', label: 'College / Office / Department' },
+      { field: 'contact', label: 'Contact Number / Email' },
+      { field: 'event_name', label: 'Function / Event' },
+      { field: 'venue', label: 'Requested Venue / Room' },
+      { field: 'attendees', label: 'Number of Attendees' },
+      { field: 'event_date', label: 'Day / Date of Event' },
+      { field: 'time_start', label: 'Time Start' },
+      { field: 'time_end', label: 'Time End' }
+    ];
+
+    for (const required of requiredFields) {
+      if (!formData[required.field] || formData[required.field].toString().trim() === '') {
+        alert(`${required.label} is required.`);
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   /* Update header info before printing */
   window.addEventListener("beforeprint", () => {

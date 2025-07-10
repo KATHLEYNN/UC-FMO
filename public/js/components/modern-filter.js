@@ -95,9 +95,9 @@ class ModernFilter {
                                 <div class="select-wrapper">
                                     <select id="typeFilter" class="modern-select">
                                         <option value="">All Types</option>
-                                        <option value="campus">🏫 SARF (On-Campus)</option>
-                                        <option value="internal">🏢 Internal Client</option>
-                                        <option value="external">👥 External Client</option>
+                                        <option value="campus">SARF (On-Campus)</option>
+                                        <option value="internal">Internal Client</option>
+                                        <option value="external">External Client</option>
                                     </select>
                                     <i class="fas fa-chevron-down select-arrow"></i>
                                 </div>

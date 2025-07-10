@@ -139,10 +139,10 @@
             <form id="loginForm" class="login-form">
                 <div class="input-container">
                     <div class="input-wrapper">
-                        <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" name="email" id="email" placeholder="Enter your email" required>
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" name="username" id="username" placeholder="Enter your username" required>
                     </div>
-                    <div class="error-message" id="email-error"></div>
+                    <div class="error-message" id="username-error"></div>
                 </div>
 
                 <div class="input-container">
@@ -600,7 +600,7 @@
 
         // Enhanced form validation
         function validateForm() {
-            const email = document.getElementById('email');
+            const username = document.getElementById('username');
             const password = document.getElementById('password');
             let isValid = true;
 
@@ -613,14 +613,14 @@
                 input.classList.remove('error');
             });
 
-            // Email validation
-            if (!email.value.trim()) {
-                showError('email-error', 'Email is required');
-                email.classList.add('error');
+            // Username validation
+            if (!username.value.trim()) {
+                showError('username-error', 'Username is required');
+                username.classList.add('error');
                 isValid = false;
-            } else if (!isValidEmail(email.value)) {
-                showError('email-error', 'Please enter a valid email address');
-                email.classList.add('error');
+            } else if (username.value.trim().length < 3) {
+                showError('username-error', 'Username must be at least 3 characters');
+                username.classList.add('error');
                 isValid = false;
             }
 
@@ -634,10 +634,7 @@
             return isValid;
         }
 
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
+
 
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
@@ -646,7 +643,6 @@
             errorElement.classList.add('show');
         }
 
-        // Form submission with enhanced UX
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
@@ -658,13 +654,12 @@
             const btnText = document.querySelector('.btn-text');
             const btnIcon = document.querySelector('.btn-icon');
 
-            // Show loading state
             submitBtn.disabled = true;
             btnText.textContent = 'Signing In...';
             btnIcon.classList.remove('fa-arrow-right');
             btnIcon.classList.add('fa-spinner', 'fa-spin');
 
-            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
             try {
@@ -673,7 +668,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ username, password })
                 });
 
                 const data = await response.json();
@@ -681,32 +676,28 @@
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
 
-                    // Success state
                     btnText.textContent = 'Success!';
                     btnIcon.classList.remove('fa-spinner', 'fa-spin');
                     btnIcon.classList.add('fa-check');
                     submitBtn.style.background = 'linear-gradient(135deg, #28a745, #4caf50)';
 
-                    // Redirect after short delay
                     setTimeout(() => {
-                        if (data.user.role === 'admin') {
+                        if (isAdminRole(data.user.role)) {
                             window.location.href = '/admin/admin';
                         } else {
-                            window.location.href = '/user/home';
+                            window.location.href = '/home';
                         }
                     }, 1000);
                 } else {
                     throw new Error(data.message || 'Login failed');
                 }
             } catch (error) {
-                // Reset button state
                 submitBtn.disabled = false;
                 btnText.textContent = 'Sign In';
                 btnIcon.classList.remove('fa-spinner', 'fa-spin', 'fa-check');
                 btnIcon.classList.add('fa-arrow-right');
                 submitBtn.style.background = '';
 
-                // Show error
                 const errorDiv = document.getElementById('general-error');
                 errorDiv.textContent = error.message || 'An error occurred during login';
                 errorDiv.style.display = 'block';
@@ -714,11 +705,11 @@
             }
         });
 
-        // Initialize navbar
         document.addEventListener('DOMContentLoaded', function() {
             initializeNavbar('public', 'login');
         });
     </script>
+    <script src="/js/roleUtils.js"></script>
     <script src="/utils/navbar.js"></script>
 </body>
 </html>

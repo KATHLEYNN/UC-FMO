@@ -1,4 +1,23 @@
-function generateAdminNavbar(activePage = '') {
+// Role display names mapping
+function getAdminRoleDisplayName(role) {
+    const roleNames = {
+        'master-admin': 'Master Administrator',
+        'citcs-admin': 'CITCS Administrator',
+        'coa-admin': 'COA Administrator',
+        'cas-admin': 'CAS Administrator',
+        'cba-admin': 'CBA Administrator',
+        'cea-admin': 'CEA Administrator',
+        'cht-admin': 'CHT Administrator',
+        'con-admin': 'CON Administrator',
+        'cte-admin': 'CTE Administrator'
+    };
+    return roleNames[role] || 'Administrator';
+}
+
+function generateAdminNavbar(activePage = '', userRole = 'master-admin') {
+    // Get role display name
+    const roleDisplayName = getAdminRoleDisplayName(userRole);
+
     return `
         <nav class="navbar">
             <div class="navbar-brand">
@@ -45,7 +64,7 @@ function generateAdminNavbar(activePage = '') {
             <div class="navbar-user">
                 <div class="user-info">
                     <i class="fas fa-user-shield"></i>
-                    <span class="user-role">Admin</span>
+                    <span class="user-role">${roleDisplayName}</span>
                 </div>
                 <button onclick="handleLogout()" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
@@ -159,7 +178,7 @@ function initializeNavbar(navbarType, activePage = '', userRole = 'student') {
 
     let navbarHTML = '';
     if (navbarType === 'admin') {
-        navbarHTML = generateAdminNavbar(activePage);
+        navbarHTML = generateAdminNavbar(activePage, userRole);
     } else if (navbarType === 'user') {
         navbarHTML = generateUserNavbar(activePage, userRole);
     } else if (navbarType === 'public') {

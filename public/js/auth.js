@@ -32,7 +32,7 @@ async function checkAuthStatus() {
 async function handleLogin(event) {
     event.preventDefault();
     const form = event.target;
-    const email = form.email.value;
+    const username = form.username.value;
     const password = form.password.value;
     const errorDiv = document.getElementById('general-error');
     
@@ -42,21 +42,18 @@ async function handleLogin(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ username, password })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            // Store the token
             localStorage.setItem('token', data.token);
 
-            // Create a form to handle the redirect with proper headers
             const form = document.createElement('form');
             form.method = 'GET';
 
-            // Redirect based on role: admin goes to admin panel, student/external go to user home
-            if (data.user.role === 'admin') {
+            if (isAdminRole(data.user.role)) {
                 form.action = '/admin/admin';
             } else if (data.user.role === 'student' || data.user.role === 'external') {
                 form.action = '/home';

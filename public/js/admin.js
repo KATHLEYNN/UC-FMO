@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             throw new Error(`Token verification failed: ${data.message}`);
         }
 
-        if (!data.user || data.user.role !== 'admin') {
+        if (!data.user || !isAdminRole(data.user.role)) {
             if (data.user && (data.user.role === 'student' || data.user.role === 'external')) {
                 window.location.href = '/home';
             } else {

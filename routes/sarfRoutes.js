@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { auth, checkRole } = require('../middleware/auth');
+const { auth, checkRole, checkAdminRole, checkUserRole } = require('../middleware/auth');
+const { isAdminRole, isUserRole } = require('../utils/roleUtils');
 const pdfService = require('../services/pdfService');
 const sarfService = require('../services/sarfService');
 const { pool } = require('../config/database');
@@ -16,7 +17,7 @@ router.post('/preview-pdf', auth, async (req, res) => {
     const formData = req.body;
 
     // Validate user role
-    if (!['student', 'external', 'admin'].includes(req.user.role)) {
+    if (!isUserRole(req.user.role) && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. Only students, external users, and admins can preview SARF forms.'
@@ -63,7 +64,7 @@ router.post('/submit', auth, async (req, res) => {
     const formData = req.body;
 
     // Validate user role
-    if (!['student', 'external', 'admin'].includes(req.user.role)) {
+    if (!isUserRole(req.user.role) && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. Only students, external users, and admins can submit SARF forms.'
@@ -185,7 +186,7 @@ router.get('/download/:pdfId', auth, async (req, res) => {
     const pdfRecord = pdfRows[0];
 
     // Check access permissions
-    if (pdfRecord.user_id !== userId && !['admin', 'staff'].includes(req.user.role)) {
+    if (pdfRecord.user_id !== userId && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. You can only download your own PDFs.'
@@ -228,7 +229,7 @@ router.get('/download/:pdfId', auth, async (req, res) => {
  * Admin: Get all SARF forms with PDFs
  * GET /api/sarf/admin/all
  */
-router.get('/admin/all', [auth, checkRole(['admin', 'staff'])], async (req, res) => {
+router.get('/admin/all', [auth, checkAdminRole()], async (req, res) => {
   try {
     const { page = 1, limit = 10, status, search } = req.query;
 
@@ -270,7 +271,7 @@ router.get('/admin/all', [auth, checkRole(['admin', 'staff'])], async (req, res)
  * Admin: Update SARF status
  * PUT /api/sarf/admin/:sarfId/status
  */
-router.put('/admin/:sarfId/status', [auth, checkRole(['admin', 'staff'])], async (req, res) => {
+router.put('/admin/:sarfId/status', [auth, checkAdminRole()], async (req, res) => {
   try {
     const { sarfId } = req.params;
     const { action, remarks } = req.body;
@@ -359,7 +360,7 @@ router.post('/internal/preview-pdf', auth, async (req, res) => {
     const formData = req.body;
 
     // Validate user role
-    if (!['student', 'external', 'admin'].includes(req.user.role)) {
+    if (!isUserRole(req.user.role) && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. Only students, external users, and admins can preview internal client forms.'
@@ -408,7 +409,7 @@ router.post('/internal/submit', auth, async (req, res) => {
     const formData = req.body;
 
     // Validate user role
-    if (!['student', 'external', 'admin'].includes(req.user.role)) {
+    if (!isUserRole(req.user.role) && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. Only students, external users, and admins can submit internal client forms.'
@@ -495,7 +496,7 @@ router.get('/internal/download/:pdfId', auth, async (req, res) => {
     const pdfRecord = pdfRows[0];
 
     // Check access permissions
-    if (pdfRecord.user_id !== userId && !['admin', 'staff'].includes(req.user.role)) {
+    if (pdfRecord.user_id !== userId && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. You can only download your own PDFs.'
@@ -542,7 +543,7 @@ router.get('/my-all-forms', auth, async (req, res) => {
     const { page = 1, limit = 10, status, type } = req.query;
 
     // Validate user role
-    if (!['student', 'external', 'admin'].includes(req.user.role)) {
+    if (!isUserRole(req.user.role) && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied.'
@@ -655,7 +656,7 @@ router.get('/my-all-forms', auth, async (req, res) => {
  * Admin: Get all forms from all users
  * GET /api/sarf/admin/all-forms
  */
-router.get('/admin/all-forms', [auth, checkRole(['admin', 'staff'])], async (req, res) => {
+router.get('/admin/all-forms', [auth, checkAdminRole()], async (req, res) => {
   try {
     const { page = 1, limit = 10, status, type, search } = req.query;
 
@@ -782,7 +783,7 @@ router.get('/admin/all-forms', [auth, checkRole(['admin', 'staff'])], async (req
  * Admin: Update form status
  * PUT /api/sarf/admin/update-status/:formId
  */
-router.put('/admin/update-status/:formId', [auth, checkRole(['admin', 'staff'])], async (req, res) => {
+router.put('/admin/update-status/:formId', [auth, checkAdminRole()], async (req, res) => {
   try {
     const { formId } = req.params;
     const { status, rejection_notes } = req.body;
@@ -858,7 +859,7 @@ router.post('/external/preview-pdf', auth, async (req, res) => {
     const formData = req.body;
 
     // Validate user role
-    if (!['student', 'external', 'admin'].includes(req.user.role)) {
+    if (!isUserRole(req.user.role) && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. Only students, external users, and admins can preview external client forms.'
@@ -907,7 +908,7 @@ router.post('/external/submit', auth, async (req, res) => {
     const formData = req.body;
 
     // Validate user role
-    if (!['student', 'external', 'admin'].includes(req.user.role)) {
+    if (!isUserRole(req.user.role) && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. Only students, external users, and admins can submit external client forms.'
@@ -994,7 +995,7 @@ router.get('/external/download/:pdfId', auth, async (req, res) => {
     const pdfRecord = pdfRows[0];
 
     // Check access permissions
-    if (pdfRecord.user_id !== userId && !['admin', 'staff'].includes(req.user.role)) {
+    if (pdfRecord.user_id !== userId && !isAdminRole(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access denied. You can only download your own PDFs.'

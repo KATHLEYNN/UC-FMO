@@ -47,7 +47,6 @@
     let currentPage = 1;
     const eventsPerPage = 3;
 
-    // Fetch events from database
     async function fetchEvents() {
       try {
         const response = await fetch('/api/events');
@@ -156,8 +155,8 @@
         }
         
         // Initialize navbar based on user role
-        if (data.user.role === 'admin') {
-          initializeNavbar('admin', 'home');
+        if (isAdminRole(data.user.role)) {
+          initializeNavbar('admin', 'home', data.user.role);
         } else if (data.user.role === 'student' || data.user.role === 'external') {
           initializeNavbar('user', 'home', data.user.role);
         } else {
@@ -428,6 +427,7 @@ body {
 }
   </style>
 
+  <script src="/js/roleUtils.js"></script>
   <script src="/utils/navbar.js"></script>
 </body>
 </html>

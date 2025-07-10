@@ -477,12 +477,17 @@
                 if (result.success) {
                     await showSuccessModal({
                         title: 'Status Updated',
-                        message: `Form has been ${status} successfully.`
+                        message: `Form has been ${status} successfully.`,
+                        onClose: () => {
+                            // Reload forms and stats after modal is closed
+                            try {
+                                formsManager.updateStats();
+                                formsManager.refresh();
+                            } catch (error) {
+                                console.error('Error refreshing forms after status update:', error);
+                            }
+                        }
                     });
-
-                    // Reload forms and stats
-                    loadStats();
-                    loadAllForms(currentPage);
                 } else {
                     await showErrorModal({
                         title: 'Update Failed',
@@ -500,70 +505,131 @@
 
         // Show reject modal with notes
         async function showRejectModal(formId) {
-            const confirmed = await showConfirmationModal({
-                title: 'Reject Form',
-                message: `
-                    <div style="margin-bottom: 15px;">
-                        Are you sure you want to reject this form? Please provide a reason:
+            return new Promise((resolve) => {
+                const modalId = 'reject-modal-' + Date.now();
+
+                const modalHTML = `
+                    <div class="modal-overlay" id="${modalId}">
+                        <div class="modal-content confirmation-modal">
+                            <div class="modal-header danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>Reject Form</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div style="margin-bottom: 15px;">
+                                    Are you sure you want to reject this form? Please provide a reason:
+                                </div>
+                                <textarea id="rejectionNotes" placeholder="Enter rejection reason..."
+                                          style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="modal-btn cancel-btn" data-action="cancel">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button class="modal-btn confirm-btn danger" data-action="confirm">
+                                    <i class="fas fa-check"></i>
+                                    Reject Form
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <textarea id="rejectionNotes" placeholder="Enter rejection reason..."
-                              style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
-                `,
-                confirmText: 'Reject Form',
-                cancelText: 'Cancel',
-                type: 'danger'
-            });
+                `;
 
-            if (confirmed) {
-                const rejectionNotes = document.getElementById('rejectionNotes').value.trim();
+                document.getElementById('modal-container').innerHTML = modalHTML;
+                const modal = document.getElementById(modalId);
 
-                if (!rejectionNotes) {
-                    await showErrorModal({
-                        title: 'Rejection Notes Required',
-                        message: 'Please provide a reason for rejecting this form.'
-                    });
-                    return;
-                }
-
-                try {
-                    const token = localStorage.getItem('token');
-
-                    const response = await fetch(`/api/sarf/admin/update-status/${formId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                            status: 'rejected',
-                            rejection_notes: rejectionNotes
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        await showSuccessModal({
-                            title: 'Form Rejected',
-                            message: 'Form has been rejected successfully.'
-                        });
-
-                        // Reload forms and stats
-                        loadStats();
-                        loadAllForms(currentPage);
-                    } else {
-                        await showErrorModal({
-                            title: 'Rejection Failed',
-                            message: result.message || 'Failed to reject form'
-                        });
+                // Add event listeners
+                modal.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        closeRejectModal(modalId, resolve);
                     }
-                } catch (error) {
-                    console.error('Error rejecting form:', error);
+                });
+
+                modal.querySelectorAll('.modal-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const action = e.currentTarget.getAttribute('data-action');
+
+                        if (action === 'confirm') {
+                            const rejectionNotesElement = document.getElementById('rejectionNotes');
+                            const rejectionNotes = rejectionNotesElement ? rejectionNotesElement.value.trim() : '';
+
+                            if (!rejectionNotes) {
+                                await showErrorModal({
+                                    title: 'Rejection Notes Required',
+                                    message: 'Please provide a reason for rejecting this form.'
+                                });
+                                return;
+                            }
+
+                            closeRejectModal(modalId, resolve);
+                            await processRejection(formId, rejectionNotes);
+                        } else {
+                            closeRejectModal(modalId, resolve);
+                        }
+                    });
+                });
+
+                // Show modal with animation
+                setTimeout(() => modal.classList.add('show'), 10);
+            });
+        }
+
+        function closeRejectModal(modalId, resolve) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hide');
+                setTimeout(() => {
+                    modal.remove();
+                    resolve();
+                }, 300);
+            }
+        }
+
+        async function processRejection(formId, rejectionNotes) {
+            try {
+                const token = localStorage.getItem('token');
+
+                const response = await fetch(`/api/sarf/admin/update-status/${formId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        status: 'rejected',
+                        rejection_notes: rejectionNotes
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    await showSuccessModal({
+                        title: 'Form Rejected',
+                        message: 'Form has been rejected successfully.',
+                        onClose: () => {
+                            // Reload forms and stats after modal is closed
+                            try {
+                                formsManager.updateStats();
+                                formsManager.refresh();
+                            } catch (error) {
+                                console.error('Error refreshing forms after rejection:', error);
+                            }
+                        }
+                    });
+                } else {
                     await showErrorModal({
-                        title: 'Rejection Error',
-                        message: 'Failed to reject form. Please try again.'
+                        title: 'Rejection Failed',
+                        message: result.message || 'Failed to reject form'
                     });
                 }
+            } catch (error) {
+                console.error('Error rejecting form:', error);
+                await showErrorModal({
+                    title: 'Rejection Error',
+                    message: 'Failed to reject form. Please try again.'
+                });
             }
         }
 
@@ -588,9 +654,9 @@
                     return;
                 }
 
-                // Only allow admin and staff users
-                if (['admin', 'staff'].includes(data.user.role)) {
-                    initializeNavbar('admin', 'request-forms');
+                // Only allow admin users
+                if (isAdminRole(data.user.role)) {
+                    initializeNavbar('admin', 'request-forms', data.user.role);
                     initializePage();
                 } else {
                     window.location.href = '/login';
@@ -601,15 +667,9 @@
             });
         });
 
-        // Add enter key support for search
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('searchFilter').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    loadAllForms(1);
-                }
-            });
-        });
+
     </script>
+    <script src="/js/roleUtils.js"></script>
     <script src="/utils/navbar.js"></script>
     <script src="/utils/modals.js"></script>
     <script src="/js/components/modern-filter.js"></script>

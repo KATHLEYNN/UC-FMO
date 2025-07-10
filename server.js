@@ -4,7 +4,8 @@ const cors = require('cors');
 const path = require('path');
 const authRoutes = require('./routes/auth');
 const sarfRoutes = require('./routes/sarfRoutes');
-const { auth, checkRole } = require('./middleware/auth');
+const { auth, checkRole, checkAdminRole, checkUserRole } = require('./middleware/auth');
+const { isAdminRole, isUserRole } = require('./utils/roleUtils');
 
 const app = express();
 // Middleware
@@ -41,7 +42,7 @@ app.get('/api/auth/verify', auth, (req, res) => {
 });
 
 // Admin-specific verification endpoint
-app.get('/api/auth/admin/verify', [auth, checkRole(['admin'])], (req, res) => {
+app.get('/api/auth/admin/verify', [auth, checkAdminRole()], (req, res) => {
     res.json({ user: req.user });
 });
 
@@ -70,11 +71,11 @@ app.get('/api/admin/stats', [auth, checkRole(['admin'])], async (req, res) => {
     }
 });
 
-app.get('/api/user/profile', [auth, checkRole(['student', 'external'])], (req, res) => {
+app.get('/api/user/profile', [auth, checkUserRole()], (req, res) => {
     res.json({ user: req.user });
 });
 
-app.get('/api/user/reservations', [auth, checkRole(['student', 'external'])], async (req, res) => {
+app.get('/api/user/reservations', [auth, checkUserRole()], async (req, res) => {
     try {
         res.json({ reservations: [] });
     } catch (error) {
@@ -138,8 +139,18 @@ app.delete('/api/events/:id', [auth, checkRole(['admin'])], async (req, res) => 
     }
 });
 
+// Test endpoint for role checking
+app.get('/api/test/role', auth, (req, res) => {
+    res.json({
+        user: req.user,
+        isAdmin: isAdminRole(req.user.role),
+        isUser: isUserRole(req.user.role),
+        message: `User ${req.user.username} has role: ${req.user.role}`
+    });
+});
+
 // Test endpoint to check database connection and table structure
-app.get('/api/test/db', [auth, checkRole(['admin'])], async (req, res) => {
+app.get('/api/test/db', [auth, checkAdminRole()], async (req, res) => {
     try {
         // Test basic connection
         const [tables] = await pool.execute('SHOW TABLES');

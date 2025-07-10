@@ -8,10 +8,9 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Navbar Container -->
   <div id="navbar-container"></div>
 
-  <main class="reservation-selection">
+  <!-- <main class="reservation-selection">
     <h1>Select Reservation Type</h1>
     <div class="reservation-options">
       <a href="on-campus.html" class="option-card">On Campus</a>
@@ -22,7 +21,7 @@
 
     <footer class="footer">
   © 2025 University of the Cordilleras. All Rights Reserved.
-</footer>
+</footer> -->
 
   <style>
     * {
@@ -133,7 +132,7 @@ nav {
         return;
       }
 
-      // Verify user role and initialize navbar
+      // Verify user role and redirect automatically
       fetch('/api/auth/verify', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -146,10 +145,16 @@ nav {
           return;
         }
 
-        if (data.user.role === 'admin') {
-          initializeNavbar('admin', 'reservation');
-        } else if (data.user.role === 'student' || data.user.role === 'external') {
-          initializeNavbar('user', 'reservation', data.user.role);
+        // Auto-redirect based on user role
+        if (data.user.role === 'student') {
+          // Students automatically go to internal clients form
+          window.location.href = '/user/internal-clients.html';
+        } else if (data.user.role === 'external') {
+          // External users automatically go to external clients form
+          window.location.href = '/user/external-clients.html';
+        } else if (isAdminRole(data.user.role)) {
+          // Admins see the selection page
+          initializeNavbar('admin', 'reservation', data.user.role);
         } else {
           window.location.href = '/login';
         }
@@ -159,6 +164,7 @@ nav {
       });
     });
   </script>
+  <script src="/js/roleUtils.js"></script>
   <script src="/utils/navbar.js"></script>
 </body>
 </html>

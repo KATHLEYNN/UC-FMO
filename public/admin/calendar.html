@@ -272,7 +272,7 @@
   <script>
     // Initialize navbar and check authentication
     document.addEventListener('DOMContentLoaded', function() {
-      // Initialize admin navbar
+      // Initialize admin navbar - will be updated with user role after auth
       initializeNavbar('admin', 'calendar');
 
       // Check authentication
@@ -290,12 +290,15 @@
       })
       .then(response => response.json())
       .then(data => {
-        if (!data.user || data.user.role !== 'admin') {
+        if (!data.user || !isAdminRole(data.user.role)) {
           if (data.user && (data.user.role === 'student' || data.user.role === 'external')) {
-            window.location.href = '/user/home';
+            window.location.href = '/home';
           } else {
             window.location.href = '/login';
           }
+        } else {
+          // Re-initialize navbar with correct role
+          initializeNavbar('admin', 'calendar', data.user.role);
         }
       })
       .catch(error => {
@@ -303,6 +306,7 @@
       });
     });
   </script>
+  <script src="/js/roleUtils.js"></script>
   <script src="/utils/navbar.js"></script>
 </body>
 </html>

@@ -255,10 +255,10 @@
                 })
                 .then(data => {
                     if (data.user) {
-                        if (data.user.role === 'admin') {
+                        if (isAdminRole(data.user.role)) {
                             window.location.href = '/admin/admin';
                         } else {
-                            window.location.href = '/user/home';
+                            window.location.href = '/home';
                         }
                     }
                 })
@@ -292,6 +292,7 @@
             }
         }
     </script>
+    <script src="/js/roleUtils.js"></script>
     <script src="/utils/navbar.js"></script>
 </body>
 </html>

@@ -36,23 +36,23 @@ const authController = {
     },
 
     async login(req, res) {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
 
         try {
             const [rows] = await pool.execute(
-                'SELECT * FROM users WHERE email = ?',
-                [email]
+                'SELECT * FROM users WHERE username = ?',
+                [username]
             );
 
             if (rows.length === 0) {
-                return res.status(401).json({ message: 'Invalid email or password' });
+                return res.status(401).json({ message: 'Invalid username or password' });
             }
 
             const user = rows[0];
             const validPassword = await bcrypt.compare(password, user.password);
 
             if (!validPassword) {
-                return res.status(401).json({ message: 'Invalid email or password' });
+                return res.status(401).json({ message: 'Invalid username or password' });
             }
 
             const token = jwt.sign(

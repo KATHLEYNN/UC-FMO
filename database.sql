@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'staff', 'student', 'external') NOT NULL,
+    role ENUM('master-admin', 'citcs-admin', 'coa-admin', 'cas-admin', 'cba-admin', 'cea-admin', 'cht-admin', 'con-admin', 'cte-admin', 'student', 'external') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -56,3 +56,6 @@ CREATE TABLE IF NOT EXISTS student_activity_requests (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- Update existing users table to include new admin roles
+ALTER TABLE users MODIFY COLUMN role ENUM('master-admin', 'citcs-admin', 'coa-admin', 'cas-admin', 'cba-admin', 'cea-admin', 'cht-admin', 'con-admin', 'cte-admin', 'student', 'external') NOT NULL;

@@ -286,8 +286,8 @@ h1 {
           return;
         }
 
-        if (data.user.role === 'admin') {
-          initializeNavbar('admin', 'campus');
+        if (isAdminRole(data.user.role)) {
+          initializeNavbar('admin', 'campus', data.user.role);
         } else if (data.user.role === 'student' || data.user.role === 'external') {
           initializeNavbar('user', 'campus', data.user.role);
         } else {
@@ -299,6 +299,7 @@ h1 {
       });
     });
   </script>
+  <script src="/js/roleUtils.js"></script>
   <script src="/utils/navbar.js"></script>
 </body>
 </html>
