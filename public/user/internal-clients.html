@@ -13,16 +13,16 @@
         margin-bottom: 1cm;
       }
       @media print {
-  .form-page {
-    display: block !important;
-  }
+        .form-page {
+          display: block !important;
+        }
 
-  .navbar,
-  .footer,
-  .navigation {         
-    display: none !important;
-  }
-}
+        .navbar,
+        .footer,
+        .navigation {
+          display: none !important;
+        }
+      }
 
       body {
         font-family: Century Gothic, sans-serif;
@@ -159,21 +159,67 @@
       }
 
       .full-form {
-        max-width: 600px;
+        max-width: 100%;
         margin: auto;
         font-family: system-ui, sans-serif;
+        background-color: #f5f8f5;
+        color: #1f1f1f;
+        padding: 2rem;
+        border-radius: 8px;
       }
+
       .full-form label {
         display: block;
         margin-bottom: 1.25rem;
+        color: #2a4d2e;
+        font-weight: 600;
+        font-size: 1rem;
       }
+
       .full-form input,
-      .full-form select {
+      .full-form select,
+      .full-form textarea {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.75rem;
         font-size: 1rem;
         margin-top: 0.25rem;
         box-sizing: border-box;
+        color: #1a1a1a;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .full-form input:focus,
+      .full-form select:focus,
+      .full-form textarea:focus {
+        border-color: #4a7d4a;
+        background-color: #f0f8f1;
+        outline: none;
+      }
+
+      .full-form button {
+        background-color: #4a7d4a;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background-color 0.2s ease;
+      }
+
+      .full-form button:hover {
+        background-color: #386938;
+      }
+
+      .full-form input[type="checkbox"],
+      .full-form input[type="radio"] {
+        vertical-align: middle;
+        transform: translateY(-1px);
+        margin-right: 0.5rem;
+        width: auto;
       }
 
       .step {
@@ -210,6 +256,27 @@
           display: block !important;
         }
       }
+
+      fieldset {
+        border: 1px solid #b6d6bf;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        background-color: #f0f7f0;
+        border-radius: 6px;
+      }
+
+      legend {
+        color: #2d5f2e;
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      fieldset label {
+        color: #000000;
+        font-weight: normal;
+        display: inline-block;
+        margin-right: 1.5rem;
+      }
     </style>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -219,6 +286,7 @@
       rel="stylesheet"
     />
   </head>
+
   <script>
     function onlyOne(checkbox, groupName) {
       const groupCheckboxes = document.querySelectorAll(
@@ -240,6 +308,49 @@
     }
   </script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const venueField = document.getElementById("u_venue");
+      const attendField = document.getElementById("u_attend");
+      const maxNote = document.getElementById("attend_max_note");
+
+      const capacityMap = {
+        "Auditorium": 250,
+        "Cañao Hall": 150,
+        "Conference Room": 20,
+        "Gymnasium": 1200,
+        "Laboratory Room": 100,
+        "Lecture Room (Main)": 60,
+        "Training Center": 40,
+
+        "AVR": 45,
+        "Crime Lab": 50,
+        "Deftac": 50,
+        "Lecture Room (Legarda)": 45,
+        "Moot Court": 45,
+      };
+
+      let currentMax = 9999;
+
+      venueField.addEventListener("change", () => {
+        const selected = venueField.value;
+        currentMax = capacityMap[selected] || 9999;
+        attendField.max = currentMax;
+        attendField.placeholder = `Max ${currentMax}`;
+        attendField.title = `Maximum allowed for ${selected}: ${currentMax}`;
+        if (maxNote) maxNote.textContent = `Max: ${currentMax}`;
+      });
+
+      attendField.addEventListener("input", () => {
+        const value = parseInt(attendField.value, 10);
+        if (value > currentMax) {
+          alert(`This venue allows only up to ${currentMax} attendees.`);
+          attendField.value = currentMax;
+        }
+      });
+    });
+  </script>
+
   <body>
     <nav class="navbar">
       <div class="logo">
@@ -257,387 +368,482 @@
     </nav>
 
     <form id="userForm" class="full-form">
-      <h2>Internal Clients Request Form</h2>
+      <div style="text-align: center; margin-bottom: 1rem;">
+  <h2>Internal Clients Request Form</h2>
+  <small
+          style="
+            display: block;
+            margin-top: 0.25rem;
+            color: #0f0f0f;
+            font-size: 0.75rem;
+            line-height: 1.2;
+          "
+        >
+          NOTE: Submit two (2) copies of this form at least two (2) weeks prior
+          to your event.
+        </small>
+</div>
 
-      <label
-        >College / Office / Department
+      <label style="display: block; font-size: 0.95rem; text-align: center">
+        Upload Request Letter (PDF only):
         <input
-          type="text"
-          name="u_org"
-          data-target="organization_name"
-          required
+          type="file"
+          name="request_letter"
+          accept="application/pdf"
+          style="margin-top: 0.25rem; text-align: center; width: 25%"
         />
+        <small
+          style="
+            display: block;
+            margin-top: 0.25rem;
+            color: #666;
+            font-size: 0.75rem;
+            line-height: 1.2;
+          "
+        >
+          Please attach a signed request letter from your department.<br />
+          Coordinate with your department to obtain it.
+        </small>
       </label>
 
-      <label
-        >Contact Number / Email
-        <input type="text" name="u_contact" data-target="contact" required />
-      </label>
-
-      <label
-        >Function / Event
-        <input type="text" name="u_event" data-target="event_name" required />
-      </label>
-
-      <label
-        >Requested Venue / Room
-        <select name="venue" data-target="venue" required>
-          <option value="">— Select —</option>
-          <option value="Auditorium" >Auditorium</option>
-          <option value="Canteen" >Canteen</option>
-          <option value="Cañao Hall" >Cañao Hall</option>
-          <option value="Laboratory Room" >Laboratory Room</option>
-          <option value="Classrooms" >Classrooms</option>
-          <option value="Function Hall" >Function Hall</option>
-          <option value="Conference Room" >Conference Room</option>
-          <option value="G311-312" >G311-312</option>
-          <option value="GS-JHS" >GS-JHS</option>
-          <option value="Gymnasium" >Gymnasium</option>
-          <option value="Hotel Room" >Hotel Room</option>
-          <option value="Legarda" >Legarda</option>
-          <option value="Lobies/Hallways" >Lobies/Hallways</option>
-          <option value="Offices" >Offices</option>
-          <option value="Student Lounge" >Student Lounge</option>
-          <option value="Theater" >Theater</option>
-          <option value="Training Center" >Training Center</option>
-          <option value="Tribu" >Tribu</option>
-        </select>
-      </label>
-
-      <label
-        >Number of Attendees
-        <input
-          type="number"
-          name="u_attend"
-          data-target="attendees"
-          min="1"
-          required
-        />
-      </label>
-
-      <label
-        >Day / Date of Event
-        <input type="date" id="u_date" name="u_date" data-target="event_date" required />
-      </label>
-
-      <label
-        >Time Start
-        <input type="time" id="u_start" name="u_start" data-target="time_start" required />
-      </label>
-
-      <label
-        >Time End
-        <input type="time" id="u_end" name="u_end" data-target="time_end" required />
-      </label>
-
-      <label
-        >Budget Source
-        <input type="text" name="u_budget" data-target="budget_source" />
-      </label>
-
-      <label
-        >Admission Fee
-        <input type="text" name="u_fee" data-target="admission_fee" />
-      </label>
-
-      <label
-        >Other Fees (please indicate)
-        <input type="text" name="u_other_fees" data-target="other_fees" />
-      </label>
-
-      <label
-        >Scope of Activity
-        <input type="text" name="u_scope" data-target="audience_type" />
-      </label>
-
-      <fieldset>
-        <legend>With Food / Canteen Service?</legend>
-
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
         <label>
+          College / Office / Department
           <input
-            type="checkbox"
-            name="u_food"
-            value="yes"
-            onclick="onlyOne(this, 'u_food')"
-            data-target="food_service"
-            data-value="yes"
+            type="text"
+            name="u_org"
+            data-target="organization_name"
+            required
+            style="width: 100%"
           />
-          Yes
         </label>
 
         <label>
+          Contact Number / Email
           <input
-            type="checkbox"
-            name="u_food"
-            value="no"
-            onclick="onlyOne(this, 'u_food')"
-            data-target="food_service"
-            data-value="no"
+            type="text"
+            name="u_contact"
+            data-target="contact"
+            required
+            style="width: 100%"
           />
-          No
         </label>
-      </fieldset>
 
-      <fieldset>
-        <legend>Audio-Visual Requirements</legend>
-        <label
-          ><input
-            type="checkbox"
-            name="mic"
-            value="Microphones"
-            data-target="mic_checkbox"
-          />
-          Microphones</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="mic_stand"
-            value="Mic_Stands"
-            data-target="mic_stands_checkbox"
-          />
-          Microphone Stands</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="projector"
-            value="Projector"
-            data-target="projector_checkbox"
-          />
-          Projector</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="pa_system"
-            value="PA_System"
-            data-target="pa_system_checkbox"
-          />
-          PA System</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="laptop"
-            value="Laptop"
-            data-target="laptop_checkbox"
-          />
-          Laptop</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="lights"
-            value="Lights"
-            data-target="lights_checkbox"
-          />
-          Lights</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="wifi_connection"
-            value="WiFi_Connection"
-            data-target="wifi_checkbox"
-          />
-          WiFi Connection</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="podium_monitor"
-            value="Podium_Monitor"
-            data-target="podium_checkbox"
-          />
-          Podium Monitor Board</label
-        >
-        <label
-          ><input
-            type="checkbox"
-            name="live_streaming"
-            value="Live_Streaming"
-            data-target="stream_checkbox"
-          />
-          Live Streaming</label
-        >
-
-        <label
-          >Other AV needs:
-          <input type="text" name="u_av_other" data-target="others_AV" />
-        </label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Medical Team Needed?</legend>
         <label>
+          Function / Event
           <input
-            type="checkbox"
-            name="u_medical"
-            value="yes"
-            onclick="onlyOne(this, 'u_medical')"
-            data-target="medical_team"
-            data-value="yes"
+            type="text"
+            name="u_event"
+            data-target="event_name"
+            required
+            style="width: 100%"
           />
-          Yes
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="u_medical"
-            value="no"
-            onclick="onlyOne(this, 'u_medical')"
-            data-target="medical_team"
-            data-value="no"
-          />
-          No
-        </label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Security Guards Needed?</legend>
-        <label>
-          <input
-            type="checkbox"
-            name="u_security"
-            value="yes"
-            onclick="onlyOne(this, 'u_security')"
-            data-target="security_guards"
-            data-value="yes"
-          />
-          Yes
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="u_security"
-            value="no"
-            onclick="onlyOne(this, 'u_security')"
-            data-target="security_guards"
-            data-value="no"
-          />
-          No
-        </label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Property / Equipment Needs (from LMO)</legend>
-
-        <!-- Air Cooler -->
-        <label>Air Cooler:</label><br />
-        <label>
-          <input
-            type="checkbox"
-            name="u_air_cooler"
-            value="yes"
-            onclick="onlyOne(this, 'u_air_cooler')"
-            data-target="air_cooler"
-            data-value="yes"
-          />
-          Yes
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="u_air_cooler"
-            value="no"
-            onclick="onlyOne(this, 'u_air_cooler')"
-            data-target="air_cooler"
-            data-value="no"
-          />
-          No
         </label>
 
-        <br /><br />
+        <label>
+          Requested Venue / Room
+          <select
+            id="u_venue"
+            name="u_venue"
+            data-target="venue"
+            required
+            style="width: 100%"
+          >
+            <option value="">— Select —</option>
 
-        <!-- Long Tables -->
+            <!-- Main Campus -->
+            <optgroup label="Main Campus">
+              <option value="Auditorium">Auditorium</option>
+              <option value="Cañao Hall">Cañao Hall</option>
+              <option value="Conference Room">Conference Room</option>
+              <option value="Gymnasium">Gymnasium</option>
+              <option value="Laboratory Room">Laboratory Room</option>
+              <option value="Lecture Room (Main)">Lecture Room (Main)</option>
+              <option value="Training Center">Training Center</option>
+            </optgroup>
+
+            <option disabled>──────────</option>
+
+            <!-- Legarda -->
+            <optgroup label="Legarda">
+              <option value="AVR">AVR</option>
+              <option value="Crime Lab">Crime Lab</option>
+              <option value="Deftac">Deftac</option>
+              <option value="Lecture Room (Legarda)">
+                Lecture Room (Legarda)
+              </option>
+              <option value="Moot Court">Moot Court</option>
+            </optgroup>
+          </select>
+        </label>
+
+        <label>
+          Number of Attendees
+          <input
+            type="number"
+            id="u_attend"
+            name="u_attend"
+            data-target="attendees"
+            min="1"
+            required
+            style="width: 100%"
+          />
+          <small id="attend_max_note" style="margin-left: 5px">Max: —</small>
+        </label>
+
+        <label
+          >Scope of Activity
+          <input type="text" name="u_scope" data-target="audience_type" />
+        </label>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
+        <label
+          >Day / Date of Event
+          <input
+            type="date"
+            id="u_date"
+            name="u_date"
+            data-target="event_date"
+            required
+          />
+        </label>
+
+        <label
+          >Time Start
+          <input
+            type="time"
+            id="u_start"
+            name="u_start"
+            data-target="time_start"
+            required
+          />
+        </label>
+
+        <label
+          >Time End
+          <input
+            type="time"
+            id="u_end"
+            name="u_end"
+            data-target="time_end"
+            required
+          />
+        </label>
+
+        <label
+          >Budget Source
+          <input type="text" name="u_budget" data-target="budget_source" />
+        </label>
+
+        <label
+          >Admission Fee
+          <input type="text" name="u_fee" data-target="admission_fee" />
+        </label>
+
+        <label
+          >Other Fees (please indicate)
+          <input type="text" name="u_other_fees" data-target="other_fees" />
+        </label>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
         <fieldset>
-          <legend>Long Tables:</legend>
+          <legend>With Food / Canteen Service?</legend>
 
           <label>
             <input
               type="checkbox"
-              name="u_long_tables"
+              name="u_food"
               value="yes"
-              onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
-              data-target="long_tables"
+              onclick="onlyOne(this, 'u_food')"
+              data-target="food_service"
               data-value="yes"
             />
-            Yes </label
-          ><br />
+            Yes
+          </label>
 
           <label>
             <input
               type="checkbox"
-              name="u_long_tables"
+              name="u_food"
               value="no"
-              onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
-              data-target="long_tables"
+              onclick="onlyOne(this, 'u_food')"
+              data-target="food_service"
               data-value="no"
             />
-            No </label
-          ><br /><br />
-
-          <label>
-            If Yes, how many?
-            <input
-              type="number"
-              name="u_long_tables_count"
-              id="u_long_tables_count"
-              data-target="long_tables_count"
-              min="0"
-              style="width: 60px"
-              disabled
-            />
+            No
           </label>
         </fieldset>
 
-        <br /><br />
+        <fieldset>
+          <legend>Medical Team Needed?</legend>
+          <label>
+            <input
+              type="checkbox"
+              name="u_medical"
+              value="yes"
+              onclick="onlyOne(this, 'u_medical')"
+              data-target="medical_team"
+              data-value="yes"
+            />
+            Yes
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="u_medical"
+              value="no"
+              onclick="onlyOne(this, 'u_medical')"
+              data-target="medical_team"
+              data-value="no"
+            />
+            No
+          </label>
+        </fieldset>
 
-        <!-- Flags -->
-        <label>Philippine Flag and UC Flag:</label><br />
-        <label>
-          <input
-            type="checkbox"
-            name="u_flags"
-            value="yes"
-            onclick="onlyOne(this, 'u_flags')"
-            data-target="flags"
-            data-value="yes"
-          />
-          Yes
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="u_flags"
-            value="no"
-            onclick="onlyOne(this, 'u_flags')"
-            data-target="flags"
-            data-value="no"
-          />
-          No
-        </label>
-      </fieldset>
+        <fieldset>
+          <legend>Security Guards Needed?</legend>
+          <label>
+            <input
+              type="checkbox"
+              name="u_security"
+              value="yes"
+              onclick="onlyOne(this, 'u_security')"
+              data-target="security_guards"
+              data-value="yes"
+            />
+            Yes
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="u_security"
+              value="no"
+              onclick="onlyOne(this, 'u_security')"
+              data-target="security_guards"
+              data-value="no"
+            />
+            No
+          </label>
+        </fieldset>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+        <fieldset>
+          <legend>Audio-Visual Requirements</legend>
+          <label
+            ><input
+              type="checkbox"
+              name="mic"
+              value="Microphones"
+              data-target="mic_checkbox"
+            />
+            Microphones</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="mic_stand"
+              value="Mic_Stands"
+              data-target="mic_stands_checkbox"
+            />
+            Microphone Stands</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="projector"
+              value="Projector"
+              data-target="projector_checkbox"
+            />
+            Projector</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="pa_system"
+              value="PA_System"
+              data-target="pa_system_checkbox"
+            />
+            PA System</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="laptop"
+              value="Laptop"
+              data-target="laptop_checkbox"
+            />
+            Laptop</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="lights"
+              value="Lights"
+              data-target="lights_checkbox"
+            />
+            Lights</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="wifi_connection"
+              value="WiFi_Connection"
+              data-target="wifi_checkbox"
+            />
+            WiFi Connection</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="podium_monitor"
+              value="Podium_Monitor"
+              data-target="podium_checkbox"
+            />
+            Podium Monitor Board</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="live_streaming"
+              value="Live_Streaming"
+              data-target="stream_checkbox"
+            />
+            Live Streaming</label
+          >
+
+          <label
+            >Other AV needs:
+            <input type="text" name="u_av_other" data-target="others_AV" />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Property / Equipment Needs (from LMO)</legend>
+
+          <!-- Air Cooler -->
+          <label>Air Cooler:</label><br />
+          <label>
+            <input
+              type="checkbox"
+              name="u_air_cooler"
+              value="yes"
+              onclick="onlyOne(this, 'u_air_cooler')"
+              data-target="air_cooler"
+              data-value="yes"
+            />
+            Yes
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="u_air_cooler"
+              value="no"
+              onclick="onlyOne(this, 'u_air_cooler')"
+              data-target="air_cooler"
+              data-value="no"
+            />
+            No
+          </label>
+
+          <br /><br />
+
+          <!-- Long Tables -->
+          <fieldset>
+            <legend>Long Tables:</legend>
+
+            <label>
+              <input
+                type="checkbox"
+                name="u_long_tables"
+                value="yes"
+                onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
+                data-target="long_tables"
+                data-value="yes"
+              />
+              Yes </label
+            ><br />
+
+            <label>
+              <input
+                type="checkbox"
+                name="u_long_tables"
+                value="no"
+                onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
+                data-target="long_tables"
+                data-value="no"
+              />
+              No </label
+            ><br /><br />
+
+            <label>
+              If Yes, how many?
+              <input
+                type="number"
+                name="u_long_tables_count"
+                id="u_long_tables_count"
+                data-target="long_tables_count"
+                min="0"
+                style="width: 150px"
+                disabled
+              />
+            </label>
+          </fieldset>
+
+          <br /><br />
+
+          <!-- Flags -->
+          <label>Philippine Flag and UC Flag:</label><br />
+          <label>
+            <input
+              type="checkbox"
+              name="u_flags"
+              value="yes"
+              onclick="onlyOne(this, 'u_flags')"
+              data-target="flags"
+              data-value="yes"
+            />
+            Yes
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="u_flags"
+              value="no"
+              onclick="onlyOne(this, 'u_flags')"
+              data-target="flags"
+              data-value="no"
+            />
+            No
+          </label>
+        </fieldset>
+      </div>
+
+      <div id="exemption-section" style="display: none; margin-top: 2rem;">
+  <h3 style="margin-bottom: 1rem;">Curfew/Exemption Form</h3>
+  <iframe
+    id="exemptionFrame"
+    src="exemption-form.html"
+    style="width: 100%; height: 600px; border: 1px solid #ccc;"
+  ></iframe>
+</div>
 
       <button type="button" id="preparePrint">Submit &amp; Print</button>
     </form>
-<footer class="footer">
-  © 2025 University of the Cordilleras. All Rights Reserved.
-</footer>
+    <footer class="footer">
+      © 2025 University of the Cordilleras. All Rights Reserved.
+    </footer>
     <form
       class="form-container"
       id="combinedForm"
       onsubmit="event.preventDefault(); window.print();"
     >
-
-    <input type="hidden" id="curfew_required" name="curfew_required" />
+      <input type="hidden" id="curfew_required" name="curfew_required" value="No" />
 
       <!-- PAGE 1 -->
       <!-- Header Section -->
       <div class="form-page active" id="page1">
         <div class="header-row">
-          <img alt="UC_LOGO" src="../images/UC_LOGO.png" />
           <img alt="University of the Cordilleras Logo" src="pending logo" />
           <div style="text-align: right">
             <strong>CAMPUS MANAGEMENT OFFICE</strong><br />
@@ -708,12 +914,7 @@
           <tr>
             <td colspan="1" style="width: 35%">
               <strong>Requested Venue/Room</strong>
-              <input
-                id="requested_room"
-                name="requested_room"
-                style="width: 98%"
-                type="text"
-              />
+              <input id="venue" name="venue" style="width: 98%" type="text" />
             </td>
             <td colspan="1" style="width: 25%">
               <strong>Number of Attendees</strong>
@@ -1217,256 +1418,164 @@
     </form>
 
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-  /* For editing */
-  const HOLIDAYS   = ["2025-01-01", "2025-04-09", "2025-12-25"]; /* sample holidates */
-  const EARLIEST   = "07:30";
-  const LATEST     = "19:30";
-  const MAX_HOURS  = 4;
-  const CURFEW_URL = "exemption-form.html";
+      document.addEventListener("DOMContentLoaded", () => {
+        /* For editing */
+        const HOLIDAYS = [
+          "2025-01-01",
+          "2025-04-09",
+          "2025-12-25",
+        ]; /* sample holidates */
+        const EARLIEST = "07:30";
+        const LATEST = "19:30";
+        const MAX_HOURS = 4;
+        const CURFEW_URL = "exemption-form.html";
 
-  const btnPrint   = document.getElementById("preparePrint");
-  if (!btnPrint) { console.error("preparePrint button not found"); return; }
-
-  /* Time string to total minutes */
-  const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-
-  /* Determine if curfew rules are triggered */
-  function curfewReasons() {
-  const date  = document.getElementById("u_date") ?.value;
-  const start = document.getElementById("u_start")?.value;
-  const end   = document.getElementById("u_end")  ?.value;
-  
-  // Track reasoning
-  const reasons = [];
-
-  // uses from YYYY-MM-DD
-  if (date) {
-    const [year, month, day] = date.split("-").map(Number);
-    const d = new Date(year, month - 1, day);
-
-    const isSunday = d.getDay() === 0;
-    if (isSunday) reasons.push("• Event is on a **Sunday**.");
-
-    if (HOLIDAYS.includes(date)) {
-      reasons.push("• Event is on a **holiday**.");
-    }
-  }
-
-  // Exit early if no time inputs
-  if (!start || !end) return reasons;
-
-  if (toMin(start) < toMin(EARLIEST)) {
-    reasons.push("• Starts **before 7:30-AM**.");
-  }
-
-  if (toMin(end) > toMin(LATEST)) {
-    reasons.push("• Ends **after 7:30-PM**.");
-  }
-
-  // Check duration
-  if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
-    reasons.push("• Duration **exceeds 4 hours**.");
-  }
-
-  return reasons;
-}
-
-  /* Copy values from user form to internal form */
-  function copyUserValues() {
-    document.querySelectorAll('#userForm [data-target]:not([type="checkbox"]):not([type="radio"])')
-      .forEach(src => {
-        const dst = document.getElementById(src.dataset.target);
-        if (dst) {
-          dst.value = src.value;
-          dst.textContent = src.value;
-        }
-      });
-
-    // checkboxes / radios
-    document.querySelectorAll(
-      '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
-    ).forEach(src => {
-      if (!src.checked) return;
-
-      const tgtName = src.dataset.target;
-      const tgtValue = src.dataset.value;
-
-      let dst = tgtValue !== undefined
-        ? document.querySelector(`#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`)
-        : document.getElementById(tgtName);
-
-      if (dst) dst.checked = true;
-    });
-  }
-
-  /* Handle submit/print with curfew check */
-  let curfewAcknowledged = false;
-
-  btnPrint.addEventListener("click", async () => {
-    const reasons = curfewReasons();
-
-    // If curfew rules are triggered and not yet acknowledged
-    if (reasons.length && !curfewAcknowledged) {
-      const msg =
-        "This booking triggers curfew rules:\n\n" +
-        reasons.join("\n") +
-        "\n\nDo you want to open the Curfew/Exemption form now?";
-      if (confirm(msg)) {
-        window.open(CURFEW_URL, "_blank");
-        curfewAcknowledged = true;
-
-        // Let internal form know curfew form was needed
-        const flag = document.getElementById("curfew_required");
-        if (flag) flag.value = "Yes";
-      }
-      return; // Cancel actual print until confirmation next time
-    }
-
-    // Submit form to API and generate PDF
-    await submitInternalClientForm();
-  });
-
-  /* Submit form to API */
-  async function submitInternalClientForm() {
-    try {
-      // Collect form data from user form
-      const formData = collectUserFormData();
-
-      // Validate required fields
-      if (!validateFormData(formData)) {
-        return;
-      }
-
-      // Show confirmation
-      if (!confirm('Are you sure you want to submit this internal client form? A PDF will be generated and saved to the database.')) {
-        return;
-      }
-
-      // Get auth token
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please log in to submit the form.');
-        window.location.href = '/login';
-        return;
-      }
-
-      // Submit to API
-      const response = await fetch('/api/sarf/internal/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        alert('Internal client form submitted successfully! PDF has been generated.');
-
-        // Optionally redirect to forms list or show download option
-        if (confirm('Would you like to download the generated PDF?')) {
-          window.open(result.data.pdfUrl, '_blank');
+        const btnPrint = document.getElementById("preparePrint");
+        if (!btnPrint) {
+          console.error("preparePrint button not found");
+          return;
         }
 
-        // Reset form or redirect
-        if (confirm('Would you like to submit another form?')) {
-          document.getElementById('userForm').reset();
-        } else {
-          window.location.href = '/user/my-forms.html';
-        }
-      } else {
-        alert('Error submitting form: ' + result.message);
-      }
+        /* Time string to total minutes */
+        const toMin = (t) => {
+          const [h, m] = t.split(":").map(Number);
+          return h * 60 + m;
+        };
 
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Error submitting form. Please try again.');
-    }
-  }
+        /* Determine if curfew rules are triggered */
+        function curfewReasons() {
+          const date = document.getElementById("u_date")?.value;
+          const start = document.getElementById("u_start")?.value;
+          const end = document.getElementById("u_end")?.value;
 
-  /* Collect form data from user form */
-  function collectUserFormData() {
-    const formData = {};
+          // Track reasoning
+          const reasons = [];
 
-    // Get all form inputs with data-target attributes
-    document.querySelectorAll('#userForm [data-target]:not([type="checkbox"]):not([type="radio"])')
-      .forEach(input => {
-        const targetField = input.dataset.target;
-        formData[targetField] = input.value;
-      });
+          // uses from YYYY-MM-DD
+          if (date) {
+            const [year, month, day] = date.split("-").map(Number);
+            const d = new Date(year, month - 1, day);
 
-    // Handle checkboxes
-    document.querySelectorAll('#userForm input[type="checkbox"][data-target]')
-      .forEach(checkbox => {
-        const targetField = checkbox.dataset.target;
-        const targetValue = checkbox.dataset.value;
+            const isSunday = d.getDay() === 0;
+            if (isSunday) reasons.push("• Event is on a **Sunday**.");
 
-        if (checkbox.checked) {
-          if (targetValue) {
-            formData[targetField] = targetValue;
-          } else {
-            // For multi-select checkboxes
-            if (!formData[targetField]) {
-              formData[targetField] = [];
-            }
-            if (Array.isArray(formData[targetField])) {
-              formData[targetField].push(checkbox.value);
-            } else {
-              formData[targetField] = [formData[targetField], checkbox.value];
+            if (HOLIDAYS.includes(date)) {
+              reasons.push("• Event is on a **holiday**.");
             }
           }
+
+          // Exit early if no time inputs
+          if (!start || !end) return reasons;
+
+          if (toMin(start) < toMin(EARLIEST)) {
+            reasons.push("• Starts **before 7:30-AM**.");
+          }
+
+          if (toMin(end) > toMin(LATEST)) {
+            reasons.push("• Ends **after 7:30-PM**.");
+          }
+
+          // Check duration
+          if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
+            reasons.push("• Duration **exceeds 4 hours**.");
+          }
+
+          return reasons;
         }
+
+        /* Copy values from userform to internal form */
+        function copyUserValues() {
+          document
+            .querySelectorAll(
+              '#userForm [data-target]:not([type="checkbox"]):not([type="radio"])'
+            )
+            .forEach((src) => {
+              const dst = document.getElementById(src.dataset.target);
+              if (dst) {
+                dst.value = src.value;
+                dst.textContent = src.value;
+              }
+            });
+
+          // checkboxes or radios
+          document
+            .querySelectorAll(
+              '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
+            )
+            .forEach((src) => {
+              if (!src.checked) return;
+
+              const tgtName = src.dataset.target;
+              const tgtValue = src.dataset.value;
+
+              let dst =
+                tgtValue !== undefined
+                  ? document.querySelector(
+                      `#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`
+                    )
+                  : document.getElementById(tgtName);
+
+              if (dst) dst.checked = true;
+            });
+        }
+
+        /* Handle submit/print with curfew check */
+        let curfewAcknowledged = false;
+
+        btnPrint.addEventListener("click", () => {
+          const reasons = curfewReasons();
+
+          // If curfew rules are triggered and not yet acknowledged
+          if (reasons.length && !curfewAcknowledged) {
+            const msg =
+              "This booking triggers curfew rules:\n\n" +
+              reasons.join("\n") +
+              "\n\nDo you want to open the Curfew/Exemption form now?";
+            if (confirm(msg)) {
+              window.open(CURFEW_URL, "_blank");
+              curfewAcknowledged = true;
+
+              // Let internal form know curfew form was needed
+              const flag = document.getElementById("curfew_required");
+              if (flag) flag.value = "Yes";
+            }
+            return; // Cancel actual print until confirmation next time
+          }
+
+          copyUserValues();
+          window.print();
+        });
+
+        /* Update header info before printing */
+        window.addEventListener("beforeprint", () => {
+          const subDate = document.getElementById("submission-date");
+          if (subDate) {
+            subDate.textContent = new Date().toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+          }
+
+          const ctrlIn = document.getElementById("control");
+          const ctrlOut = document.getElementById("control-display");
+          if (ctrlIn && ctrlOut) {
+            ctrlOut.textContent = ctrlIn.value || "___________";
+          }
+        });
       });
-
-    return formData;
-  }
-
-  /* Validate form data */
-  function validateFormData(formData) {
-    const requiredFields = [
-      { field: 'organization_name', label: 'College / Office / Department' },
-      { field: 'contact', label: 'Contact Number / Email' },
-      { field: 'event_name', label: 'Function / Event' },
-      { field: 'venue', label: 'Requested Venue / Room' },
-      { field: 'attendees', label: 'Number of Attendees' },
-      { field: 'event_date', label: 'Day / Date of Event' },
-      { field: 'time_start', label: 'Time Start' },
-      { field: 'time_end', label: 'Time End' }
-    ];
-
-    for (const required of requiredFields) {
-      if (!formData[required.field] || formData[required.field].toString().trim() === '') {
-        alert(`${required.label} is required.`);
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  /* Update header info before printing */
+    </script>
+    <script>
   window.addEventListener("beforeprint", () => {
-    const subDate = document.getElementById("submission-date");
-    if (subDate) {
-      subDate.textContent = new Date().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      });
-    }
+    const flag = document.getElementById("curfew_required");
+    const exemptionDiv = document.getElementById("exemption-section");
 
-    const ctrlIn = document.getElementById("control");
-    const ctrlOut = document.getElementById("control-display");
-    if (ctrlIn && ctrlOut) {
-      ctrlOut.textContent = ctrlIn.value || "___________";
+    if (flag && flag.value === "Yes" && exemptionDiv) {
+      exemptionDiv.style.display = "block";
+    } else if (exemptionDiv) {
+      exemptionDiv.style.display = "none";
     }
   });
-});
 </script>
-
-
   </body>
 </html>
