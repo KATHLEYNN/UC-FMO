@@ -151,21 +151,66 @@
         margin: 10px 0 15px 0;
       }
       .full-form {
-        max-width: 600px;
+        max-width: 100%;
         margin: auto;
         font-family: system-ui, sans-serif;
+        background-color: #f5f8f5;
+        color: #1f1f1f;
+        padding: 2rem;
+        border-radius: 8px;
       }
+
       .full-form label {
         display: block;
         margin-bottom: 1.25rem;
+        color: #2a4d2e;
+        font-weight: 600;
+        font-size: 1rem;
       }
+
       .full-form input,
-      .full-form select {
+      .full-form select,
+      .full-form textarea {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.75rem;
         font-size: 1rem;
         margin-top: 0.25rem;
         box-sizing: border-box;
+        color: #1a1a1a;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .full-form input:focus,
+      .full-form select:focus,
+      .full-form textarea:focus {
+        border-color: #4a7d4a;
+        background-color: #f0f8f1;
+        outline: none;
+      }
+
+      .full-form button {
+        background-color: #4a7d4a;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background-color 0.2s ease;
+      }
+
+      .full-form button:hover {
+        background-color: #386938;
+      }
+      .full-form input[type="checkbox"],
+      .full-form input[type="radio"] {
+        vertical-align: middle;
+        transform: translateY(-1px);
+        margin-right: 0.5rem;
+        width: auto;
       }
 
       .step {
@@ -239,6 +284,90 @@
     }
   </script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const attendField = document.getElementById("u_participant");
+      const maxNote = document.getElementById("attend_max_note");
+
+      const capacityMap = {
+        classroom: 45,
+        gym: 1500,
+        auditorium: 250,
+        theater: 600,
+        review_center: 100,
+        training: 40,
+        other_facilities: null,
+      };
+
+      const facilityCheckboxes = document.querySelectorAll(
+        'input[name="u_facility"]'
+      );
+
+      let currentMax = 9999;
+
+      function updateMaxCapacity() {
+        let max = 0;
+
+        facilityCheckboxes.forEach((cb) => {
+          if (cb.checked) {
+            const val = cb.value;
+            if (val === "other_facilities") {
+              const dynamicMax = parseInt(
+                document.getElementById("u_others_max").value,
+                10
+              );
+              if (!isNaN(dynamicMax)) max = Math.max(max, dynamicMax);
+            } else {
+              max = Math.max(max, capacityMap[val] || 0);
+            }
+          }
+        });
+
+        currentMax = max || 9999;
+        attendField.max = currentMax;
+        attendField.placeholder = `Max ${currentMax}`;
+        attendField.title = `Maximum allowed: ${currentMax}`;
+        if (maxNote) maxNote.textContent = `Max: ${currentMax}`;
+      }
+
+      facilityCheckboxes.forEach((cb) => {
+        cb.addEventListener("change", () => {
+          if (cb.dataset.toggleTarget) {
+            const targets = cb.dataset.toggleTarget.split(",");
+            targets.forEach((id) => {
+              const el = document.getElementById(id.trim());
+              if (el) el.disabled = !cb.checked;
+            });
+          }
+
+          updateMaxCapacity();
+        });
+      });
+
+      const othersMax = document.getElementById("u_others_max");
+      if (othersMax) {
+        othersMax.addEventListener("input", () => {
+          if (
+            document.querySelector(
+              'input[name="u_facility"][value="other_facilities"]'
+            ).checked
+          ) {
+            attendField.value = othersMax.value;
+            updateMaxCapacity();
+          }
+        });
+      }
+
+      attendField.addEventListener("input", () => {
+        const val = parseInt(attendField.value, 10);
+        if (val > currentMax) {
+          alert(`This selection allows only up to ${currentMax} attendees.`);
+          attendField.value = currentMax;
+        }
+      });
+    });
+  </script>
+
   <body>
     <nav class="navbar">
       <div class="logo">
@@ -256,766 +385,642 @@
     </nav>
 
     <form id="userForm" class="full-form">
-      <h2>External Clients Request Form</h2>
+      <div style="text-align: center; margin-bottom: 1rem;">
+  <h2>External Clients Request Form</h2>
+  <small
+          style="
+            display: block;
+            margin-top: 0.25rem;
+            color: #0f0f0f;
+            font-size: 0.75rem;
+            line-height: 1.2;
+          "
+        >
+          NOTE: Submit two (2) copies of this form at least two (2) weeks prior
+          to your event.
+        </small>
+</div>
 
-      <label>
-        Name of Agency/Organization:
-        <input
-          type="text"
-          id="u_organization_name"
-          name="u_organization_name"
-          data-target="organization_name"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Contact Person:
-        <input
-          type="text"
-          id="u_contact_person"
-          name="u_contact_person"
-          data-target="contact_person"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Contact No.:
-        <input
-          type="text"
-          id="u_contact_number"
-          name="u_contact_number"
-          data-target="contact_number"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Address of Agency/Organization:
-        <input
-          type="text"
-          id="u_agency_org"
-          name="u_agency_org"
-          data-target="agency_org"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Title/Theme of Activity:
-        <input
-          type="text"
-          id="u_title_theme"
-          name="u_title_theme"
-          data-target="title_theme"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Purpose of Activity:
-        <input
-          type="text"
-          id="u_purpose"
-          name="u_purpose"
-          data-target="purpose"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Date being reserved:
-        <input
-          type="date"
-          id="u_reserve_date"
-          name="u_reserve_date"
-          data-target="reserve_date"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Time Start:
-        <input
-          type="time"
-          id="u_time_start"
-          name="u_time_start"
-          data-target="time_start"
-          style="width: 100%"
-        />
-      </label>
-
-      <label>
-        Time End:
-        <input
-          type="time"
-          id="u_time_end"
-          name="u_time_end"
-          data-target="time_end"
-          style="width: 100%"
-        /> </label
-      ><br />
-
-      <label>
-        Number of Participants:
-        <input
-          type="text"
-          id="u_participant"
-          name="u_participant"
-          data-target="participant"
-          style="width: 100%"
-        />
-      </label>
-
-      <fieldset>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
         <label>
-          <strong>*With Food/Canteen Services?</strong>
-          <input
-            type="checkbox"
-            name="u_food_option"
-            value="with_food"
-            onclick="onlyOne(this, 'u_food_option')"
-            data-target="with_food"
-          />
-          Yes
-        </label>
-        &nbsp;&nbsp;
-        <label>
-          <input
-            type="checkbox"
-            name="u_food_option"
-            value="without_food"
-            onclick="onlyOne(this, 'u_food_option')"
-            data-target="without_food"
-          />
-          No
-        </label>
-      </fieldset>
-
-      <fieldset>
-        <legend><strong>Facilities Needed</strong></legend>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_facility"
-            value="classroom"
-            data-target="classroom_check"
-            data-toggle-target="u_classroom_number"
-            onclick="toggleDependentInput(this)"
-          />
-          Classroom (Max Capacity = 45) Room No.
+          Name of Agency/Organization:
           <input
             type="text"
-            id="u_classroom_number"
-            name="u_classroom_number"
-            data-target="classroom_number"
-            disabled
-            style="width: 10%"
+            id="u_organization_name"
+            name="u_organization_name"
+            data-target="organization_name"
+            style="width: 100%"
           />
         </label>
 
         <label>
-          <input
-            type="checkbox"
-            name="u_facility"
-            value="gym"
-            data-target="gym_check"
-          />
-          Gymnasium (Max Capacity = 1,500)
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_facility"
-            value="auditorium"
-            data-target="auditorium_check"
-          />
-          Auditorium (Max Capacity = 250)
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_facility"
-            value="theater"
-            data-target="theater_check"
-          />
-          Theater (Max Capacity = 600)
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_facility"
-            value="review_center"
-            data-target="review_center_check"
-          />
-          G311-G312 - Review Center (Max Capacity = 100)
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_facility"
-            value="training"
-            data-target="training_check"
-          />
-          Training Center (Max Capacity = 40)
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_facility"
-            value="other_facilities"
-            data-target="others_check"
-            data-toggle-target="u_others_number,u_others_max"
-            onclick="toggleDependentInput(this)"
-          />
-          Others, Specify:
+          Contact Person:
           <input
             type="text"
-            id="u_others_number"
-            name="u_others_number"
-            data-target="others_number"
-            disabled
-            style="width: 35%"
+            id="u_contact_person"
+            name="u_contact_person"
+            data-target="contact_person"
+            style="width: 100%"
           />
-          Max Capacity:
+        </label>
+
+        <label>
+          Contact No.:
           <input
             type="text"
-            id="u_others_max"
-            name="u_others_max"
-            data-target="others_max"
-            disabled
-            style="width: 10%"
+            id="u_contact_number"
+            name="u_contact_number"
+            data-target="contact_number"
+            style="width: 100%"
           />
-        </label>
-      </fieldset>
-
-      <fieldset>
-        <legend><strong>Type of Activity</strong></legend>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="play_presentation"
-            data-target="play_presentation_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Play Presentation
         </label>
 
         <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="convention"
-            data-target="convention_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Convention
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="seminar"
-            data-target="seminar_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Training / Seminar / Conference
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="graduation"
-            data-target="graduation_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Graduation / Convocation
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="fellowship"
-            data-target="fellowship_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Fellowship
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="basketball_volleyball"
-            data-target="basketball_volleyball_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Basketball / Volleyball
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="sportsfest"
-            data-target="sportsfest_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Sportsfest
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="review"
-            data-target="review_check"
-            onclick="onlyOne(this, 'u_activity_type')"
-          />
-          Review
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_activity_type"
-            value="other_activity"
-            data-target="other_activity_check"
-            data-toggle-target="u_activity_specify"
-            onclick="onlyOne(this, 'u_activity_type'); toggleDependentInput(this)"
-          />
-          Others, Specify:
+          Address of Agency/Organization:
           <input
             type="text"
-            id="u_activity_specify"
-            name="u_activity_specify"
-            data-target="activity_specify"
+            id="u_agency_org"
+            name="u_agency_org"
+            data-target="agency_org"
+            style="width: 100%"
+          />
+        </label>
+
+        <label>
+          Title/Theme of Activity:
+          <input
+            type="text"
+            id="u_title_theme"
+            name="u_title_theme"
+            data-target="title_theme"
+            style="width: 100%"
+          />
+        </label>
+
+        <label>
+          Purpose of Activity:
+          <input
+            type="text"
+            id="u_purpose"
+            name="u_purpose"
+            data-target="purpose"
+            style="width: 100%"
+          />
+        </label>
+      </div>
+      <br />
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
+        <label>
+          Date being reserved:
+          <input
+            type="date"
+            id="u_reserve_date"
+            name="u_reserve_date"
+            data-target="reserve_date"
+            style="width: 100%"
+          />
+        </label>
+
+        <label>
+          Time Start:
+          <input
+            type="time"
+            id="u_time_start"
+            name="u_time_start"
+            data-target="time_start"
+            style="width: 100%"
+          />
+        </label>
+
+        <label>
+          Time End:
+          <input
+            type="time"
+            id="u_time_end"
+            name="u_time_end"
+            data-target="time_end"
+            style="width: 100%"
+          /> </label
+        ><br />
+      </div>
+      <br />
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+        <fieldset>
+          <legend><strong>Facilities Needed</strong></legend>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_facility"
+              value="classroom"
+              data-target="classroom_check"
+              data-toggle-target="u_classroom_number"
+              onclick="onlyOne(this, 'u_facility'); toggleDependentInput(this)"
+            />
+            Classroom (Max Capacity = 45) Room No.
+            <input
+              type="text"
+              id="u_classroom_number"
+              name="u_classroom_number"
+              data-target="classroom_number"
+              disabled
+              style="width: 10%"
+            />
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_facility"
+              value="gym"
+              data-target="gym_check"
+              onclick="onlyOne(this, 'u_facility')"
+            />
+            Gymnasium (Max Capacity = 1,500)
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_facility"
+              value="auditorium"
+              data-target="auditorium_check"
+              onclick="onlyOne(this, 'u_facility')"
+            />
+            Auditorium (Max Capacity = 250)
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_facility"
+              value="theater"
+              data-target="theater_check"
+              onclick="onlyOne(this, 'u_facility')"
+            />
+            Theater (Max Capacity = 600)
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_facility"
+              value="review_center"
+              data-target="review_center_check"
+              onclick="onlyOne(this, 'u_facility')"
+            />
+            G311-G312 - Review Center (Max Capacity = 100)
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_facility"
+              value="training"
+              data-target="training_check"
+              onclick="onlyOne(this, 'u_facility')"
+            />
+            Training Center (Max Capacity = 40)
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_facility"
+              value="other_facilities"
+              data-target="others_check"
+              data-toggle-target="u_others_number,u_others_max"
+              onclick="onlyOne(this, 'u_facility'); toggleDependentInput(this)"
+            />
+            Others, Specify:
+            <input
+              type="text"
+              id="u_others_number"
+              name="u_others_number"
+              data-target="others_number"
+              disabled
+              style="width: 35%"
+            />
+            Max Capacity:
+            <input
+              type="text"
+              id="u_others_max"
+              name="u_others_max"
+              data-target="others_max"
+              disabled
+              style="width: 20%"
+            />
+          </label>
+
+          <label>
+            Number of Participants:
+            <input
+              type="text"
+              id="u_participant"
+              name="u_participant"
+              data-target="participant"
+              style="width: 100%"
+            />
+            <small
+              id="participant_max_note"
+              style="color: #666; display: block; margin-top: 0.25rem"
+            >
+              Max: —
+            </small>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend><strong>Type of Activity</strong></legend>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="play_presentation"
+              data-target="play_presentation_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Play Presentation
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="convention"
+              data-target="convention_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Convention
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="seminar"
+              data-target="seminar_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Training / Seminar / Conference
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="graduation"
+              data-target="graduation_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Graduation / Convocation
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="fellowship"
+              data-target="fellowship_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Fellowship
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="basketball_volleyball"
+              data-target="basketball_volleyball_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Basketball / Volleyball
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="sportsfest"
+              data-target="sportsfest_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Sportsfest
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="review"
+              data-target="review_check"
+              onclick="onlyOne(this, 'u_activity_type')"
+            />
+            Review
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_activity_type"
+              value="other_activity"
+              data-target="other_activity_check"
+              data-toggle-target="u_activity_specify"
+              onclick="onlyOne(this, 'u_activity_type'); toggleDependentInput(this)"
+            />
+            Others, Specify:
+            <input
+              type="text"
+              id="u_activity_specify"
+              name="u_activity_specify"
+              data-target="activity_specify"
+              disabled
+              style="width: 75%"
+            />
+          </label>
+        </fieldset>
+      </div>
+      <br />
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+        <fieldset>
+          <legend><strong>Equipment Needed</strong></legend>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_whiteboard_check"
+              value="yes"
+              data-target="whiteboard_check"
+            />
+            Whiteboard
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_chairs_check"
+              value="yes"
+              data-toggle-target="u_chairs"
+              data-target="chairs"
+              onclick="toggleDependentInput(this)"
+            />
+            Chairs:
+            <input
+              type="text"
+              id="u_chairs"
+              name="u_chairs"
+              data-target="chairs"
+              disabled
+              style="width: 20%"
+            />
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_ls_tables_check"
+              value="yes"
+              data-toggle-target="u_ls_tables"
+              data-target="ls_tables"
+              onclick="toggleDependentInput(this)"
+            />
+            Long/Short Table:
+            <input
+              type="text"
+              id="u_ls_tables"
+              name="u_ls_tables"
+              data-target="ls_tables"
+              disabled
+              style="width: 20%"
+            />
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_rostrum_check"
+              value="yes"
+              data-target="rostrum_check"
+            />
+            Rostrum
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_round_tables_check"
+              value="yes"
+              data-toggle-target="u_round_tables"
+              data-target="round_tables"
+              onclick="toggleDependentInput(this)"
+            />
+            Round Table:
+            <input
+              type="text"
+              id="u_round_tables"
+              name="u_round_tables"
+              data-target="round_tables"
+              disabled
+              style="width: 20%"
+            />
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_others_equipment_check"
+              value="yes"
+              data-toggle-target="u_others_equipment"
+              data-target="others_equipment"
+              onclick="toggleDependentInput(this)"
+            />
+            Others, Specify:
+          </label>
+          <input
+            type="text"
+            id="u_others_equipment"
+            name="u_others_equipment"
+            data-target="others_equipment"
             disabled
             style="width: 75%"
           />
-        </label>
-      </fieldset>
+          <br />
+          <fieldset>
+            <label>
+              <strong>*With Food/Canteen Services?</strong>
+              <input
+                type="checkbox"
+                name="u_food_option"
+                value="with_food"
+                onclick="onlyOne(this, 'u_food_option')"
+                data-target="with_food"
+              />
+              Yes
+            </label>
+            &nbsp;&nbsp;
+            <label>
+              <input
+                type="checkbox"
+                name="u_food_option"
+                value="without_food"
+                onclick="onlyOne(this, 'u_food_option')"
+                data-target="without_food"
+              />
+              No
+            </label>
+          </fieldset>
+        </fieldset>
 
-      <fieldset>
-        <legend><strong>Equipment Needed</strong></legend>
+        <fieldset>
+          <legend><strong>Audio-Visual Requirements</strong></legend>
 
-        <label>
-          <input
-            type="checkbox"
-            name="u_whiteboard_check"
-            value="yes"
-            data-target="whiteboard_check"
-          />
-          Whiteboard
-        </label>
+          <label>
+            <input
+              type="checkbox"
+              name="u_mic_check"
+              value="yes"
+              data-toggle-target="u_mic"
+              data-target="mic"
+              onclick="toggleDependentInput(this)"
+            />
+            Microphones:
+            <input
+              type="text"
+              id="u_mic"
+              name="u_mic"
+              data-target="mic"
+              disabled
+              style="width: 20%"
+            />
+            pcs
+          </label>
 
-        <label>
-          <input
-            type="checkbox"
-            name="u_chairs_check"
-            value="yes"
-            data-toggle-target="u_chairs"
-            data-target="chairs"
-            onclick="toggleDependentInput(this)"
-          />
-          Chairs:
+          <label>
+            <input
+              type="checkbox"
+              name="u_mic_stands_check"
+              value="yes"
+              data-toggle-target="u_mic_stands"
+              data-target="mic_stands"
+              onclick="toggleDependentInput(this)"
+            />
+            Microphone Stands:
+            <input
+              type="text"
+              id="u_mic_stands"
+              name="u_mic_stands"
+              data-target="mic_stands"
+              disabled
+              style="width: 20%"
+            />
+            pcs
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_projector_check"
+              value="yes"
+              data-target="projector_check"
+            />
+            Projector
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_pa_system_check"
+              value="yes"
+              data-target="pa_system_check"
+            />
+            PA System
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_wifi_check"
+              value="yes"
+              data-target="wifi_check"
+            />
+            WiFi Connection
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_monitor_board_check"
+              value="yes"
+              data-target="monitor_board_check"
+            />
+            Podium Monitor Board
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_livestream_check"
+              value="yes"
+              data-target="livestream_check"
+            />
+            Live Streaming
+          </label>
+
+          <strong>Lights</strong>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_house_lights_check"
+              value="yes"
+              data-target="house_lights_check"
+            />
+            House Lights / Par Lights
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_follow_spot_check"
+              value="yes"
+              data-target="follow_spot_check"
+            />
+            Follow Spotlights
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_stage_lights_check"
+              value="yes"
+              data-target="stage_lights_check"
+            />
+            Stage Lights
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="u_others_av_check"
+              value="yes"
+              data-toggle-target="u_others_AV"
+              data-target="others_AV"
+              onclick="toggleDependentInput(this)"
+            />
+            Other AV needs:
+          </label>
           <input
             type="text"
-            id="u_chairs"
-            name="u_chairs"
-            data-target="chairs"
-            disabled
-            style="width: 20%"
-          />
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_ls_tables_check"
-            value="yes"
-            data-toggle-target="u_ls_tables"
-            data-target="ls_tables"
-            onclick="toggleDependentInput(this)"
-          />
-          Long/Short Table:
-          <input
-            type="text"
-            id="u_ls_tables"
-            name="u_ls_tables"
-            data-target="ls_tables"
-            disabled
-            style="width: 20%"
-          />
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_rostrum_check"
-            value="yes"
-            data-target="rostrum_check"
-          />
-          Rostrum
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_round_tables_check"
-            value="yes"
-            data-toggle-target="u_round_tables"
-            data-target="round_tables"
-            onclick="toggleDependentInput(this)"
-          />
-          Round Table:
-          <input
-            type="text"
-            id="u_round_tables"
-            name="u_round_tables"
-            data-target="round_tables"
-            disabled
-            style="width: 20%"
-          />
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_others_equipment_check"
-            value="yes"
-            data-toggle-target="u_others_equipment"
-            data-target="others_equipment"
-            onclick="toggleDependentInput(this)"
-          />
-          Others, Specify:
-        </label>
-        <input
-          type="text"
-          id="u_others_equipment"
-          name="u_others_equipment"
-          data-target="others_equipment"
-          disabled
-          style="width: 75%"
-        />
-      </fieldset>
-
-      <fieldset>
-        <legend><strong>Audio-Visual Requirements</strong></legend>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_mic_check"
-            value="yes"
-            data-toggle-target="u_mic"
-            data-target="mic"
-            onclick="toggleDependentInput(this)"
-          />
-          Microphones:
-          <input
-            type="text"
-            id="u_mic"
-            name="u_mic"
-            data-target="mic"
-            disabled
-            style="width: 20%"
-          />
-          pcs
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_mic_stands_check"
-            value="yes"
-            data-toggle-target="u_mic_stands"
-            data-target="mic_stands"
-            onclick="toggleDependentInput(this)"
-          />
-          Microphone Stands:
-          <input
-            type="text"
-            id="u_mic_stands"
-            name="u_mic_stands"
-            data-target="mic_stands"
-            disabled
-            style="width: 20%"
-          />
-          pcs
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_projector_check"
-            value="yes"
-            data-target="projector_check"
-          />
-          Projector
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_pa_system_check"
-            value="yes"
-            data-target="pa_system_check"
-          />
-          PA System
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_wifi_check"
-            value="yes"
-            data-target="wifi_check"
-          />
-          WiFi Connection
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_monitor_board_check"
-            value="yes"
-            data-target="monitor_board_check"
-          />
-          Podium Monitor Board
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_livestream_check"
-            value="yes"
-            data-target="livestream_check"
-          />
-          Live Streaming
-        </label>
-
-        <strong>Lights</strong>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_house_lights_check"
-            value="yes"
-            data-target="house_lights_check"
-          />
-          House Lights / Par Lights
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_follow_spot_check"
-            value="yes"
-            data-target="follow_spot_check"
-          />
-          Follow Spotlights
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_stage_lights_check"
-            value="yes"
-            data-target="stage_lights_check"
-          />
-          Stage Lights
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            name="u_others_av_check"
-            value="yes"
-            data-toggle-target="u_others_AV"
+            id="u_others_AV"
+            name="u_others_AV"
             data-target="others_AV"
-            onclick="toggleDependentInput(this)"
-          />
-          Other AV needs:
-        </label>
-        <input
-          type="text"
-          id="u_others_AV"
-          name="u_others_AV"
-          data-target="others_AV"
-          disabled
-          style="width: 50%"
-        />
-      </fieldset>
-
-      <fieldset>
-        <legend><strong>Billing Particulars</strong></legend>
-
-        <label>
-          Use of
-          <input
-            type="text"
-            id="u_billing_use"
-            name="u_billing_use"
-            data-target="billing_use"
+            disabled
             style="width: 50%"
           />
-        </label>
-
-        <label>
-          Other Fees:
-          <input
-            type="text"
-            id="u_billing_other1"
-            name="u_billing_other1"
-            data-target="billing_other1"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          <input
-            type="text"
-            id="u_billing_other2"
-            name="u_billing_other2"
-            data-target="billing_other2"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Full Payment:
-          <input
-            type="text"
-            id="u_php_full"
-            name="u_php_full"
-            data-target="php_full"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Less Deposit/Payment:
-          <input
-            type="text"
-            id="u_php_less"
-            name="u_php_less"
-            data-target="php_less"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Balance:
-          <input
-            type="text"
-            id="u_php_bal"
-            name="u_php_bal"
-            data-target="php_bal"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Additional:
-          <input
-            type="text"
-            id="u_php_additional"
-            name="u_php_additional"
-            data-target="php_additional"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Use of - PhP:
-          <input
-            type="text"
-            id="u_php_use"
-            name="u_php_use"
-            data-target="php_use"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Other Fees 1 - PhP:
-          <input
-            type="text"
-            id="u_php_fees1"
-            name="u_php_fees1"
-            data-target="php_fees1"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Other Fees 2 - PhP:
-          <input
-            type="text"
-            id="u_php_fees2"
-            name="u_php_fees2"
-            data-target="php_fees2"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Full Payment O.R. #:
-          <input
-            type="text"
-            id="u_OR_full"
-            name="u_OR_full"
-            data-target="OR_full"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Less Deposit/Payment O.R. #:
-          <input
-            type="text"
-            id="u_OR_less"
-            name="u_OR_less"
-            data-target="OR_less"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Balance O.R. #:
-          <input
-            type="text"
-            id="u_OR_bal"
-            name="u_OR_bal"
-            data-target="OR_bal"
-            style="width: 50%"
-          />
-        </label>
-
-        <label>
-          Additional O.R. #:
-          <input
-            type="text"
-            id="u_OR_additional"
-            name="u_OR_additional"
-            data-target="OR_additional"
-            style="width: 50%"
-          />
-        </label>
-      </fieldset>
+        </fieldset>
+      </div>
 
       <!--tbd-->
 
@@ -1027,8 +1032,7 @@
       id="combinedForm"
       onsubmit="event.preventDefault(); window.print();"
     >
-
-    <input type="hidden" id="curfew_required" name="curfew_required" />
+      <input type="hidden" id="curfew_required" name="curfew_required" />
 
       <!-- PAGE 1 -->
       <!-- Header Section -->
@@ -2051,7 +2055,6 @@
             </td>
           </tr>
         </table>
-
       </div>
     </form>
 
@@ -2075,263 +2078,156 @@
     </script>
 
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-  /* For editing */
-  const HOLIDAYS   = ["2025-01-01", "2025-04-09", "2025-12-25"]; /* sample holidates */
-  const EARLIEST   = "07:30";
-  const LATEST     = "19:30";
-  const MAX_HOURS  = 4;
-  const CURFEW_URL = "exemption-form.html";
+      document.addEventListener("DOMContentLoaded", () => {
+        /* For editing */
+        const HOLIDAYS = [
+          "2025-01-01",
+          "2025-04-09",
+          "2025-12-25",
+        ]; /* sample holidates */
+        const EARLIEST = "07:30";
+        const LATEST = "19:30";
+        const MAX_HOURS = 4;
+        const CURFEW_URL = "exemption-form.html";
 
-  const btnPrint   = document.getElementById("preparePrint");
-  if (!btnPrint) { console.error("preparePrint button not found"); return; }
-
-  /* Time string to total minutes */
-  const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-
-  /* Determine if curfew rules are triggered */
-  function curfewReasons() {
-  const date  = document.getElementById("u_reserve_date") ?.value;
-  const start = document.getElementById("u_time_start")?.value;
-  const end   = document.getElementById("u_time_end")  ?.value;
-  
-  // Track reasoning
-  const reasons = [];
-
-  // uses from YYYY-MM-DD
-  if (date) {
-    const [year, month, day] = date.split("-").map(Number);
-    const d = new Date(year, month - 1, day);
-
-    const isSunday = d.getDay() === 0;
-    if (isSunday) reasons.push("• Event is on a **Sunday**.");
-
-    if (HOLIDAYS.includes(date)) {
-      reasons.push("• Event is on a **holiday**.");
-    }
-  }
-
-  // Exit early if no time inputs
-  if (!start || !end) return reasons;
-
-  if (toMin(start) < toMin(EARLIEST)) {
-    reasons.push("• Starts **before 7:30-AM**.");
-  }
-
-  if (toMin(end) > toMin(LATEST)) {
-    reasons.push("• Ends **after 7:30-PM**.");
-  }
-
-  // Check duration
-  if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
-    reasons.push("• Duration **exceeds 4 hours**.");
-  }
-
-  return reasons;
-}
-
-  /* Copy values from user form to internal form */
-  function copyUserValues() {
-    document.querySelectorAll('#userForm [data-target]:not([type="checkbox"]):not([type="radio"])')
-      .forEach(src => {
-        const dst = document.getElementById(src.dataset.target);
-        if (dst) {
-          dst.value = src.value;
-          dst.textContent = src.value;
+        const btnPrint = document.getElementById("preparePrint");
+        if (!btnPrint) {
+          console.error("preparePrint button not found");
+          return;
         }
+
+        /* Time string to total minutes */
+        const toMin = (t) => {
+          const [h, m] = t.split(":").map(Number);
+          return h * 60 + m;
+        };
+
+        /* Determine if curfew rules are triggered */
+        function curfewReasons() {
+          const date = document.getElementById("u_reserve_date")?.value;
+          const start = document.getElementById("u_time_start")?.value;
+          const end = document.getElementById("u_time_end")?.value;
+
+          // Track reasoning
+          const reasons = [];
+
+          // uses from YYYY-MM-DD
+          if (date) {
+            const [year, month, day] = date.split("-").map(Number);
+            const d = new Date(year, month - 1, day);
+
+            const isSunday = d.getDay() === 0;
+            if (isSunday) reasons.push("• Event is on a **Sunday**.");
+
+            if (HOLIDAYS.includes(date)) {
+              reasons.push("• Event is on a **holiday**.");
+            }
+          }
+
+          // Exit early if no time inputs
+          if (!start || !end) return reasons;
+
+          if (toMin(start) < toMin(EARLIEST)) {
+            reasons.push("• Starts **before 7:30-AM**.");
+          }
+
+          if (toMin(end) > toMin(LATEST)) {
+            reasons.push("• Ends **after 7:30-PM**.");
+          }
+
+          // Check duration
+          if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
+            reasons.push("• Duration **exceeds 4 hours**.");
+          }
+
+          return reasons;
+        }
+
+        /* Copy values from user form to internal form */
+        function copyUserValues() {
+          document
+            .querySelectorAll(
+              '#userForm [data-target]:not([type="checkbox"]):not([type="radio"])'
+            )
+            .forEach((src) => {
+              const dst = document.getElementById(src.dataset.target);
+              if (dst) {
+                dst.value = src.value;
+                dst.textContent = src.value;
+              }
+            });
+
+          // checkboxes / radios
+          document
+            .querySelectorAll(
+              '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
+            )
+            .forEach((src) => {
+              if (!src.checked) return;
+
+              const tgtName = src.dataset.target;
+              const tgtValue = src.dataset.value;
+
+              let dst =
+                tgtValue !== undefined
+                  ? document.querySelector(
+                      `#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`
+                    )
+                  : document.getElementById(tgtName);
+
+              if (dst) dst.checked = true;
+            });
+        }
+
+        /* Handle submit/print with curfew check */
+        let curfewAcknowledged = false;
+
+        btnPrint.addEventListener("click", () => {
+          const reasons = curfewReasons();
+
+          // If curfew rules are triggered and not yet acknowledged
+          if (reasons.length && !curfewAcknowledged) {
+            const msg =
+              "This booking triggers curfew rules:\n\n" +
+              reasons.join("\n") +
+              "\n\nDo you want to open the Curfew/Exemption form now?";
+            if (confirm(msg)) {
+              window.open(CURFEW_URL, "_blank");
+              curfewAcknowledged = true;
+
+              // Let internal form know curfew form was needed
+              const flag = document.getElementById("curfew_required");
+              if (flag) flag.value = "Yes";
+            }
+            return; // Cancel actual print until confirmation next time
+          }
+
+          copyUserValues();
+          window.print();
+        });
+
+        /* Update header info before printing */
+        window.addEventListener("beforeprint", () => {
+          const subDate = document.getElementById("submission-date");
+          if (subDate) {
+            subDate.textContent = new Date().toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+          }
+
+          const ctrlIn = document.getElementById("control");
+          const ctrlOut = document.getElementById("control-display");
+          if (ctrlIn && ctrlOut) {
+            ctrlOut.textContent = ctrlIn.value || "___________";
+          }
+        });
       });
-
-    // checkboxes / radios
-    document.querySelectorAll(
-      '#userForm input[type="checkbox"][data-target], #userForm input[type="radio"][data-target]'
-    ).forEach(src => {
-      if (!src.checked) return;
-
-      const tgtName = src.dataset.target;
-      const tgtValue = src.dataset.value;
-
-      let dst = tgtValue !== undefined
-        ? document.querySelector(`#combinedForm input[name="${tgtName}"][value="${tgtValue}"]`)
-        : document.getElementById(tgtName);
-
-      if (dst) dst.checked = true;
-    });
-  }
-
-  /* Handle submit/print with curfew check */
-  let curfewAcknowledged = false;
-
-  btnPrint.addEventListener("click", () => {
-    const reasons = curfewReasons();
-
-    // If curfew rules are triggered and not yet acknowledged
-    if (reasons.length && !curfewAcknowledged) {
-      const msg =
-        "This booking triggers curfew rules:\n\n" +
-        reasons.join("\n") +
-        "\n\nDo you want to open the Curfew/Exemption form now?";
-      if (confirm(msg)) {
-        window.open(CURFEW_URL, "_blank");
-        curfewAcknowledged = true;
-
-        // Let internal form know curfew form was needed
-        const flag = document.getElementById("curfew_required");
-        if (flag) flag.value = "Yes";
-      }
-      return; // Cancel actual print until confirmation next time
-    }
-
-    copyUserValues();
-    window.print();
-  });
-
-  /* Update header info before printing */
-  window.addEventListener("beforeprint", () => {
-    const subDate = document.getElementById("submission-date");
-    if (subDate) {
-      subDate.textContent = new Date().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      });
-    }
-
-    const ctrlIn = document.getElementById("control");
-    const ctrlOut = document.getElementById("control-display");
-    if (ctrlIn && ctrlOut) {
-      ctrlOut.textContent = ctrlIn.value || "___________";
-    }
-  });
-});
-</script>
+    </script>
 
     <footer class="footer">
       © 2025 University of the Cordilleras. All Rights Reserved.
     </footer>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          window.location.href = '/login';
-          return;
-        }
-
-        fetch('/api/auth/verify', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.user) {
-            window.location.href = '/login';
-            return;
-          }
-
-          if (isAdminRole(data.user.role)) {
-            initializeNavbar('user', 'reservation', 'external'); // Show as external for admin
-          } else if (data.user.role === 'student' || data.user.role === 'external') {
-            initializeNavbar('user', 'reservation', data.user.role);
-          } else {
-            window.location.href = '/login';
-          }
-        })
-        .catch(error => {
-          window.location.href = '/login';
-        });
-      });
-    </script>
-    <script src="/js/roleUtils.js"></script>
-    <script src="/utils/navbar.js"></script>
-    <script src="/utils/modals.js"></script>
-    <script src="/js/utils/form-submission-handler.js"></script>
-    <script>
-        // Global form handler
-        let formHandler;
-
-        // Initialize form submission handler
-        function initializeFormHandler() {
-            formHandler = new FormSubmissionHandler('external', {
-                formId: 'combinedForm',
-                confirmationTitle: 'Submit External Client Form',
-                confirmationMessage: 'Are you sure you want to submit this external client form? Once submitted, a PDF will be generated and saved to the database.',
-                successTitle: 'External Client Form Submitted Successfully!',
-                successMessage: 'Your external client form has been submitted successfully. A PDF has been generated and saved.'
-            });
-
-            formHandler.init();
-        }
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
-
-            // Verify user role and initialize navbar
-            fetch('/api/auth/verify', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.user) {
-                    window.location.href = '/login';
-                    return;
-                }
-
-                // Allow admin, student, and external users
-                if (isAdminRole(data.user.role) || data.user.role === 'student' || data.user.role === 'external') {
-                    initializeNavbar('user', 'external-clients', data.user.role);
-                    initializeFormHandler();
-                } else {
-                    window.location.href = '/login';
-                }
-            })
-            .catch(error => {
-                window.location.href = '/login';
-            });
-        });
-
-        // Utility functions for PDF operations
-        function previewPDF(pdfUrl) {
-            window.open(pdfUrl, '_blank');
-        }
-
-        async function downloadFormPDF(formId, formType) {
-            try {
-                const token = localStorage.getItem('token');
-                let downloadUrl = `/api/sarf/external/download/${formId}`;
-
-                const response = await fetch(downloadUrl, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `External-Client-Form-${formId}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                } else {
-                    const error = await response.json();
-                    alert('Error downloading PDF: ' + error.message);
-                }
-            } catch (error) {
-                console.error('Error downloading PDF:', error);
-                alert('Failed to download PDF. Please try again.');
-            }
-        }
-    </script>
   </body>
 </html>
