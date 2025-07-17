@@ -4,6 +4,22 @@ const BasePDFFormat = require('./basePDFFormat');
  * Internal Client PDF Format class for generating Internal Client form PDFs
  */
 class InternalClientPDFFormat extends BasePDFFormat {
+
+  /**
+   * Format time from 24-hour to 12-hour format with AM/PM
+   * @param {string} time24 - Time in 24-hour format (HH:MM)
+   * @returns {string} - Time in 12-hour format with AM/PM
+   */
+  formatTime(time24) {
+    if (!time24) return '';
+
+    const [hours, minutes] = time24.split(':');
+    const hour24 = parseInt(hours, 10);
+    const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+    const ampm = hour24 >= 12 ? 'PM' : 'AM';
+
+    return `${hour12}:${minutes} ${ampm}`;
+  }
   constructor() {
     super();
   }
@@ -23,47 +39,47 @@ class InternalClientPDFFormat extends BasePDFFormat {
       }
       body {
         font-family: Century Gothic, sans-serif;
-        font-size: 11px;
+        font-size: 9px;
         margin: 0;
         padding: 0;
-        line-height: 1.2;
+        line-height: 1.1;
         color: black;
       }
       .form-container {
         width: 100%;
-        padding: 10px;
+        padding: 5px;
         box-sizing: border-box;
       }
       .header-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
       }
       .header-row img {
-        height: 40px;
+        height: 30px;
       }
       .title-section {
         text-align: center;
         font-weight: bold;
-        font-size: 14px;
-        margin-bottom: 15px;
+        font-size: 12px;
+        margin-bottom: 8px;
       }
       .note-section {
         font-weight: bold;
-        margin-bottom: 15px;
-        font-size: 11px;
+        margin-bottom: 8px;
+        font-size: 9px;
       }
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
       }
       td, th {
         border: 1px solid black;
-        padding: 5px;
+        padding: 3px;
         vertical-align: top;
-        font-size: 11px;
+        font-size: 9px;
       }
       .no-border {
         border: none !important;
@@ -76,32 +92,32 @@ class InternalClientPDFFormat extends BasePDFFormat {
       .outer-border td,
       .outer-border th {
         border: none;
-        padding: 8px;
+        padding: 4px;
       }
       .section-title {
         font-weight: bold;
         background-color: #747272;
       }
       .small {
-        font-size: 10px;
+        font-size: 8px;
       }
       .footer-info {
         display: flex;
         justify-content: space-between;
         width: 100%;
-        font-size: 11px;
-        margin-top: 40px;
+        font-size: 9px;
+        margin-top: 15px;
       }
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 10px;
+        margin-bottom: 3px;
       }
       td, th {
         border: 1px solid black;
-        padding: 4px;
+        padding: 2px;
         vertical-align: top;
-        font-size: 9px;
+        font-size: 8px;
         line-height: 1.2;
       }
       .no-border {
@@ -123,8 +139,8 @@ class InternalClientPDFFormat extends BasePDFFormat {
       }
       .signature-line {
         border-bottom: 1px solid black;
-        height: 20px;
-        margin-bottom: 3px;
+        height: 12px;
+        margin-bottom: 2px;
       }
       .section-title {
         font-weight: bold;
@@ -195,12 +211,10 @@ class InternalClientPDFFormat extends BasePDFFormat {
       <strong>NOTE: Submit two (2) copies of this form at least two (2) weeks prior to your event.</strong>
 
       ${this.createMainInfoTable(formData)}
-      ${this.createFacilitiesServicesSection(formData)}
       ${this.createAudioVisualSection(formData)}
       ${this.createMedicalSecuritySection(formData)}
       ${this.createPropertyEquipmentSection(formData)}
       ${this.createAgreementSection(formData)}
-      ${this.createOfficeUseSection(formData)}
 
       <!-- Footer -->
       <div class="footer-info">
@@ -227,67 +241,63 @@ class InternalClientPDFFormat extends BasePDFFormat {
         <tr>
           <td colspan="2" style="width: 50%;">
             <strong>College/ Office/ Department/ Organization:</strong><br/>
-            ${this.getValue(formData, 'organization_name')}
+            ${this.getValue(formData, 'u_org')}
           </td>
           <td colspan="1" style="width: 25%;">
             <strong>Contact Number/ *Email:</strong><br/>
-            ${this.getValue(formData, 'contact')}
+            ${this.getValue(formData, 'u_contact')}
           </td>
           <td colspan="1" style="width: 25%;">
             <strong>Budget Source:</strong><br/>
-            ${this.getValue(formData, 'budget_source')}
+            ${this.getValue(formData, 'u_budget')}
           </td>
         </tr>
         <tr>
           <td colspan="2">
             <strong>Function/Event:</strong><br/>
-            ${this.getValue(formData, 'event_name')}
+            ${this.getValue(formData, 'u_event')}
           </td>
           <td colspan="2">
             <strong>Date/Day of Event:</strong><br/>
-            ${this.getValue(formData, 'event_date')}
+            ${this.getValue(formData, 'u_date')}
           </td>
         </tr>
         <tr>
           <td colspan="1" style="width: 35%;">
             <strong>Requested Venue/Room:</strong><br/>
-            ${this.getValue(formData, 'venue')}
+            ${this.getValue(formData, 'u_venue')}
           </td>
           <td colspan="1" style="width: 25%;">
             <strong>Number of Attendees:</strong><br/>
-            ${this.getValue(formData, 'attendees')}
+            ${this.getValue(formData, 'u_attend')}
           </td>
           <td colspan="1" style="width: 20%;">
             <strong>Time Start:</strong><br/>
-            ${this.getValue(formData, 'time_start')}
+            ${this.formatTime(this.getValue(formData, 'u_start'))}
           </td>
           <td colspan="1" style="width: 20%;">
             <strong>Time End:</strong><br/>
-            ${this.getValue(formData, 'time_end')}
+            ${this.formatTime(this.getValue(formData, 'u_end'))}
           </td>
         </tr>
         <tr>
           <td colspan="1" style="width: 35%;">
             <strong>Admission Fee:</strong><br/>
-            <div style="text-align: center;">
-              ${this.getCheckboxState(formData, 'admission_fee', 'free')} Free<br/>
-              ${this.getCheckboxState(formData, 'admission_fee', 'php')} PHP ${this.getValue(formData, 'admission_amount')}<br/>
-            </div>
+            ${this.getValue(formData, 'u_admission')}
             <div style="margin-top: 3px; font-style: italic; font-size: 9px;">
-              ***for other fees, please indicate: ${this.getValue(formData, 'other_fees')}
+              ***for other fees, please indicate: ${this.getValue(formData, 'u_other_fees')}
             </div>
           </td>
           <td colspan="1" style="width: 25%;">
             <strong>Scope of Activity:</strong><br/>
-            ${this.getCheckboxState(formData, 'audience_type', 'general')} General Public<br/>
-            ${this.getCheckboxState(formData, 'audience_type', 'exclusive')} Exclusive
+            ${this.getValue(formData, 'u_scope')}
           </td>
           <td colspan="2" style="width: 40%;">
             <div style="display: flex; justify-content: space-between;">
               <div style="width: 50%;">
                 <strong>*With Food/Canteen Services?</strong><br/>
-                ${this.getCheckboxState(formData, 'food_service', 'yes')} Yes<br/>
-                ${this.getCheckboxState(formData, 'food_service', 'no')} No
+                ${formData.u_food === 'yes' ? '☑' : '☐'} Yes<br/>
+                ${formData.u_food === 'no' ? '☑' : '☐'} No
               </div>
               <div style="width: 50%; text-align: center;">
                 <strong>Canteen:</strong><br/>
@@ -332,21 +342,21 @@ class InternalClientPDFFormat extends BasePDFFormat {
         </tr>
         <tr>
           <td colspan="1">
-            ${this.getCheckboxState(formData, 'mic_checkbox', 'Microphones')} Microphones: ${this.getValue(formData, 'mic')} pcs<br/>
-            ${this.getCheckboxState(formData, 'mic_stands_checkbox', 'Mic_Stands')} Microphone Stands: ${this.getValue(formData, 'mic_stands')} pcs<br/>
-            ${this.getCheckboxState(formData, 'projector_checkbox', 'Projector')} Projector<br/>
-            ${this.getCheckboxState(formData, 'pa_system_checkbox', 'PA_System')} PA System
+            ${formData.mic ? '☑' : '☐'} Microphones<br/>
+            ${formData.mic_stand ? '☑' : '☐'} Microphone Stands<br/>
+            ${formData.projector ? '☑' : '☐'} Projector<br/>
+            ${formData.pa_system ? '☑' : '☐'} PA System
           </td>
           <td colspan="1">
-            ${this.getCheckboxState(formData, 'laptop_checkbox', 'Laptop')} Laptop<br/>
-            ${this.getCheckboxState(formData, 'lights_checkbox', 'Lights')} Lights<br/>
+            ${formData.laptop ? '☑' : '☐'} Laptop<br/>
+            ${formData.lights ? '☑' : '☐'} Lights<br/>
             Other AV needs:<br/>
-            ${this.getValue(formData, 'others_AV')}
+            ${this.getValue(formData, 'u_av_other')}
           </td>
           <td colspan="1">
-            ${this.getCheckboxState(formData, 'wifi_checkbox', 'WiFi_Connection')} WiFi Connection<br/>
-            ${this.getCheckboxState(formData, 'podium_checkbox', 'Podium_Monitor')} Podium Monitor Board<br/>
-            ${this.getCheckboxState(formData, 'stream_checkbox', 'Live_Streaming')} Live Streaming
+            ${formData.wifi_connection ? '☑' : '☐'} WiFi Connection<br/>
+            ${formData.podium_monitor ? '☑' : '☐'} Podium Monitor Board<br/>
+            ${formData.live_streaming ? '☑' : '☐'} Live Streaming
           </td>
         </tr>
         <tr>
@@ -384,13 +394,13 @@ class InternalClientPDFFormat extends BasePDFFormat {
         <tr>
           <td style="text-align: center; width: 50%;">
             <strong>Medical Team Needed?</strong><br/>
-            ${this.getCheckboxState(formData, 'medical_team', 'yes')} Yes &nbsp;&nbsp;&nbsp;&nbsp;
-            ${this.getCheckboxState(formData, 'medical_team', 'no')} No
+            ${formData.u_medical === 'yes' ? '☑' : '☐'} Yes &nbsp;&nbsp;&nbsp;&nbsp;
+            ${formData.u_medical === 'no' ? '☑' : '☐'} No
           </td>
           <td style="text-align: center; width: 50%;">
             <strong>Security Guards Needed?</strong><br/>
-            ${this.getCheckboxState(formData, 'security_guards', 'yes')} Yes &nbsp;&nbsp;&nbsp;&nbsp;
-            ${this.getCheckboxState(formData, 'security_guards', 'no')} No
+            ${formData.u_security === 'yes' ? '☑' : '☐'} Yes &nbsp;&nbsp;&nbsp;&nbsp;
+            ${formData.u_security === 'no' ? '☑' : '☐'} No
           </td>
         </tr>
         <tr>
@@ -433,16 +443,17 @@ class InternalClientPDFFormat extends BasePDFFormat {
         </tr>
         <tr>
           <td style="text-align: center; width: 33%;">
-            ${this.getCheckboxState(formData, 'air_cooler', 'yes')} Yes &nbsp;&nbsp;
-            ${this.getCheckboxState(formData, 'air_cooler', 'no')} No
+            ${formData.u_air_cooler === 'yes' ? '☑' : '☐'} Yes &nbsp;&nbsp;
+            ${formData.u_air_cooler === 'no' ? '☑' : '☐'} No
           </td>
           <td style="text-align: center; width: 33%;">
-            ${this.getCheckboxState(formData, 'long_tables', 'yes')} Yes, How many? ${this.getValue(formData, 'long_tables_count')}<br/>
-            ${this.getCheckboxState(formData, 'long_tables', 'no')} No
+            ${formData.u_long_tables === 'yes' ? '☑' : '☐'} Yes<br/>
+            How many? <strong>${this.getValue(formData, 'u_long_tables_count') || '___'}</strong><br/>
+            ${formData.u_long_tables === 'no' ? '☑' : '☐'} No
           </td>
           <td style="text-align: center; width: 34%;">
-            ${this.getCheckboxState(formData, 'flags', 'yes')} Yes &nbsp;&nbsp;
-            ${this.getCheckboxState(formData, 'flags', 'no')} No
+            ${formData.u_flags === 'yes' ? '☑' : '☐'} Yes &nbsp;&nbsp;
+            ${formData.u_flags === 'no' ? '☑' : '☐'} No
           </td>
         </tr>
         <tr>
@@ -466,31 +477,7 @@ class InternalClientPDFFormat extends BasePDFFormat {
       <table class="outer-border">
         <tr>
           <td colspan="2">
-            I have read and discussed with the Director of *Campus Management Office the policies and guidelines and accept personal responsibility to abide by them. I understand that the use of UC Facilities is contingent upon the approval of the concerned Offices.
-          </td>
-        </tr>
-        <tr>
-          <td colspan="1">
-            I understand there may be additional charges for:
-            <ul>
-              <li>Set-up/ take-down/ if overtime is required</li>
-              <li>Technician</li>
-              <li>Electricity Needs</li>
-              <li>Parking arrangements for large events</li>
-            </ul>
-          </td>
-          <td colspan="1">
-            <br/>
-            <ul>
-              <li>Rental additional equipment, if any</li>
-              <li>Cleaning, damage, repair of facilities or grounds</li>
-              <li>Security personnel beyond regularly scheduled guards</li>
-            </ul>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            By signing this form, I acknowledge responsibility for the care and condition of facilities and equipment used by our department/ organization.
+            I have read and accept the policies and guidelines. I understand that the use of UC Facilities is contingent upon approval of the concerned Offices and acknowledge responsibility for the care and condition of facilities and equipment used.
           </td>
         </tr>
         <tr>
@@ -517,37 +504,6 @@ class InternalClientPDFFormat extends BasePDFFormat {
   createOfficeUseSection(formData) {
     return `
       <table>
-        <tr>
-          <td style="width: 50%;">
-            <strong>For Facilities Management Office Use Only</strong><br/>
-            <p>
-              &nbsp;&nbsp;Catering Clean up to be completed by<br/>
-              &nbsp;&nbsp;${this.getValue(formData, 'catering')}&nbsp;&nbsp;&nbsp;Date: ___________<br/>
-              &nbsp;&nbsp;Retrieval of Audio-Visual Equipment to be done by<br/>
-              &nbsp;&nbsp;${this.getValue(formData, 'AV_retrieval')}&nbsp;&nbsp;&nbsp;Date: ___________
-            </p>
-          </td>
-          <td style="width: 50%;">
-            <br/>
-            <strong>With Payment?</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            ${this.getCheckboxState(formData, 'payment', 'yes')} Yes &nbsp;&nbsp;&nbsp;&nbsp;
-            ${this.getCheckboxState(formData, 'payment', 'no')} No<br/>
-            <ul>
-              <li>
-                <strong>
-                  Rental Fees ${this.getValue(formData, 'rental_fees')}
-                  &nbsp;O.R. # ${this.getValue(formData, 'rental_or')}
-                </strong>
-              </li>
-              <li>
-                <strong>
-                  Other Fees ${this.getValue(formData, 'other_fees')}
-                  &nbsp;O.R. # ${this.getValue(formData, 'other_or')}
-                </strong>
-              </li>
-            </ul>
-          </td>
-        </tr>
         <tr>
           <td style="background-color: #918f8f;">
             <strong>Approved By</strong>

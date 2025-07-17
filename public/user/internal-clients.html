@@ -4,6 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <title>Internal Clients Registration Form</title>
+    <!-- Include navbar CSS -->
+    <link rel="stylesheet" href="/utils/navbar.css">
+    <!-- Include modal CSS -->
+    <link rel="stylesheet" href="/utils/modals.css">
     <style>
       @page {
         size: 8.5in 13in;
@@ -29,31 +33,6 @@
         font-size: 11px;
         margin: 0;
         padding: 0;
-      }
-      .navbar {
-        background-color: #2e7d32; /* dark green */
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        position: relative;
-      }
-      .nav-links {
-        list-style: none;
-        display: flex;
-        gap: 2rem;
-      }
-
-      .nav-links li a {
-        text-decoration: none;
-        color: white;
-        font-weight: 500;
-        font-size: 16px;
-      }
-
-      .nav-links li a:hover {
-        color: #a5d6a7;
       }
       .footer {
         background-color: #033e2e;
@@ -159,13 +138,15 @@
       }
 
       .full-form {
-        max-width: 100%;
-        margin: auto;
+        max-width: 1200px;
+        margin: 2rem auto;
         font-family: system-ui, sans-serif;
-        background-color: #f5f8f5;
+        background-color: #ffffff;
         color: #1f1f1f;
         padding: 2rem;
-        border-radius: 8px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
       }
 
       .full-form label {
@@ -199,19 +180,34 @@
       }
 
       .full-form button {
-        background-color: #4a7d4a;
+        background: linear-gradient(135deg, #2e7d32, #1b5e20);
         color: white;
         border: none;
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        border-radius: 4px;
+        padding: 0.875rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
         cursor: pointer;
-        margin-top: 1rem;
-        transition: background-color 0.2s ease;
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        min-width: 160px;
       }
 
       .full-form button:hover {
-        background-color: #386938;
+        background: linear-gradient(135deg, #1b5e20, #0d4e14);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+      }
+
+      .full-form button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
       }
 
       .full-form input[type="checkbox"],
@@ -258,17 +254,25 @@
       }
 
       fieldset {
-        border: 1px solid #b6d6bf;
+        border: 2px solid #e8f5e8;
         padding: 1.5rem;
         margin-bottom: 2rem;
-        background-color: #f0f7f0;
-        border-radius: 6px;
+        background-color: #f8fdf8;
+        border-radius: 8px;
+        transition: border-color 0.3s ease;
+      }
+
+      fieldset:hover {
+        border-color: #c8e6c9;
       }
 
       legend {
-        color: #2d5f2e;
-        font-weight: bold;
+        color: #2e7d32;
+        font-weight: 700;
         font-size: 1.1rem;
+        padding: 0 0.5rem;
+        background-color: white;
+        border-radius: 4px;
       }
 
       fieldset label {
@@ -352,37 +356,24 @@
   </script>
 
   <body>
-    <nav class="navbar">
-      <div class="logo">
-        <img
-          alt="UC Logo"
-          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
-          style="height: 75px; width: auto"
-        />
-      </div>
-      <ul class="nav-links" id="navLinks">
-        <li><a class="active" href="home.html">Home</a></li>
-        <li><a href="#">Inquire</a></li>
-        <li><a href="reservation.html">Reservation</a></li>
-      </ul>
-    </nav>
+    <!-- Navbar container for utils -->
+    <div id="navbar-container"></div>
 
     <form id="userForm" class="full-form">
-      <div style="text-align: center; margin-bottom: 1rem;">
-  <h2>Internal Clients Request Form</h2>
-  <small
-          style="
-            display: block;
-            margin-top: 0.25rem;
-            color: #0f0f0f;
-            font-size: 0.75rem;
-            line-height: 1.2;
-          "
-        >
-          NOTE: Submit two (2) copies of this form at least two (2) weeks prior
-          to your event.
-        </small>
-</div>
+      <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e8f5e8;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png" alt="UC Logo" style="height: 60px; width: auto;">
+          <div>
+            <h1 style="margin: 0; color: #2e7d32; font-size: 1.8rem; font-weight: 700;">Internal Clients Request Form</h1>
+            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 1rem;">Facilities Management Operations Unit</p>
+          </div>
+        </div>
+        <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 1rem; margin-top: 1rem;">
+          <i class="fas fa-info-circle" style="color: #856404; margin-right: 0.5rem;"></i>
+          <strong style="color: #856404;">NOTE:</strong>
+          <span style="color: #856404;">Submit two (2) copies of this form at least two (2) weeks prior to your event.</span>
+        </div>
+      </div>
 
       <label style="display: block; font-size: 0.95rem; text-align: center">
         Upload Request Letter (PDF only):
@@ -406,230 +397,265 @@
         </small>
       </label>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
-        <label>
-          College / Office / Department
-          <input
-            type="text"
-            name="u_org"
-            data-target="organization_name"
-            required
-            style="width: 100%"
-          />
-        </label>
+      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
+          <i class="fas fa-building" style="margin-right: 0.5rem;"></i>
+          Organization Information
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+          <label>
+            College / Office / Department
+            <input
+              type="text"
+              name="u_org"
+              data-target="organization_name"
+              required
+              style="width: 100%"
+            />
+          </label>
 
-        <label>
-          Contact Number / Email
-          <input
-            type="text"
-            name="u_contact"
-            data-target="contact"
-            required
-            style="width: 100%"
-          />
-        </label>
-
-        <label>
-          Function / Event
-          <input
-            type="text"
-            name="u_event"
-            data-target="event_name"
-            required
-            style="width: 100%"
-          />
-        </label>
-
-        <label>
-          Requested Venue / Room
-          <select
-            id="u_venue"
-            name="u_venue"
-            data-target="venue"
-            required
-            style="width: 100%"
-          >
-            <option value="">— Select —</option>
-
-            <!-- Main Campus -->
-            <optgroup label="Main Campus">
-              <option value="Auditorium">Auditorium</option>
-              <option value="Cañao Hall">Cañao Hall</option>
-              <option value="Conference Room">Conference Room</option>
-              <option value="Gymnasium">Gymnasium</option>
-              <option value="Laboratory Room">Laboratory Room</option>
-              <option value="Lecture Room (Main)">Lecture Room (Main)</option>
-              <option value="Training Center">Training Center</option>
-            </optgroup>
-
-            <option disabled>──────────</option>
-
-            <!-- Legarda -->
-            <optgroup label="Legarda">
-              <option value="AVR">AVR</option>
-              <option value="Crime Lab">Crime Lab</option>
-              <option value="Deftac">Deftac</option>
-              <option value="Lecture Room (Legarda)">
-                Lecture Room (Legarda)
-              </option>
-              <option value="Moot Court">Moot Court</option>
-            </optgroup>
-          </select>
-        </label>
-
-        <label>
-          Number of Attendees
-          <input
-            type="number"
-            id="u_attend"
-            name="u_attend"
-            data-target="attendees"
-            min="1"
-            required
-            style="width: 100%"
-          />
-          <small id="attend_max_note" style="margin-left: 5px">Max: —</small>
-        </label>
-
-        <label
-          >Scope of Activity
-          <input type="text" name="u_scope" data-target="audience_type" />
-        </label>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
-        <label
-          >Day / Date of Event
-          <input
-            type="date"
-            id="u_date"
-            name="u_date"
-            data-target="event_date"
-            required
-          />
-        </label>
-
-        <label
-          >Time Start
-          <input
-            type="time"
-            id="u_start"
-            name="u_start"
-            data-target="time_start"
-            required
-          />
-        </label>
-
-        <label
-          >Time End
-          <input
-            type="time"
-            id="u_end"
-            name="u_end"
-            data-target="time_end"
-            required
-          />
-        </label>
-
-        <label
-          >Budget Source
-          <input type="text" name="u_budget" data-target="budget_source" />
-        </label>
-
-        <label
-          >Admission Fee
-          <input type="text" name="u_fee" data-target="admission_fee" />
-        </label>
-
-        <label
-          >Other Fees (please indicate)
-          <input type="text" name="u_other_fees" data-target="other_fees" />
-        </label>
+          <label>
+            Contact Number / Email
+            <input
+              type="text"
+              name="u_contact"
+              data-target="contact"
+              required
+              style="width: 100%"
+            />
+          </label>
+        </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
-        <fieldset>
-          <legend>With Food / Canteen Service?</legend>
-
+      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
+          <i class="fas fa-calendar-alt" style="margin-right: 0.5rem;"></i>
+          Event Details
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
           <label>
+            Function / Event
             <input
-              type="checkbox"
-              name="u_food"
-              value="yes"
-              onclick="onlyOne(this, 'u_food')"
-              data-target="food_service"
-              data-value="yes"
+              type="text"
+              name="u_event"
+              data-target="event_name"
+              required
+              style="width: 100%"
             />
-            Yes
           </label>
 
           <label>
-            <input
-              type="checkbox"
-              name="u_food"
-              value="no"
-              onclick="onlyOne(this, 'u_food')"
-              data-target="food_service"
-              data-value="no"
-            />
-            No
-          </label>
-        </fieldset>
+            Requested Venue / Room
+            <select
+              id="u_venue"
+              name="u_venue"
+              data-target="venue"
+              required
+              style="width: 100%"
+            >
+              <option value="">— Select —</option>
 
-        <fieldset>
-          <legend>Medical Team Needed?</legend>
-          <label>
-            <input
-              type="checkbox"
-              name="u_medical"
-              value="yes"
-              onclick="onlyOne(this, 'u_medical')"
-              data-target="medical_team"
-              data-value="yes"
-            />
-            Yes
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="u_medical"
-              value="no"
-              onclick="onlyOne(this, 'u_medical')"
-              data-target="medical_team"
-              data-value="no"
-            />
-            No
-          </label>
-        </fieldset>
+              <!-- Main Campus -->
+              <optgroup label="Main Campus">
+                <option value="Auditorium">Auditorium</option>
+                <option value="Cañao Hall">Cañao Hall</option>
+                <option value="Conference Room">Conference Room</option>
+                <option value="Gymnasium">Gymnasium</option>
+                <option value="Laboratory Room">Laboratory Room</option>
+                <option value="Lecture Room (Main)">Lecture Room (Main)</option>
+                <option value="Training Center">Training Center</option>
+              </optgroup>
 
-        <fieldset>
-          <legend>Security Guards Needed?</legend>
-          <label>
-            <input
-              type="checkbox"
-              name="u_security"
-              value="yes"
-              onclick="onlyOne(this, 'u_security')"
-              data-target="security_guards"
-              data-value="yes"
-            />
-            Yes
+              <option disabled>──────────</option>
+
+              <!-- Legarda -->
+              <optgroup label="Legarda">
+                <option value="AVR">AVR</option>
+                <option value="Crime Lab">Crime Lab</option>
+                <option value="Deftac">Deftac</option>
+                <option value="Lecture Room (Legarda)">
+                  Lecture Room (Legarda)
+                </option>
+                <option value="Moot Court">Moot Court</option>
+              </optgroup>
+            </select>
           </label>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <label>
+            Number of Attendees
             <input
-              type="checkbox"
-              name="u_security"
-              value="no"
-              onclick="onlyOne(this, 'u_security')"
-              data-target="security_guards"
-              data-value="no"
+              type="number"
+              id="u_attend"
+              name="u_attend"
+              data-target="attendees"
+              min="1"
+              required
+              style="width: 100%"
             />
-            No
+            <small id="attend_max_note" style="margin-left: 5px; color: #666;">Max: —</small>
           </label>
-        </fieldset>
+
+          <label>
+            Scope of Activity
+            <input type="text" name="u_scope" data-target="audience_type" />
+          </label>
+        </div>
       </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
-        <fieldset>
-          <legend>Audio-Visual Requirements</legend>
+      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
+          <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>
+          Schedule & Budget Information
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <label>
+            Day / Date of Event
+            <input
+              type="date"
+              id="u_date"
+              name="u_date"
+              data-target="event_date"
+              required
+            />
+          </label>
+
+          <label>
+            Time Start
+            <input
+              type="time"
+              id="u_start"
+              name="u_start"
+              data-target="time_start"
+              required
+            />
+          </label>
+
+          <label>
+            Time End
+            <input
+              type="time"
+              id="u_end"
+              name="u_end"
+              data-target="time_end"
+              required
+            />
+          </label>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+          <label>
+            Budget Source
+            <input type="text" name="u_budget" data-target="budget_source" />
+          </label>
+
+          <label>
+            Admission Fee
+            <input type="text" name="u_fee" data-target="admission_fee" />
+          </label>
+
+          <label>
+            Other Fees (please indicate)
+            <input type="text" name="u_other_fees" data-target="other_fees" />
+          </label>
+        </div>
+      </div>
+
+      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
+          <i class="fas fa-concierge-bell" style="margin-right: 0.5rem;"></i>
+          Additional Services
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
+          <fieldset>
+            <legend>With Food / Canteen Service?</legend>
+
+            <label>
+              <input
+                type="checkbox"
+                name="u_food"
+                value="yes"
+                onclick="onlyOne(this, 'u_food')"
+                data-target="food_service"
+                data-value="yes"
+              />
+              Yes
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                name="u_food"
+                value="no"
+                onclick="onlyOne(this, 'u_food')"
+                data-target="food_service"
+                data-value="no"
+              />
+              No
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Medical Team Needed?</legend>
+            <label>
+              <input
+                type="checkbox"
+                name="u_medical"
+                value="yes"
+                onclick="onlyOne(this, 'u_medical')"
+                data-target="medical_team"
+                data-value="yes"
+              />
+              Yes
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="u_medical"
+                value="no"
+                onclick="onlyOne(this, 'u_medical')"
+                data-target="medical_team"
+                data-value="no"
+              />
+              No
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Security Guards Needed?</legend>
+            <label>
+              <input
+                type="checkbox"
+                name="u_security"
+                value="yes"
+                onclick="onlyOne(this, 'u_security')"
+                data-target="security_guards"
+                data-value="yes"
+              />
+              Yes
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="u_security"
+                value="no"
+                onclick="onlyOne(this, 'u_security')"
+                data-target="security_guards"
+                data-value="no"
+              />
+              No
+            </label>
+          </fieldset>
+        </div>
+      </div>
+      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
+          <i class="fas fa-tools" style="margin-right: 0.5rem;"></i>
+          Equipment & Requirements
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+          <fieldset>
+            <legend>Audio-Visual Requirements</legend>
           <label
             ><input
               type="checkbox"
@@ -817,605 +843,32 @@
             No
           </label>
         </fieldset>
+        </div>
       </div>
 
       <div id="exemption-section" style="display: none; margin-top: 2rem;">
-  <h3 style="margin-bottom: 1rem;">Curfew/Exemption Form</h3>
-  <iframe
-    id="exemptionFrame"
-    src="exemption-form.html"
-    style="width: 100%; height: 600px; border: 1px solid #ccc;"
-  ></iframe>
-</div>
+        <h3 style="margin-bottom: 1rem;">Curfew/Exemption Form</h3>
+        <iframe
+          id="exemptionFrame"
+          src="exemption-form.html"
+          style="width: 100%; height: 600px; border: 1px solid #ccc;"
+        ></iframe>
+      </div>
 
-      <button type="button" id="preparePrint">Submit &amp; Print</button>
+      <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e8f5e8;">
+        <button type="button" id="preparePrint" onclick="handleFormSubmission()">
+          <i class="fas fa-paper-plane"></i>
+          Submit Form
+        </button>
+        <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+          <i class="fas fa-info-circle"></i>
+          Your form will be submitted and a PDF will be generated for your records.
+        </p>
+      </div>
     </form>
     <footer class="footer">
       © 2025 University of the Cordilleras. All Rights Reserved.
     </footer>
-    <form
-      class="form-container"
-      id="combinedForm"
-      onsubmit="event.preventDefault(); window.print();"
-    >
-      <input type="hidden" id="curfew_required" name="curfew_required" value="No" />
-
-      <!-- PAGE 1 -->
-      <!-- Header Section -->
-      <div class="form-page active" id="page1">
-        <div class="header-row">
-          <img alt="University of the Cordilleras Logo" src="pending logo" />
-          <div style="text-align: right">
-            <strong>CAMPUS MANAGEMENT OFFICE</strong><br />
-            <strong>Facilities Management Operations Unit</strong>
-          </div>
-        </div>
-        <!-- Second Section -->
-        <div style="text-align: center">
-          <strong style="font-size: 14px"
-            >FACILITIES AND SERVICES REQUEST FORM FOR INTERNAL CLIENTS</strong
-          ><br />
-        </div>
-        <br />
-        <strong
-          >NOTE: Submit two (2) copies of this form at least two (2) weeks prior
-          to your event.</strong
-        >
-        <table>
-          <tr>
-            <td colspan="2" style="width: 50%">
-              <strong>College/ Office/ Department/ Organization:</strong>
-              <input
-                id="organization_name"
-                name="organization_name"
-                style="width: 98%"
-                type="text"
-              />
-            </td>
-            <td colspan="1" style="width: 25%">
-              <strong>Contact Number/ *Email:</strong>
-              <input
-                id="contact"
-                name="contact"
-                style="width: 98%"
-                type="text"
-              />
-            </td>
-            <td colspan="1" style="width: 25%">
-              <strong>Budget Source:</strong>
-              <input
-                id="budget_source"
-                name="budget_source"
-                style="width: 98%"
-                type="text"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <strong>Function/Event:</strong>
-              <input
-                id="event_name"
-                name="event_name"
-                style="width: 98%"
-                type="text"
-              />
-            </td>
-            <td colspan="2">
-              <strong>Date/Day of Event</strong>
-              <input
-                id="event_date"
-                name="event_date"
-                style="width: 98%"
-                type="date"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="1" style="width: 35%">
-              <strong>Requested Venue/Room</strong>
-              <input id="venue" name="venue" style="width: 98%" type="text" />
-            </td>
-            <td colspan="1" style="width: 25%">
-              <strong>Number of Attendees</strong>
-              <input
-                id="attendees"
-                name="attendees"
-                style="width: 96%"
-                type="text"
-              />
-            </td>
-            <td colspan="1" style="width: 20%">
-              <strong>Time Start:</strong>
-              <input
-                id="time_start"
-                name="time_start"
-                style="width: 95%"
-                type="text"
-              />
-            </td>
-            <td colspan="1" style="width: 20%">
-              <strong>Time End:</strong>
-              <input
-                id="time_end"
-                name="time_end"
-                style="width: 96%"
-                type="text"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colspan="1" style="width: 35%">
-              <strong>Admission Fee:</strong>
-              <div style="text-align: center">
-                <label style="margin-right: 15px">
-                  <input
-                    type="checkbox"
-                    name="admission_fee"
-                    value="free"
-                    onclick="onlyOne(this, 'admission_fee')"
-                  />
-                  Free
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="admission_fee"
-                    value="php"
-                    onclick="onlyOne(this, 'admission_fee')"
-                  />
-                  PHP
-                  <input
-                    type="text"
-                    name="admission_amount"
-                    style="width: 60px"
-                  />
-                </label>
-              </div>
-              <div style="margin-top: 3px; font-style: italic; font-size: 9px">
-                ***for other fees, please indicate
-                <input
-                  id="indicated_fees"
-                  name="organization_name"
-                  style="width: 30%"
-                  type="text"
-                />
-              </div>
-            </td>
-            <td colspan="1" style="width: 25%">
-              <strong>Scope of Activity:</strong>
-              <div>
-                <input
-                  type="checkbox"
-                  name="audience_type"
-                  value="general"
-                  onclick="onlyOne(this, 'audience_type')"
-                />
-                General Public
-                <br />
-                <input
-                  type="checkbox"
-                  name="audience_type"
-                  value="exclusive"
-                  onclick="onlyOne(this, 'audience_type')"
-                />
-                Exclusive
-              </div>
-            </td>
-            <td colspan="2" style="width: 40%">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                "
-              >
-                <!-- Left side: Food Service Yes/No -->
-                <div style="text-align: center; width: 50%">
-                  <strong>*With Food/Canteen Services?</strong><br />
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="food_service"
-                      value="yes"
-                      onclick="onlyOne(this, 'food_service')"
-                    />
-                    Yes
-                  </label>
-                  &nbsp;&nbsp;&nbsp;
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="food_service"
-                      value="no"
-                      onclick="onlyOne(this, 'food_service')"
-                    />
-                    No
-                  </label>
-                </div>
-
-                <div style="text-align: center; width: 50%">
-                  <strong>Canteen:</strong><br /><br />
-                  <strong>____________________________</strong><br />
-                  <strong>(Name | Signature | Date)</strong>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <table>
-          <strong>*Facilities Services</strong>
-          <td>
-            <div>
-              Please attach a floor plan and include all set-up needs. (Podium,
-              chairs, tables, riser, platform, *native cloth, etc)
-            </div>
-          </td>
-        </table>
-        <table class="outer-border">
-          <strong>Audio-Visual Requirements</strong>
-          <tr>
-            <td colspan="1">
-              <label
-                ><input type="checkbox" /> Microphones:&nbsp;<input
-                  id="mic"
-                  min="0"
-                  name="mic"
-                  step="1"
-                  style="width: 10%"
-                  type="number"
-                />
-                pcs</label
-              ><br />
-              <label
-                ><input type="checkbox" /> Microphone Stands:&nbsp;<input
-                  id="mic_stands"
-                  min="0"
-                  name="mic_stands"
-                  step="1"
-                  style="width: 10%"
-                  type="number"
-                />
-                pcs</label
-              ><br />
-              <label><input type="checkbox" /> Projector</label><br />
-              <label><input type="checkbox" /> PA System</label><br />
-            </td>
-            <td colspan="1">
-              <label><input type="checkbox" /> Laptop</label><br />
-              <label><input type="checkbox" /> Lights</label><br />
-              <label
-                ><input type="checkbox" /> Other AV needs:<br /><input
-                  name="others_AV"
-                  style="width: 75%"
-                  type="text" /></label
-              ><br />
-            </td>
-            <td colspan="1">
-              <label><input type="checkbox" /> WiFi Connection</label><br />
-              <label><input type="checkbox" /> Podium Monitor Board</label
-              ><br />
-              <label><input type="checkbox" /> Live Streaming</label><br />
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align: center; width: 33%">
-              <strong>*Maintenance Operation Unit:</strong><br />
-              <strong>____________________________</strong><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-            <td style="text-align: center; width: 33%">
-              <strong>*Media Center:</strong><br />
-              <strong>____________________________</strong><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-            <td style="text-align: center; width: 34%">
-              <strong>iTSS:</strong><br />
-              <strong>____________________________</strong><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-          </tr>
-        </table>
-        <table class="outer-border">
-          <strong>Medical/ Safety and Security Services</strong>
-          <tr>
-            <td style="text-align: center; width: 50%">
-              <strong>Medical Team Needed?</strong><br />
-              <strong
-                ><input
-                  type="checkbox"
-                  name="medical_team"
-                  value="yes"
-                  onclick="onlyOne(this, 'medical_team')"
-                />
-                Yes</strong
-              >&nbsp;&nbsp;&nbsp;&nbsp;
-              <strong
-                ><input
-                  type="checkbox"
-                  name="medical_team"
-                  value="no"
-                  onclick="onlyOne(this, 'medical_team')"
-                />
-                No</strong
-              ><br />
-            </td>
-            <td style="text-align: center; width: 50%">
-              <strong>Security Guards Needed?</strong><br />
-              <strong
-                ><input
-                  type="checkbox"
-                  name="security_guards"
-                  value="yes"
-                  onclick="onlyOne(this, 'security_guards')"
-                />
-                Yes</strong
-              >&nbsp;&nbsp;&nbsp;&nbsp;
-              <strong
-                ><input
-                  type="checkbox"
-                  name="security_guards"
-                  value="no"
-                  onclick="onlyOne(this, 'security_guards')"
-                />
-                No</strong
-              ><br />
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align: center; width: 50%">
-              <strong>Medical Clinic:</strong><br />
-              <strong>____________________________</strong><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-            <td style="text-align: center; width: 50%">
-              <strong>*Occupational Safety and Health Office:</strong><br />
-              <strong>____________________________</strong><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-          </tr>
-        </table>
-        <table class="no-border">
-          <strong>Property/ Equipment Needs (from LMO)</strong>
-          <tr>
-            <td style="text-align: center; width: 33%">
-              <label>Air Cooler</label>
-            </td>
-            <td style="text-align: center; width: 33%">
-              <label>Long Tables</label>
-            </td>
-            <td style="text-align: center; width: 34%">
-              <label>Philippine Flag and UC Flag</label>
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align: center; width: 33%">
-              <strong>
-                <input
-                  type="checkbox"
-                  name="air_cooler"
-                  value="yes"
-                  onclick="onlyOne(this, 'air_cooler')"
-                />
-                Yes
-              </strong>
-              &nbsp;&nbsp;
-              <strong>
-                <input
-                  type="checkbox"
-                  name="air_cooler"
-                  value="no"
-                  onclick="onlyOne(this, 'air_cooler')"
-                />
-                No
-              </strong>
-            </td>
-
-            <td style="text-align: center; width: 33%">
-              <strong>
-                <input
-                  type="checkbox"
-                  name="long_tables"
-                  value="yes"
-                  onclick="onlyOne(this, 'long_tables')"
-                />
-                Yes, How many?
-                <input
-                  id="long_tables_count"
-                  min="0"
-                  name="long_tables"
-                  step="1"
-                  style="width: 15%"
-                  type="number"
-                /><br />
-              </strong>
-              &nbsp;&nbsp;
-              <strong>
-                <input
-                  type="checkbox"
-                  name="long_tables"
-                  value="no"
-                  onclick="onlyOne(this, 'long_tables')"
-                />
-                No
-              </strong>
-            </td>
-
-            <td style="text-align: center; width: 34%">
-              <strong>
-                <input
-                  type="checkbox"
-                  name="flags"
-                  value="yes"
-                  onclick="onlyOne(this, 'flags')"
-                />
-                Yes
-              </strong>
-              &nbsp;&nbsp;
-              <strong>
-                <input
-                  type="checkbox"
-                  name="flags"
-                  value="no"
-                  onclick="onlyOne(this, 'flags')"
-                />
-                No
-              </strong>
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align: center; width: 33%">
-              <strong>Logistic Management Office:</strong><br />
-              <strong>____________________________</strong><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-          </tr>
-        </table>
-        <table class="outer-border">
-          <tr>
-            <td colspan="2">
-              I have read and discussed with the Director of *Campus Management
-              Office the policies and guidelines and accept personal
-              responsibility to abide by them. I understand that the use of UC
-              Facilities is contingent upon the approval of the concerned
-              Offices.
-            </td>
-          </tr>
-          <tr>
-            <td colspan="1">
-              I understand there may be additional charges for:
-              <ul>
-                <li>Set-up/ take-down/ if overtime is required</li>
-                <li>Technician</li>
-                <li>Electricity Needs</li>
-                <li>Parking arrangements for large events</li>
-              </ul>
-            </td>
-            <td colspan="1">
-              <br />
-              <ul>
-                <li>Rental additional equipment, if any</li>
-                <li>Cleaning, damage, repair of facilities or grounds</li>
-                <li>Security personnel beyond regularly scheduled guards</li>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              By signing this form, I acknowledge responsibility for the care
-              and condition of facilities and equipment used by our department/
-              organization.
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2" style="text-align: center">
-              <div
-                style="
-                  display: inline-block;
-                  text-align: center;
-                  margin-right: 40px;
-                "
-              >
-                <strong>_________________________________</strong><br />
-                <strong>Name and Signature of Contact Person</strong>
-              </div>
-              <div style="display: inline-block; text-align: center">
-                <strong>___________</strong><br />
-                <strong>Date</strong>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <table>
-          <tr>
-            <td style="width: 50%">
-              <strong>For Facilities Management Office Use Only</strong><br />
-              <p>
-                &nbsp;&nbsp;Catering Clean up to be completed by<br />
-                &nbsp;&nbsp;<input
-                  name="catering"
-                  style="width: 50%"
-                  type="text"
-                />&nbsp;&nbsp;&nbsp;Date: ___________<br />
-                &nbsp;&nbsp;Retrieval of Audio-Visual Equipment to be done by
-                &nbsp;&nbsp;<input
-                  name="AV_retrieval"
-                  style="width: 50%"
-                  type="text"
-                />&nbsp;&nbsp;&nbsp;Date: ___________
-              </p>
-            </td>
-            <td style="width: 50%">
-              <br />
-              <strong>With Payment?</strong
-              >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-              <label>
-                <input
-                  type="checkbox"
-                  name="payment"
-                  value="yes"
-                  onclick="onlyOne(this, 'payment')"
-                />
-                Yes
-              </label>
-
-              &nbsp;&nbsp;&nbsp;&nbsp;
-
-              <label>
-                <input
-                  type="checkbox"
-                  name="payment"
-                  value="no"
-                  onclick="onlyOne(this, 'payment')"
-                />
-                No </label
-              ><br />
-              <ul>
-                <li>
-                  <strong>
-                    Rental Fees&nbsp;
-                    <input name="rental_fees" style="width: 20%" type="text" />
-                    &nbsp;O.R. # &nbsp;
-                    <input name="rental_or" style="width: 20%" type="text" />
-                  </strong>
-                </li>
-                <li>
-                  <strong>
-                    Other Fees&nbsp;&nbsp;
-                    <input name="other_fees" style="width: 20%" type="text" />
-                    &nbsp;O.R. # &nbsp;
-                    <input name="other_or" style="width: 20%" type="text" />
-                  </strong>
-                </li>
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td style="background-color: #918f8f">
-              <strong>Approved By</strong><br />
-            </td>
-            <td style="background-color: #918f8f">
-              <strong>Health &amp; Safety Protocol Approved By</strong>
-            </td>
-          </tr>
-          <tr>
-            <td><br /></td>
-          </tr>
-          <tr>
-            <td style="text-align: center">
-              <strong>Director, *Campus Management Office</strong><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-            <td style="text-align: center">
-              <strong>VP for Administration &amp; Student Services</strong
-              ><br />
-              <strong>(Name | Signature | Date)</strong>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </form>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -1490,10 +943,48 @@
               '#userForm [data-target]:not([type="checkbox"]):not([type="radio"])'
             )
             .forEach((src) => {
-              const dst = document.getElementById(src.dataset.target);
-              if (dst) {
-                dst.value = src.value;
-                dst.textContent = src.value;
+              const targetName = src.dataset.target;
+              const srcValue = src.value;
+
+              // Special handling for fields that map to checkboxes in combinedForm
+              if (targetName === 'admission_fee') {
+                // Clear all admission_fee checkboxes first
+                document.querySelectorAll('#combinedForm input[name="admission_fee"]').forEach(cb => cb.checked = false);
+
+                // Set appropriate checkbox based on text value
+                if (srcValue.toLowerCase().includes('free')) {
+                  const freeCheckbox = document.querySelector('#combinedForm input[name="admission_fee"][value="free"]');
+                  if (freeCheckbox) freeCheckbox.checked = true;
+                } else if (srcValue.toLowerCase().includes('php') || srcValue.match(/\d/)) {
+                  const phpCheckbox = document.querySelector('#combinedForm input[name="admission_fee"][value="php"]');
+                  if (phpCheckbox) phpCheckbox.checked = true;
+
+                  // Extract amount if present
+                  const amountMatch = srcValue.match(/\d+(\.\d+)?/);
+                  if (amountMatch) {
+                    const amountField = document.querySelector('#combinedForm input[name="admission_amount"]');
+                    if (amountField) amountField.value = amountMatch[0];
+                  }
+                }
+              } else if (targetName === 'audience_type') {
+                // Clear all audience_type checkboxes first
+                document.querySelectorAll('#combinedForm input[name="audience_type"]').forEach(cb => cb.checked = false);
+
+                // Set appropriate checkbox based on text value
+                if (srcValue.toLowerCase().includes('general')) {
+                  const generalCheckbox = document.querySelector('#combinedForm input[name="audience_type"][value="general"]');
+                  if (generalCheckbox) generalCheckbox.checked = true;
+                } else if (srcValue.toLowerCase().includes('exclusive')) {
+                  const exclusiveCheckbox = document.querySelector('#combinedForm input[name="audience_type"][value="exclusive"]');
+                  if (exclusiveCheckbox) exclusiveCheckbox.checked = true;
+                }
+              } else {
+                // Regular text field mapping
+                const dst = document.getElementById(targetName);
+                if (dst) {
+                  dst.value = srcValue;
+                  dst.textContent = srcValue;
+                }
               }
             });
 
@@ -1519,32 +1010,29 @@
             });
         }
 
-        /* Handle submit/print with curfew check */
-        let curfewAcknowledged = false;
-
-        btnPrint.addEventListener("click", () => {
+        /* Handle curfew check - this will be called from the new submit handler */
+        window.checkCurfewRules = function() {
           const reasons = curfewReasons();
 
-          // If curfew rules are triggered and not yet acknowledged
-          if (reasons.length && !curfewAcknowledged) {
+          if (reasons.length > 0) {
             const msg =
               "This booking triggers curfew rules:\n\n" +
               reasons.join("\n") +
               "\n\nDo you want to open the Curfew/Exemption form now?";
             if (confirm(msg)) {
               window.open(CURFEW_URL, "_blank");
-              curfewAcknowledged = true;
 
               // Let internal form know curfew form was needed
               const flag = document.getElementById("curfew_required");
               if (flag) flag.value = "Yes";
             }
-            return; // Cancel actual print until confirmation next time
           }
 
-          copyUserValues();
-          window.print();
-        });
+          return reasons.length === 0; // Return true if no curfew issues
+        };
+
+        /* Make copyUserValues available globally for form submission */
+        window.copyUserValues = copyUserValues;
 
         /* Update header info before printing */
         window.addEventListener("beforeprint", () => {
@@ -1577,5 +1065,103 @@
     }
   });
 </script>
+
+    <!-- Include navbar and modal JavaScript -->
+    <script src="/utils/navbar.js"></script>
+    <script src="/utils/modals.js"></script>
+
+    <script>
+      // Initialize navbar and modals
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize navbar for user role
+        initializeNavbar('user', 'internal-clients', 'student');
+
+        // Initialize modals
+        initializeModals();
+      });
+
+      // Handle form submission with PDF generation
+      async function handleFormSubmission() {
+        try {
+          // Check curfew rules first
+          if (!window.checkCurfewRules()) {
+            return; // Stop submission if curfew rules are triggered and not acknowledged
+          }
+
+          // Get form data directly from the user form
+          const formData = new FormData(document.getElementById('userForm'));
+
+          // Convert FormData to regular object
+          const formObject = {};
+          for (let [key, value] of formData.entries()) {
+            formObject[key] = value;
+          }
+
+          // Add checkbox values properly
+          const checkboxes = document.querySelectorAll('#userForm input[type="checkbox"]:checked');
+          checkboxes.forEach(checkbox => {
+            if (checkbox.name && checkbox.value) {
+              formObject[checkbox.name] = checkbox.value;
+            }
+          });
+
+          // Show loading state
+          const submitBtn = document.getElementById('preparePrint');
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+          // Submit form to backend
+          const response = await fetch('/api/sarf/internal/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(formObject)
+          });
+
+          const result = await response.json();
+
+          // Reset button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Submit';
+
+          if (result.success) {
+            // Show success modal with PDF options
+            showSuccessModalWithPDF({
+              title: 'Form Submitted Successfully!',
+              message: `Your internal client form has been submitted and PDF generated. Control Number: ${result.data.control}`,
+              pdfUrl: result.data.pdfUrl,
+              pdfId: result.data.id,
+              controlNumber: result.data.control,
+              onClose: () => {
+                // Optionally redirect or reset form
+                window.location.href = '/user/my-forms';
+              }
+            });
+          } else {
+            showErrorModal({
+              title: 'Submission Failed',
+              message: result.message || 'Failed to submit form. Please try again.',
+              buttonText: 'Try Again'
+            });
+          }
+
+        } catch (error) {
+          console.error('Form submission error:', error);
+
+          // Reset button
+          const submitBtn = document.getElementById('preparePrint');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Submit';
+
+          showErrorModal({
+            title: 'Network Error',
+            message: 'Unable to submit form. Please check your connection and try again.',
+            buttonText: 'Try Again'
+          });
+        }
+      }
+    </script>
   </body>
 </html>
