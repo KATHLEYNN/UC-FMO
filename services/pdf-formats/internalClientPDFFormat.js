@@ -20,6 +20,47 @@ class InternalClientPDFFormat extends BasePDFFormat {
 
     return `${hour12}:${minutes} ${ampm}`;
   }
+
+  /**
+   * Check if curfew exemption is needed based on form data
+   * @param {Object} formData - Form data
+   * @returns {boolean} - True if exemption is needed
+   */
+  needsCurfewExemption(formData) {
+    const startTime = formData.u_start;
+    const endTime = formData.u_end;
+    const eventDate = formData.u_date;
+
+    if (!startTime || !endTime) return false;
+
+    // Convert time to minutes for calculation
+    const toMinutes = (time) => {
+      const [h, m] = time.split(':').map(Number);
+      return h * 60 + m;
+    };
+
+    const startMinutes = toMinutes(startTime);
+    const endMinutes = toMinutes(endTime);
+    const duration = endMinutes - startMinutes;
+
+    // Check if duration exceeds 4 hours (240 minutes)
+    if (duration > 240) return true;
+
+    // Check if event is on Sunday
+    if (eventDate) {
+      const [year, month, day] = eventDate.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      if (date.getDay() === 0) return true; // Sunday
+    }
+
+    // Check if starts before 7:30 AM or ends after 7:30 PM
+    const earliestMinutes = toMinutes('07:30');
+    const latestMinutes = toMinutes('19:30');
+
+    if (startMinutes < earliestMinutes || endMinutes > latestMinutes) return true;
+
+    return false;
+  }
   constructor() {
     super();
   }
@@ -227,6 +268,9 @@ class InternalClientPDFFormat extends BasePDFFormat {
           <div><strong>Control No.: ${controlNo}</strong></div>
         </div>
       </div>
+
+      <!-- Conditionally include curfew exemption form -->
+      ${this.needsCurfewExemption(formData) ? this.createCurfewExemptionSection(formData) : ''}
     `;
   }
 
@@ -461,6 +505,49 @@ class InternalClientPDFFormat extends BasePDFFormat {
             <strong>Logistic Management Office:</strong><br/>
             <div class="signature-line"></div>
             <strong>(Name | Signature | Date)</strong>
+          </td>
+        </tr>
+      </table>
+    `;
+  }
+
+  /**
+   * Create curfew exemption section (compact inline version)
+   * @param {Object} formData - Form data
+   * @returns {string} - Curfew exemption section HTML
+   */
+  createCurfewExemptionSection(formData) {
+    return `
+      <table class="outer-border" style="margin-top: 5px;">
+        <tr>
+          <td colspan="2" style="text-align: center; font-weight: bold; background-color: #fff3cd; font-size: 10px;">
+            REQUEST FOR EXEMPTION FROM CURFEW
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 50%; font-size: 8px;">
+            <strong>Date:</strong> ${this.getCurrentDate()}<br/>
+            <strong>Requesting Office:</strong> ${this.getValue(formData, 'u_org')}<br/>
+            <strong>Venue:</strong> ${this.getValue(formData, 'u_venue')}<br/>
+            <strong>Number of People:</strong> ${this.getValue(formData, 'u_attend')}
+          </td>
+          <td style="width: 50%; font-size: 8px;">
+            <strong>Activity:</strong> ${this.getValue(formData, 'u_event')}<br/>
+            <strong>Date:</strong> ${this.getValue(formData, 'u_date')}<br/>
+            <strong>Time:</strong> ${this.formatTime(this.getValue(formData, 'u_start'))} to ${this.formatTime(this.getValue(formData, 'u_end'))}<br/>
+            <strong>Attachment:</strong> ☑ Internal Client Form
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; font-size: 7px;">
+            <strong>Requesting Office:</strong><br/>
+            <div class="signature-line" style="height: 8px;"></div>
+            <strong>(Signature | Date)</strong>
+          </td>
+          <td style="text-align: center; font-size: 7px;">
+            <strong>Campus Management Office:</strong><br/>
+            <div class="signature-line" style="height: 8px;"></div>
+            <strong>(Signature | Date)</strong>
           </td>
         </tr>
       </table>

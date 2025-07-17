@@ -360,6 +360,7 @@
     <div id="navbar-container"></div>
 
     <form id="userForm" class="full-form">
+      <input type="hidden" id="curfew_required" name="curfew_required" value="No" />
       <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e8f5e8;">
         <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
           <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png" alt="UC Logo" style="height: 60px; width: auto;">
@@ -407,6 +408,7 @@
             College / Office / Department
             <input
               type="text"
+              id="u_org"
               name="u_org"
               data-target="organization_name"
               required
@@ -437,6 +439,7 @@
             Function / Event
             <input
               type="text"
+              id="u_event"
               name="u_event"
               data-target="event_name"
               required
@@ -846,13 +849,78 @@
         </div>
       </div>
 
-      <div id="exemption-section" style="display: none; margin-top: 2rem;">
-        <h3 style="margin-bottom: 1rem;">Curfew/Exemption Form</h3>
-        <iframe
-          id="exemptionFrame"
-          src="exemption-form.html"
-          style="width: 100%; height: 600px; border: 1px solid #ccc;"
-        ></iframe>
+      <div id="exemption-section" style="display: none; margin-top: 2rem; padding: 2rem; background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <h2 style="color: #856404; margin: 0;">📋 Page 2: Curfew Exemption Form</h2>
+          <p style="color: #856404; margin: 0.5rem 0;">This form will be included in your PDF submission</p>
+        </div>
+
+        <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
+          <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
+            <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>
+            REQUEST FOR EXEMPTION FROM CURFEW
+          </h3>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <label>
+              Requesting Office
+              <input type="text" name="exemption_office" id="exemption_office" style="width: 100%;" />
+            </label>
+
+            <label>
+              Venue
+              <input type="text" name="exemption_venue" id="exemption_venue" style="width: 100%;" />
+            </label>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <label>
+              Number of People
+              <input type="number" name="exemption_people" id="exemption_people" min="1" style="width: 100%;" />
+            </label>
+
+            <label>
+              Activity Date
+              <input type="date" name="exemption_date" id="exemption_date" style="width: 100%;" />
+            </label>
+          </div>
+
+          <label style="margin-bottom: 1rem;">
+            Title/Nature of Activity
+            <input type="text" name="exemption_activity" id="exemption_activity" style="width: 100%;" />
+          </label>
+
+          <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: end; margin-bottom: 1rem;">
+            <label>
+              Time Start
+              <input type="time" name="exemption_start" id="exemption_start" style="width: 100%;" />
+            </label>
+            <span style="text-align: center; padding: 0 1rem;">to</span>
+            <label>
+              Time End
+              <input type="time" name="exemption_end" id="exemption_end" style="width: 100%;" />
+            </label>
+          </div>
+
+          <div style="background-color: #e8f5e8; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #2e7d32;">Attachment: Duly accomplished and approved</h4>
+            <label style="display: block; margin-bottom: 0.5rem;">
+              <input type="checkbox" checked disabled /> Facilities & Service Request Form for Internal Clients (UC-SDWO-FORM-22)
+            </label>
+            <label style="display: block; margin-bottom: 0.5rem;">
+              <input type="checkbox" disabled /> Student Activity Request Form (UC-SDWO-FORM-106)
+            </label>
+            <label style="display: block;">
+              <input type="checkbox" disabled /> List of Participants
+            </label>
+          </div>
+
+          <div style="text-align: center; margin-top: 2rem;">
+            <button type="button" onclick="proceedWithSubmission()" style="background-color: #2e7d32; color: white; padding: 0.75rem 2rem; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
+              <i class="fas fa-check"></i> Confirm & Submit Both Forms
+            </button>
+          </div>
+        </div>
       </div>
 
       <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e8f5e8;">
@@ -920,16 +988,22 @@
           // Exit early if no time inputs
           if (!start || !end) return reasons;
 
-          if (toMin(start) < toMin(EARLIEST)) {
-            reasons.push("• Starts **before 7:30-AM**.");
+          const startMin = toMin(start);
+          const endMin = toMin(end);
+          const earliestMin = toMin(EARLIEST);
+          const latestMin = toMin(LATEST);
+          const duration = endMin - startMin;
+
+          if (startMin < earliestMin) {
+            reasons.push("• Starts **before 7:30 AM**.");
           }
 
-          if (toMin(end) > toMin(LATEST)) {
-            reasons.push("• Ends **after 7:30-PM**.");
+          if (endMin > latestMin) {
+            reasons.push("• Ends **after 7:30 PM**.");
           }
 
           // Check duration
-          if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
+          if (duration > MAX_HOURS * 60) {
             reasons.push("• Duration **exceeds 4 hours**.");
           }
 
@@ -1010,29 +1084,135 @@
             });
         }
 
-        /* Handle curfew check - this will be called from the new submit handler */
+
+
+        /* Make copyUserValues available globally for form submission */
+        window.copyUserValues = copyUserValues;
+
+        /* Populate exemption form with data from main form */
+        function populateExemptionForm() {
+          // Helper function to safely get element value
+          const getElementValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value || '' : '';
+          };
+
+          // Helper function to safely set element value
+          const setElementValue = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) {
+              element.value = value;
+            }
+          };
+
+          // Populate exemption form fields safely
+          setElementValue('exemption_office', getElementValue('u_org'));
+          setElementValue('exemption_venue', getElementValue('u_venue'));
+          setElementValue('exemption_people', getElementValue('u_attend'));
+          setElementValue('exemption_date', getElementValue('u_date'));
+          setElementValue('exemption_activity', getElementValue('u_event'));
+
+          // Set times in 24-hour format for time inputs (they'll display as 12-hour automatically)
+          const startTime = getElementValue('u_start');
+          const endTime = getElementValue('u_end');
+
+          setElementValue('exemption_start', startTime);
+          setElementValue('exemption_end', endTime);
+        }
+
+        /* Format time from 24-hour to 12-hour format */
+        function formatTimeTo12Hour(time24) {
+          if (!time24) return '';
+          const [hours, minutes] = time24.split(':');
+          const hour24 = parseInt(hours, 10);
+          const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+          const ampm = hour24 >= 12 ? 'PM' : 'AM';
+          return `${hour12}:${minutes} ${ampm}`;
+        }
+
+        /* Function to proceed with submission after exemption form is shown */
+        window.proceedWithSubmission = function() {
+          // Validate exemption form fields
+          const requiredFields = [
+            { id: 'exemption_office', name: 'Requesting Office' },
+            { id: 'exemption_venue', name: 'Venue' },
+            { id: 'exemption_people', name: 'Number of People' },
+            { id: 'exemption_date', name: 'Activity Date' },
+            { id: 'exemption_activity', name: 'Title/Nature of Activity' },
+            { id: 'exemption_start', name: 'Time Start' },
+            { id: 'exemption_end', name: 'Time End' }
+          ];
+
+          const missingFields = [];
+          requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+              missingFields.push(field.name);
+            }
+          });
+
+          if (missingFields.length > 0) {
+            showErrorModal({
+              title: 'Exemption Form Incomplete',
+              message: `Please fill out the following required fields in the exemption form:\n\n• ${missingFields.join('\n• ')}`,
+              buttonText: 'OK'
+            });
+            return;
+          }
+
+          // Ensure the curfew flag is set so the check will pass
+          const flag = document.getElementById("curfew_required");
+          if (flag) flag.value = "Yes";
+
+          // Call the form submission directly
+          handleFormSubmission();
+        };
+
+        /* Update the curfew check to populate exemption form */
+        const originalCheckCurfewRules = window.checkCurfewRules;
         window.checkCurfewRules = function() {
           const reasons = curfewReasons();
 
           if (reasons.length > 0) {
-            const msg =
-              "This booking triggers curfew rules:\n\n" +
-              reasons.join("\n") +
-              "\n\nDo you want to open the Curfew/Exemption form now?";
-            if (confirm(msg)) {
-              window.open(CURFEW_URL, "_blank");
+            // Check if exemption form is already visible and filled
+            const exemptionSection = document.getElementById('exemption-section');
+            const curfewFlag = document.getElementById("curfew_required");
 
-              // Let internal form know curfew form was needed
-              const flag = document.getElementById("curfew_required");
-              if (flag) flag.value = "Yes";
+            if (exemptionSection && exemptionSection.style.display === 'block' && curfewFlag && curfewFlag.value === "Yes") {
+              // Exemption form is already shown and acknowledged, proceed with submission
+              return true;
             }
+
+            // First time curfew detected - populate and show exemption form
+            populateExemptionForm();
+
+            // Show modal for curfew exemption
+            showConfirmationModal({
+              title: 'Curfew Exemption Required',
+              message: `This booking triggers curfew rules:\n\n${reasons.join('\n')}\n\nYou need to fill out the exemption form to proceed.`,
+              confirmText: 'Fill Exemption Form',
+              cancelText: 'Cancel',
+              type: 'warning',
+              onConfirm: () => {
+                // Show exemption form section
+                document.getElementById('exemption-section').style.display = 'block';
+                document.getElementById('exemption-section').scrollIntoView({ behavior: 'smooth' });
+
+                // Set flag that curfew form is needed
+                const flag = document.getElementById("curfew_required");
+                if (flag) flag.value = "Yes";
+
+                return false; // Don't submit yet, user needs to fill exemption form
+              },
+              onCancel: () => {
+                return false; // User cancelled
+              }
+            });
+            return false; // Don't proceed with submission yet
           }
 
-          return reasons.length === 0; // Return true if no curfew issues
+          return true; // No curfew issues, proceed normally
         };
-
-        /* Make copyUserValues available globally for form submission */
-        window.copyUserValues = copyUserValues;
 
         /* Update header info before printing */
         window.addEventListener("beforeprint", () => {
@@ -1105,6 +1285,40 @@
             }
           });
 
+          // Add exemption form data if curfew is required
+          if (formObject.curfew_required === "Yes") {
+            const exemptionFields = [
+              'exemption_office', 'exemption_venue', 'exemption_people',
+              'exemption_date', 'exemption_activity', 'exemption_start', 'exemption_end'
+            ];
+
+            exemptionFields.forEach(fieldId => {
+              const element = document.getElementById(fieldId);
+              if (element && element.value) {
+                formObject[fieldId] = element.value;
+              }
+            });
+
+
+          }
+
+          // Check authentication token
+          const token = localStorage.getItem('token');
+
+          if (!token) {
+            showErrorModal({
+              title: 'Authentication Required',
+              message: 'Please log in to submit the form.',
+              buttonText: 'Go to Login',
+              onClose: () => {
+                window.location.href = '/login';
+              }
+            });
+            return;
+          }
+
+
+
           // Show loading state
           const submitBtn = document.getElementById('preparePrint');
           submitBtn.disabled = true;
@@ -1119,6 +1333,11 @@
             },
             body: JSON.stringify(formObject)
           });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+          }
 
           const result = await response.json();
 
@@ -1148,16 +1367,27 @@
           }
 
         } catch (error) {
-          console.error('Form submission error:', error);
 
           // Reset button
           const submitBtn = document.getElementById('preparePrint');
           submitBtn.disabled = false;
           submitBtn.innerHTML = 'Submit';
 
+          // More detailed error message
+          let errorMessage = 'Unable to submit form. ';
+          if (error.message.includes('Failed to fetch')) {
+            errorMessage += 'Server connection failed. Please check if the server is running.';
+          } else if (error.message.includes('401')) {
+            errorMessage += 'Authentication failed. Please log in again.';
+          } else if (error.message.includes('403')) {
+            errorMessage += 'Access denied. Please check your permissions.';
+          } else {
+            errorMessage += `Error: ${error.message}`;
+          }
+
           showErrorModal({
             title: 'Network Error',
-            message: 'Unable to submit form. Please check your connection and try again.',
+            message: errorMessage,
             buttonText: 'Try Again'
           });
         }
