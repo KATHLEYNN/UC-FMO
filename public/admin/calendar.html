@@ -66,12 +66,13 @@
       vertical-align: middle;
     }
 
-    .today { background-color: #2e7d32; }
-    .reserved { background-color: #d32f2f; }
+    .today { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
+    .reserved { background: linear-gradient(135deg, #ff7043 0%, #ff5722 100%); }
+    .pending { background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%); }
     .available { background-color: white; border: 1px solid #ccc; }
 
     .calendar-container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
       background: white;
       border-radius: 10px;
@@ -92,41 +93,125 @@
 
     .calendar-grid {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
-    }
-
-    .day-name, .calendar-day {
-      text-align: center;
-      padding: 15px;
-      border-radius: 6px;
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      gap: 4px;
+      padding: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .day-name {
-      font-weight: bold;
-      background-color: #e8f5e9;
+      background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+      color: white;
+      text-align: center;
+      padding: 0.8rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 6px 6px 0 0;
+      box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
     }
 
     .calendar-day {
-      background-color: #ffffff;
-      border: 1px solid #ccc;
+      background: white;
+      text-align: center;
+      padding: 0.4rem;
       cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 110px;
+      max-height: 110px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      font-weight: 500;
+      flex-direction: column;
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
     }
 
     .calendar-day.today {
-      background-color: #2e7d32;
-      color: #fff;
+      background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+      color: white;
+      box-shadow: 0 3px 8px rgba(46, 125, 50, 0.3);
+      border: 2px solid #4caf50;
     }
 
     .calendar-day.reserved {
-      background-color: #d32f2f;
-      color: #fff;
+      background: linear-gradient(135deg, #ff7043 0%, #ff5722 100%);
+      color: white;
+      cursor: pointer;
+      padding: 0.3rem;
+      justify-content: space-between;
+      align-items: stretch;
+      box-shadow: 0 2px 4px rgba(255, 87, 34, 0.3);
+      border: 1px solid #ff5722;
+    }
+
+    .calendar-day.pending {
+      background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);
+      color: white;
+      cursor: pointer;
+      padding: 0.3rem;
+      justify-content: space-between;
+      align-items: stretch;
+      box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+      border: 1px solid #ff9800;
     }
 
     .calendar-day.empty {
       background: none;
       border: none;
       cursor: default;
+    }
+
+    .day-number {
+      font-size: 0.9rem;
+      font-weight: 700;
+      position: absolute;
+      top: 0.2rem;
+      right: 0.3rem;
+      background: rgba(255, 255, 255, 0.25);
+      padding: 0.1rem 0.25rem;
+      border-radius: 3px;
+      min-width: 1.2rem;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .event-title {
+      font-size: 0.65rem;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-top: 1.5rem;
+      margin-bottom: 0.1rem;
+      text-align: left;
+      word-wrap: break-word;
+      flex: 1;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      max-height: 2.2rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .event-location {
+      font-size: 0.55rem;
+      opacity: 0.95;
+      line-height: 1;
+      text-align: left;
+      word-wrap: break-word;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.15rem 0.25rem;
+      border-radius: 2px;
+      font-weight: 500;
+      max-height: 1.1rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     /* Modal */
@@ -149,6 +234,7 @@
       max-width: 400px;
       text-align: left;
       box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      position: relative;
     }
 
     .modal-content h3 {
@@ -158,15 +244,105 @@
 
     .modal-content p {
       margin: 5px 0;
+      color: #333;
     }
 
     .close-btn {
       position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 24px;
-      color: white;
+      top: 15px;
+      right: 20px;
+      font-size: 28px;
+      color: #666;
       cursor: pointer;
+      background: none;
+      border: none;
+      padding: 5px;
+      line-height: 1;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #333;
+    }
+
+    .additional-info {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .additional-info p {
+      margin: 8px 0;
+      color: #333;
+    }
+
+    .status-pending {
+      color: #ff9800;
+      font-weight: bold;
+      text-transform: capitalize;
+      background: rgba(255, 152, 0, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .status-confirmed, .status-approved {
+      color: #4caf50;
+      font-weight: bold;
+      text-transform: capitalize;
+      background: rgba(76, 175, 80, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .status-cancelled, .status-rejected {
+      color: #f44336;
+      font-weight: bold;
+      text-transform: capitalize;
+      background: rgba(244, 67, 54, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .calendar-grid {
+        grid-template-columns: repeat(7, minmax(90px, 1fr));
+        gap: 2px;
+        padding: 0.5rem;
+      }
+
+      .calendar-day {
+        min-height: 90px;
+        max-height: 90px;
+        padding: 0.25rem;
+      }
+
+      .day-number {
+        font-size: 0.75rem;
+        top: 0.15rem;
+        right: 0.25rem;
+        padding: 0.05rem 0.2rem;
+      }
+
+      .event-title {
+        font-size: 0.55rem;
+        margin-top: 1.2rem;
+        max-height: 1.8rem;
+      }
+
+      .event-location {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.2rem;
+      }
+
+      .calendar-container {
+        margin: 1rem;
+        padding: 15px;
+      }
+
+      .calendar-legend {
+        gap: 15px;
+        font-size: 0.9rem;
+      }
     }
 
   </style>
@@ -178,10 +354,10 @@
 
   <!-- Legend -->
   <div class="calendar-legend">
-    <div><span class="legend-circle today"></span> Green = Today</div>
-    <div><span class="legend-circle reserved"></span> Red = Reserved</div>
-    <div><span class="legend-circle pending" style="background-color:#ff9800;"></span> Orange = Pending</div>
-    <div><span class="legend-circle available"></span> White = Available</div>
+    <div><span class="legend-circle today"></span> Today</div>
+    <div><span class="legend-circle reserved"></span> Approved Reservations</div>
+    <div><span class="legend-circle pending" style="background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);"></span> Pending Requests</div>
+    <div><span class="legend-circle available"></span> Available Dates</div>
   </div>
 
   <!-- Calendar -->
@@ -201,72 +377,199 @@
   </div>
 
   <!-- Modal -->
-  <div id="eventModal" class="modal">
-    <div class="modal-content">
+  <div id="eventModal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="close-btn" onclick="closeModal()">&times;</button>
       <h3 id="modalTitle">Event Title</h3>
       <p><strong>Time:</strong> <span id="modalTime"></span></p>
       <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+      <div class="additional-info" id="additionalInfo"></div>
     </div>
-    <div class="close-btn" onclick="closeModal()">×</div>
   </div>
 
   <!-- JavaScript -->
   <script>
-    const reservedEvents = {
-      "2025-06-15": { title: "Faculty Meeting", time: "10:00 AM – 12:00 PM", location: "AVR Room" },
-      "2025-06-20": { title: "Student Orientation", time: "1:00 PM – 4:00 PM", location: "Auditorium" },
-      "2025-06-23": { title: "Defense Presentation", time: "9:00 AM – 11:00 AM", location: "Lecture Room 101" }
-    };
+    let reservedEvents = {};
+    let calendarData = {};
 
-    const calendar = document.getElementById("calendar");
-    const monthYear = document.getElementById("monthYear");
+    // Load calendar data from API
+    async function loadCalendarData() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/reservations/admin/calendar', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const todayStr = now.toISOString().split("T")[0];
+        if (response.ok) {
+          const data = await response.json();
+          calendarData = data.calendarData || {};
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const lastDate = new Date(year, month + 1, 0).getDate();
+          // Convert to the format expected by existing code
+          reservedEvents = {};
+          Object.keys(calendarData).forEach(date => {
+            if (calendarData[date].length > 0) {
+              const firstEvent = calendarData[date][0];
+              reservedEvents[date] = {
+                title: firstEvent.title,
+                time: firstEvent.time,
+                location: firstEvent.location,
+                status: firstEvent.status,
+                user: firstEvent.user,
+                type: firstEvent.type
+              };
+            }
+          });
 
-    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    monthYear.textContent = `${monthNames[month]} ${year}`;
-
-    for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement("div");
-      empty.classList.add("calendar-day", "empty");
-      calendar.appendChild(empty);
+          renderCalendar();
+        }
+      } catch (error) {
+        console.error('Error loading calendar data:', error);
+        // Fallback to mock data
+        loadMockData();
+      }
     }
 
-    for (let d = 1; d <= lastDate; d++) {
-      const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-      const cell = document.createElement("div");
-      cell.classList.add("calendar-day");
-      cell.textContent = d;
+    // Fallback mock data
+    function loadMockData() {
+      reservedEvents = {
+        "2025-06-15": { title: "Faculty Meeting", time: "10:00 AM – 12:00 PM", location: "AVR Room", status: "confirmed", user: "Admin", type: "event" },
+        "2025-06-20": { title: "Student Orientation", time: "1:00 PM – 4:00 PM", location: "Auditorium", status: "confirmed", user: "Admin", type: "event" },
+        "2025-06-23": { title: "Defense Presentation", time: "9:00 AM – 11:00 AM", location: "Lecture Room 101", status: "pending", user: "John Doe", type: "internal" }
+      };
+      renderCalendar();
+    }
 
-      if (dateStr === todayStr) {
-        cell.classList.add("today");
+    function renderCalendar() {
+      const calendar = document.getElementById("calendar");
+      const monthYear = document.getElementById("monthYear");
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const todayStr = now.toISOString().split("T")[0];
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      monthYear.textContent = `${monthNames[month]} ${year}`;
+
+      // Clear existing calendar days (keep headers)
+      const dayHeaders = calendar.querySelectorAll('.day-name');
+      calendar.innerHTML = '';
+      dayHeaders.forEach(header => calendar.appendChild(header));
+
+      // Add empty cells for days before the first day of the month
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.classList.add("calendar-day", "empty");
+        calendar.appendChild(empty);
       }
 
-      if (reservedEvents[dateStr]) {
-        cell.classList.add("reserved");
-        cell.onclick = () => showModal(dateStr);
-      }
+      // Add days of the month
+      for (let d = 1; d <= lastDate; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+        const cell = document.createElement("div");
+        cell.classList.add("calendar-day");
+        cell.textContent = d;
 
-      calendar.appendChild(cell);
+        if (dateStr === todayStr) {
+          cell.classList.add("today");
+        }
+
+        if (reservedEvents[dateStr]) {
+          const event = reservedEvents[dateStr];
+
+          // Add appropriate class based on status
+          if (event.status === 'pending') {
+            cell.classList.add("pending");
+          } else {
+            cell.classList.add("reserved");
+          }
+
+          // Create content structure for reserved/pending dates
+          const dayNumber = document.createElement('div');
+          dayNumber.className = 'day-number';
+          dayNumber.textContent = d;
+
+          const eventTitle = document.createElement('div');
+          eventTitle.className = 'event-title';
+          eventTitle.textContent = truncateText(event.title, 20);
+          eventTitle.title = event.title;
+
+          const eventLocation = document.createElement('div');
+          eventLocation.className = 'event-location';
+          eventLocation.textContent = truncateText(event.location || 'TBD', 25);
+          eventLocation.title = event.location || 'TBD';
+
+          // Clear the day number and add structured content
+          cell.textContent = '';
+          cell.appendChild(dayNumber);
+          cell.appendChild(eventTitle);
+          cell.appendChild(eventLocation);
+
+          cell.onclick = () => showModal(dateStr);
+          cell.style.cursor = 'pointer';
+        }
+
+        calendar.appendChild(cell);
+      }
+    }
+
+    // Function to truncate text with ellipsis
+    function truncateText(text, maxLength) {
+      if (!text) return '';
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength - 3) + '...';
     }
 
     function showModal(date) {
       const event = reservedEvents[date];
       document.getElementById("modalTitle").textContent = event.title;
-      document.getElementById("modalTime").textContent = event.time;
-      document.getElementById("modalLocation").textContent = event.location;
+      document.getElementById("modalTime").textContent = event.time || 'Not specified';
+      document.getElementById("modalLocation").textContent = event.location || 'TBD';
+
+      // Add additional information for reservations
+      const additionalInfo = document.getElementById('additionalInfo');
+
+      if (event.user && event.type) {
+        additionalInfo.innerHTML = `
+          <p><strong>Requested by:</strong> ${event.user}</p>
+          <p><strong>Type:</strong> ${event.type.charAt(0).toUpperCase() + event.type.slice(1)}</p>
+          <p><strong>Status:</strong> <span class="status-${event.status}">${event.status.charAt(0).toUpperCase() + event.status.slice(1)}</span></p>
+        `;
+        additionalInfo.style.display = 'block';
+      } else {
+        additionalInfo.style.display = 'none';
+      }
+
       document.getElementById("eventModal").style.display = "flex";
     }
 
-    function closeModal() {
+    function closeModal(event) {
+      // If event is passed and it's not the modal background, don't close
+      if (event && event.target !== event.currentTarget) {
+        return;
+      }
       document.getElementById("eventModal").style.display = "none";
     }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // Initialize calendar on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadCalendarData();
+    });
+
+    // Initial render for fallback
+    renderCalendar();
   </script>
 
   <script>

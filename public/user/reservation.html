@@ -2,169 +2,186 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Reservation Options</title>
+  <title>Reservation - Rules & Calendar</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="/utils/navbar.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/user/styles/reservation-calendar.css">
 </head>
 <body>
   <div id="navbar-container"></div>
 
-  <!-- <main class="reservation-selection">
-    <h1>Select Reservation Type</h1>
-    <div class="reservation-options">
-      <a href="on-campus.html" class="option-card">On Campus</a>
-      <a href="internal-clients.html" class="option-card">Internal Clients</a>
-      <a href="external-clients.html" class="option-card">External Clients</a>
+  <!-- Rules and Regulations Section -->
+  <div id="rules-section" class="rules-container">
+    <div class="rules-content">
+      <div class="rules-header">
+        <i class="fas fa-gavel"></i>
+        <h1>Rules and Regulations</h1>
+        <p>Please read and accept the following terms before proceeding with your reservation</p>
+      </div>
+
+      <div class="rules-body">
+        <div class="rule-item">
+          <h3><i class="fas fa-clock"></i> Booking Requirements</h3>
+          <ul>
+            <li>All reservations must be submitted at least <strong>2 weeks in advance</strong></li>
+            <li>Submit <strong>two (2) copies</strong> of the completed form</li>
+            <li>Include a signed request letter from your department/organization</li>
+          </ul>
+        </div>
+
+        <div class="rule-item">
+          <h3><i class="fas fa-calendar-check"></i> Reservation Policies</h3>
+          <ul>
+            <li>Reservations are subject to availability and approval</li>
+            <li>Maximum booking duration is <strong>8 hours per day</strong></li>
+            <li>No same-day reservations will be accepted</li>
+            <li>Cancellations must be made at least 48 hours in advance</li>
+          </ul>
+        </div>
+
+        <div class="rule-item">
+          <h3><i class="fas fa-users"></i> Facility Usage</h3>
+          <ul>
+            <li>Respect the maximum capacity of each venue</li>
+            <li>Keep facilities clean and organized</li>
+            <li>Report any damages immediately to the FMO office</li>
+            <li>No smoking, eating, or drinking in certain designated areas</li>
+          </ul>
+        </div>
+
+        <div class="rule-item">
+          <h3><i class="fas fa-exclamation-triangle"></i> Violations & Penalties</h3>
+          <ul>
+            <li>Failure to comply may result in <strong>reservation cancellation</strong></li>
+            <li>Repeated violations may lead to <strong>booking privileges suspension</strong></li>
+            <li>Damage to facilities will incur <strong>repair/replacement costs</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rules-footer">
+        <div class="acceptance-checkbox">
+          <input type="checkbox" id="accept-rules" required>
+          <label for="accept-rules">
+            I have read and agree to abide by all the rules and regulations stated above
+          </label>
+        </div>
+
+        <div class="rules-actions">
+          <button type="button" class="btn-decline" onclick="declineRules()">
+            <i class="fas fa-times"></i> Decline
+          </button>
+          <button type="button" class="btn-accept" id="accept-btn" onclick="acceptRules()" disabled>
+            <i class="fas fa-check"></i> Accept & Continue
+          </button>
+        </div>
+      </div>
     </div>
-  </main>
+  </div>
 
-    <footer class="footer">
-  © 2025 University of the Cordilleras. All Rights Reserved.
-</footer> -->
+  <!-- Calendar Section (Initially Hidden) -->
+  <div id="calendar-section" class="calendar-container" style="display: none;">
+    <div class="calendar-content">
+      <div class="calendar-header">
+        <h2><i class="fas fa-calendar-alt"></i> Select Your Preferred Date</h2>
+        <p>Choose an available date for your reservation</p>
+        <div class="calendar-navigation">
+          <button type="button" id="prev-month" class="nav-btn">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span id="current-month-year"></span>
+          <button type="button" id="next-month" class="nav-btn">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
-  <style>
-    * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+      <!-- Calendar Legend -->
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <span class="legend-circle today"></span>
+          <span>Today</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-circle available"></span>
+          <span>Available</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-circle reserved"></span>
+          <span>Reserved</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-circle selected"></span>
+          <span>Selected</span>
+        </div>
+      </div>
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
-  flex-direction: column;
-}
+      <!-- Calendar Grid -->
+      <div class="calendar-grid">
+        <div class="day-header">Sun</div>
+        <div class="day-header">Mon</div>
+        <div class="day-header">Tue</div>
+        <div class="day-header">Wed</div>
+        <div class="day-header">Thu</div>
+        <div class="day-header">Fri</div>
+        <div class="day-header">Sat</div>
+        <!-- Calendar days will be populated by JavaScript -->
+      </div>
 
-nav {
-      position: sticky;
-      top: 0;
-      z-index: 999;
-      background-color: #2e7d32;
-      color: #ffffff;
-      padding: 15px 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
+      <div class="calendar-footer">
+        <div class="selected-date-info" id="selected-date-info" style="display: none;">
+          <i class="fas fa-calendar-check"></i>
+          <span>Selected Date: <strong id="selected-date-display"></strong></span>
+        </div>
 
-.logo img {
-  height: 75px;
-  width: auto;
-}
+        <div class="calendar-actions">
+          <button type="button" class="btn-back" onclick="goBackToRules()">
+            <i class="fas fa-arrow-left"></i> Back to Rules
+          </button>
+          <button type="button" class="btn-continue" id="continue-btn" onclick="proceedToForms()" disabled>
+            <i class="fas fa-arrow-right"></i> Continue to Forms
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 2rem;
-}
+  <!-- Form Selection Section (Initially Hidden) -->
+  <div id="form-selection" class="form-selection-container" style="display: none;">
+    <div class="form-selection-content">
+      <h2><i class="fas fa-clipboard-list"></i> Select Reservation Type</h2>
+      <p>Choose the appropriate form for your reservation</p>
 
-.nav-links li a {
-  text-decoration: none;
-  color: white;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
+      <div class="form-options">
+        <a href="#" class="form-option-card" onclick="navigateToForm('on-campus.html')">
+          <i class="fas fa-university"></i>
+          <h3>On Campus</h3>
+          <p>For campus-based activities and events</p>
+        </a>
+        <a href="#" class="form-option-card" onclick="navigateToForm('internal-clients.html')">
+          <i class="fas fa-users"></i>
+          <h3>Internal Clients</h3>
+          <p>For university departments and organizations</p>
+        </a>
+        <a href="#" class="form-option-card" onclick="navigateToForm('external-clients.html')">
+          <i class="fas fa-handshake"></i>
+          <h3>External Clients</h3>
+          <p>For external organizations and partners</p>
+        </a>
+      </div>
+    </div>
+  </div>
 
-.nav-links li a:hover {
-  color: #a5d6a7; 
-}
-
-    .reservation-selection {
-  text-align: center;
-  padding: 100px 20px;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f1f8e9;
-}
-
-.reservation-selection h1 {
-  font-size: 2.5rem;
-  margin-bottom: 40px;
-  color: #256d1b;
-}
-
-.reservation-options {
-  display: flex;
-  flex-direction: column; 
-  align-items: center;
-  gap: 30px;
-}
-
-.option-card {
-  background-color: #ffffff;
-  padding: 40px 30px;
-  width: 250px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: #1b5e20;
-  font-weight: 600;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid #c5e1a5;
-}
-
-.option-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(67, 160, 71, 0.2);
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-/* Footer */
-.footer {
-  background-color: #033E2E;
-  color: white;
-  text-align: center;
-  padding: 108px;
-  font-size: 14px;
-}
-  </style>
+  <script src="/user/scripts/reservation-calendar.js"></script>
+  <script src="/utils/navbar.js"></script>
 
   <script>
-    // Initialize navbar and check authentication
+    // Initialize navbar
     document.addEventListener('DOMContentLoaded', function() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = '/login';
-        return;
-      }
-
-      // Verify user role and redirect automatically
-      fetch('/api/auth/verify', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.user) {
-          window.location.href = '/login';
-          return;
-        }
-
-        // Auto-redirect based on user role
-        if (data.user.role === 'student') {
-          // Students automatically go to internal clients form
-          window.location.href = '/user/internal-clients.html';
-        } else if (data.user.role === 'external') {
-          // External users automatically go to external clients form
-          window.location.href = '/user/external-clients.html';
-        } else if (isAdminRole(data.user.role)) {
-          // Admins see the selection page
-          initializeNavbar('admin', 'reservation', data.user.role);
-        } else {
-          window.location.href = '/login';
-        }
-      })
-      .catch(error => {
-        window.location.href = '/login';
-      });
+      initializeNavbar('user', 'reservation', 'student');
     });
   </script>
-  <script src="/js/roleUtils.js"></script>
-  <script src="/utils/navbar.js"></script>
+
+
 </body>
 </html>

@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const authRoutes = require('./routes/auth');
 const sarfRoutes = require('./routes/sarfRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
 const { auth, checkRole, checkAdminRole, checkUserRole } = require('./middleware/auth');
 const { isAdminRole, isUserRole } = require('./utils/roleUtils');
 
@@ -32,6 +33,7 @@ pool.getConnection()
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/sarf', sarfRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 // Serve PDF files (public access for preview)
 app.use('/uploads/pdfs', express.static(path.join(__dirname, 'uploads', 'pdfs')));

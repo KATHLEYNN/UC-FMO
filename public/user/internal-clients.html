@@ -34,6 +34,12 @@
         margin: 0;
         padding: 0;
       }
+
+      /* Ensure navbar uses proper font from navbar.css */
+      .navbar,
+      .navbar * {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      }
       .footer {
         background-color: #033e2e;
         color: white;
@@ -520,7 +526,12 @@
               name="u_date"
               data-target="event_date"
               required
+              readonly
+              style="background-color: #f0f0f0; cursor: not-allowed;"
             />
+            <small style="color: #666; font-size: 0.8rem; margin-top: 0.25rem; display: block;">
+              Date selected from reservation calendar
+            </small>
           </label>
 
           <label>
@@ -1246,19 +1257,97 @@
   });
 </script>
 
-    <!-- Include navbar and modal JavaScript -->
+    <!-- Include required JavaScript files -->
+    <script src="/js/roleUtils.js"></script>
     <script src="/utils/navbar.js"></script>
     <script src="/utils/modals.js"></script>
 
     <script>
       // Initialize navbar and modals
       document.addEventListener('DOMContentLoaded', function() {
-        // Initialize navbar for user role
-        initializeNavbar('user', 'internal-clients', 'student');
+        // Check authentication and initialize navbar
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+          return;
+        }
 
-        // Initialize modals
-        initializeModals();
+        // Verify user role and initialize navbar
+        fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.user) {
+            window.location.href = '/login';
+            return;
+          }
+
+          // Initialize navbar with correct user role
+          initializeNavbar('user', 'internal-clients', data.user.role);
+
+          // Initialize modals
+          initializeModals();
+
+          // Populate date field from calendar selection
+          populateSelectedDate();
+        })
+        .catch(error => {
+          console.error('Error verifying user:', error);
+          window.location.href = '/login';
+        });
       });
+
+      // Function to populate the selected date from calendar
+      function populateSelectedDate() {
+        const selectedDate = localStorage.getItem('selectedReservationDate');
+        const dateField = document.getElementById('u_date');
+
+        if (selectedDate && dateField) {
+          dateField.value = selectedDate;
+          console.log('Pre-populated date from calendar:', selectedDate);
+        } else if (!selectedDate) {
+          // If no date was selected from calendar, redirect back to reservation page
+          alert('Please select a date from the reservation calendar first.');
+          window.location.href = '/user/reservation.html';
+        }
+      }
+
+      // Function to save reservation to calendar
+      async function saveReservationToCalendar(formData) {
+        try {
+          const reservationData = {
+            reservation_date: formData.u_date,
+            time_start: formData.u_start,
+            time_end: formData.u_end,
+            form_type: 'internal',
+            title: formData.u_event || 'Internal Client Event', // Function/Event field
+            location: formData.u_venue || 'TBD'
+          };
+
+          const response = await fetch('/api/reservations/save-date', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(reservationData)
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            console.error('Failed to save reservation:', error);
+            throw new Error(error.message || 'Failed to save reservation');
+          }
+
+          console.log('Reservation saved successfully');
+        } catch (error) {
+          console.error('Error saving reservation:', error);
+          // Don't throw error here to allow form submission to continue
+        }
+      }
 
       // Handle form submission with PDF generation
       async function handleFormSubmission() {
@@ -1346,6 +1435,9 @@
           submitBtn.innerHTML = 'Submit';
 
           if (result.success) {
+            // Save the reservation to calendar after successful form submission
+            await saveReservationToCalendar(formObject);
+
             // Show success modal with PDF options
             showSuccessModalWithPDF({
               title: 'Form Submitted Successfully!',

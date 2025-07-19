@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>External Clients Registration Form</title>
+    <!-- Include navbar CSS -->
+    <link rel="stylesheet" href="/utils/navbar.css">
+    <!-- Include modal CSS -->
+    <link rel="stylesheet" href="/utils/modals.css">
     <style>
       @page {
         size: 8.5in 13in;
@@ -25,6 +29,12 @@
         font-size: 11pt;
         margin: 0;
         padding: 0;
+      }
+
+      /* Ensure navbar uses proper font from navbar.css */
+      .navbar,
+      .navbar * {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
       }
       .navbar {
         background-color: #2e7d32; /* dark green */
@@ -369,20 +379,8 @@
   </script>
 
   <body>
-    <nav class="navbar">
-      <div class="logo">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
-          alt="UC Logo"
-          style="height: 75px; width: auto"
-        />
-      </div>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="home.html" class="active">Home</a></li>
-        <li><a href="#">Inquire</a></li>
-        <li><a href="reservation.html">Reservation</a></li>
-      </ul>
-    </nav>
+    <!-- Navbar Container -->
+    <div id="navbar-container"></div>
 
     <form id="userForm" class="full-form">
       <div style="text-align: center; margin-bottom: 1rem;">
@@ -477,8 +475,12 @@
             id="u_reserve_date"
             name="u_reserve_date"
             data-target="reserve_date"
-            style="width: 100%"
+            style="width: 100%; background-color: #f0f0f0; cursor: not-allowed;"
+            readonly
           />
+          <small style="color: #666; font-size: 0.8rem; margin-top: 0.25rem; display: block;">
+            Date selected from reservation calendar
+          </small>
         </label>
 
         <label>
@@ -2182,7 +2184,7 @@
         /* Handle submit/print with curfew check */
         let curfewAcknowledged = false;
 
-        btnPrint.addEventListener("click", () => {
+        btnPrint.addEventListener("click", async () => {
           const reasons = curfewReasons();
 
           // If curfew rules are triggered and not yet acknowledged
@@ -2202,8 +2204,19 @@
             return; // Cancel actual print until confirmation next time
           }
 
-          copyUserValues();
-          window.print();
+          // Confirm submission before saving reservation
+          if (confirm('Are you ready to submit this form? This will reserve your selected date and generate the PDF for printing.')) {
+            // Save reservation to calendar
+            await saveExternalReservationToCalendar();
+
+            copyUserValues();
+            window.print();
+
+            // Show success message
+            setTimeout(() => {
+              alert('Form submitted successfully! Your reservation has been saved.');
+            }, 1000);
+          }
         });
 
         /* Update header info before printing */
@@ -2224,6 +2237,122 @@
           }
         });
       });
+    </script>
+
+    <!-- Include required JavaScript files -->
+    <script src="/js/roleUtils.js"></script>
+    <script src="/utils/navbar.js"></script>
+    <script src="/utils/modals.js"></script>
+
+    <script>
+      // Initialize navbar and modals
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check authentication and initialize navbar
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+          return;
+        }
+
+        // Verify user role and initialize navbar
+        fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.user) {
+            window.location.href = '/login';
+            return;
+          }
+
+          // Initialize navbar with correct user role
+          initializeNavbar('user', 'external-clients', data.user.role);
+
+          // Initialize modals
+          initializeModals();
+
+          // Populate date field from calendar selection
+          populateSelectedDate();
+        })
+        .catch(error => {
+          console.error('Error verifying user:', error);
+          window.location.href = '/login';
+        });
+      });
+
+      // Function to populate the selected date from calendar
+      function populateSelectedDate() {
+        const selectedDate = localStorage.getItem('selectedReservationDate');
+        const dateField = document.getElementById('u_reserve_date');
+        const printDateField = document.getElementById('reserve_date');
+
+        if (selectedDate && dateField) {
+          dateField.value = selectedDate;
+          if (printDateField) {
+            printDateField.value = selectedDate;
+          }
+          console.log('Pre-populated date from calendar:', selectedDate);
+        } else if (!selectedDate) {
+          // If no date was selected from calendar, redirect back to reservation page
+          alert('Please select a date from the reservation calendar first.');
+          window.location.href = '/user/reservation.html';
+        }
+      }
+
+      // Function to get selected facility
+      function getSelectedFacility() {
+        const facilityCheckboxes = document.querySelectorAll('input[name="u_facility"]:checked');
+        if (facilityCheckboxes.length > 0) {
+          const facility = facilityCheckboxes[0].value;
+          const facilityNames = {
+            'classroom': 'Classroom',
+            'gym': 'Gymnasium',
+            'auditorium': 'Auditorium',
+            'theater': 'Theater',
+            'review_center': 'G311-G312 Review Center',
+            'training': 'Training Center',
+            'other_facilities': document.getElementById('u_others_number')?.value || 'Other Facility'
+          };
+          return facilityNames[facility] || 'TBD';
+        }
+        return 'TBD';
+      }
+
+      // Function to save external reservation to calendar
+      async function saveExternalReservationToCalendar() {
+        try {
+          const reservationData = {
+            reservation_date: document.getElementById('u_reserve_date').value,
+            time_start: document.getElementById('u_time_start').value,
+            time_end: document.getElementById('u_time_end').value,
+            form_type: 'external',
+            title: document.getElementById('u_title_theme').value || 'External Client Activity',
+            location: getSelectedFacility()
+          };
+
+          const response = await fetch('/api/reservations/save-date', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(reservationData)
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            console.error('Failed to save reservation:', error);
+            throw new Error(error.message || 'Failed to save reservation');
+          }
+
+          console.log('External reservation saved successfully');
+        } catch (error) {
+          console.error('Error saving external reservation:', error);
+          // Don't throw error here to allow form submission to continue
+        }
+      }
     </script>
 
     <footer class="footer">
