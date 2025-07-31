@@ -5,6 +5,7 @@
   <title>Reservation - Rules & Calendar</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="/utils/navbar.css">
+  <link rel="stylesheet" href="/utils/modals.css">
   <link rel="stylesheet" href="/user/styles/reservation-calendar.css">
 </head>
 <body>
@@ -79,12 +80,149 @@
     </div>
   </div>
 
+  <!-- Venue Selection Section (Initially Hidden) -->
+  <div id="venue-section" class="venue-container" style="display: none;">
+    <div class="venue-content">
+      <div class="venue-header">
+        <i class="fas fa-building"></i>
+        <h1>Select Venue</h1>
+        <p>Choose the venue for your reservation from Main Campus or Legarda Campus</p>
+      </div>
+
+      <div class="venue-grid">
+        <!-- Main Campus Venues -->
+        <div class="campus-section">
+          <h3 class="campus-title"><i class="fas fa-building"></i> Main Campus</h3>
+          <div class="campus-venues">
+            <div class="venue-card" data-venue="Auditorium">
+              <div class="venue-icon">
+                <i class="fas fa-theater-masks"></i>
+              </div>
+              <h4>Auditorium</h4>
+              <p>Large capacity venue for events</p>
+            </div>
+
+            <div class="venue-card" data-venue="Cañao Hall">
+              <div class="venue-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <h4>Cañao Hall</h4>
+              <p>Multi-purpose hall</p>
+            </div>
+
+            <div class="venue-card" data-venue="Conference Room">
+              <div class="venue-icon">
+                <i class="fas fa-handshake"></i>
+              </div>
+              <h4>Conference Room</h4>
+              <p>Professional meeting space</p>
+            </div>
+
+            <div class="venue-card" data-venue="Gymnasium">
+              <div class="venue-icon">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <h4>Gymnasium</h4>
+              <p>Sports and physical activities</p>
+            </div>
+
+            <div class="venue-card" data-venue="Laboratory Room">
+              <div class="venue-icon">
+                <i class="fas fa-flask"></i>
+              </div>
+              <h4>Laboratory Room</h4>
+              <p>Science and research lab</p>
+            </div>
+
+            <div class="venue-card" data-venue="Lecture Room (Main)">
+              <div class="venue-icon">
+                <i class="fas fa-chalkboard"></i>
+              </div>
+              <h4>Lecture Room (Main)</h4>
+              <p>Academic presentations</p>
+            </div>
+
+            <div class="venue-card" data-venue="Training Center">
+              <div class="venue-icon">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <h4>Training Center</h4>
+              <p>Skills development and training</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legarda Campus Venues -->
+        <div class="campus-section">
+          <h3 class="campus-title"><i class="fas fa-university"></i> Legarda Campus</h3>
+          <div class="campus-venues">
+            <div class="venue-card" data-venue="AVR">
+              <div class="venue-icon">
+                <i class="fas fa-video"></i>
+              </div>
+              <h4>AVR</h4>
+              <p>Audio-Visual Room</p>
+            </div>
+
+            <div class="venue-card" data-venue="Crime Lab">
+              <div class="venue-icon">
+                <i class="fas fa-search"></i>
+              </div>
+              <h4>Crime Lab</h4>
+              <p>Forensic laboratory</p>
+            </div>
+
+            <div class="venue-card" data-venue="Deftac">
+              <div class="venue-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <h4>Deftac</h4>
+              <p>Defense tactics training</p>
+            </div>
+
+            <div class="venue-card" data-venue="Lecture Room (Legarda)">
+              <div class="venue-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+              </div>
+              <h4>Lecture Room (Legarda)</h4>
+              <p>Academic presentations</p>
+            </div>
+
+            <div class="venue-card" data-venue="Moot Court">
+              <div class="venue-icon">
+                <i class="fas fa-gavel"></i>
+              </div>
+              <h4>Moot Court</h4>
+              <p>Legal practice and simulation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="venue-footer">
+        <div class="selected-venue-info" id="selected-venue-info" style="display: none;">
+          <i class="fas fa-check-circle"></i>
+          <span>Selected Venue: <strong id="selected-venue-display"></strong></span>
+        </div>
+
+        <div class="venue-actions">
+          <button type="button" class="btn-back" onclick="goBackToRules()">
+            <i class="fas fa-arrow-left"></i> Back to Rules
+          </button>
+          <button type="button" class="btn-continue" id="venue-continue-btn" onclick="proceedToCalendar()" disabled>
+            <i class="fas fa-arrow-right"></i> Continue to Calendar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Calendar Section (Initially Hidden) -->
   <div id="calendar-section" class="calendar-container" style="display: none;">
     <div class="calendar-content">
       <div class="calendar-header">
         <h2><i class="fas fa-calendar-alt"></i> Select Your Preferred Date</h2>
-        <p>Choose an available date for your reservation</p>
+        <p>Choose an available date for your reservation at <strong id="calendar-venue-display"></strong></p>
         <div class="calendar-navigation">
           <button type="button" id="prev-month" class="nav-btn">
             <i class="fas fa-chevron-left"></i>
@@ -94,6 +232,31 @@
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
+      </div>
+
+      <!-- Venue Filter -->
+      <div class="venue-filter-container">
+        <label for="venue-filter">
+          <i class="fas fa-filter"></i>
+          Filter by Venue:
+        </label>
+        <select id="venue-filter" class="venue-filter-select" disabled>
+          <option value="">Select venue first</option>
+          <!-- Main Campus -->
+          <option value="Auditorium">Auditorium</option>
+          <option value="Cañao Hall">Cañao Hall</option>
+          <option value="Conference Room">Conference Room</option>
+          <option value="Gymnasium">Gymnasium</option>
+          <option value="Laboratory Room">Laboratory Room</option>
+          <option value="Lecture Room (Main)">Lecture Room (Main)</option>
+          <option value="Training Center">Training Center</option>
+          <!-- Legarda -->
+          <option value="AVR">AVR</option>
+          <option value="Crime Lab">Crime Lab</option>
+          <option value="Deftac">Deftac</option>
+          <option value="Lecture Room (Legarda)">Lecture Room (Legarda)</option>
+          <option value="Moot Court">Moot Court</option>
+        </select>
       </div>
 
       <!-- Calendar Legend -->
@@ -135,8 +298,8 @@
         </div>
 
         <div class="calendar-actions">
-          <button type="button" class="btn-back" onclick="goBackToRules()">
-            <i class="fas fa-arrow-left"></i> Back to Rules
+          <button type="button" class="btn-back" onclick="goBackToVenue()">
+            <i class="fas fa-arrow-left"></i> Back to Venue
           </button>
           <button type="button" class="btn-continue" id="continue-btn" onclick="proceedToForms()" disabled>
             <i class="fas fa-arrow-right"></i> Continue to Forms
@@ -172,6 +335,7 @@
     </div>
   </div>
 
+  <script src="/utils/modals.js"></script>
   <script src="/user/scripts/reservation-calendar.js"></script>
   <script src="/utils/navbar.js"></script>
 

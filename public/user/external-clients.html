@@ -31,6 +31,59 @@
         padding: 0;
       }
 
+      /* Time Conflict Warning Styles */
+      .time-conflict-warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .conflict-message {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #856404;
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .conflict-message i {
+        color: #f39c12;
+        font-size: 1.2rem;
+      }
+
+      .suggested-times h4 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .time-suggestions-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .time-suggestion {
+        background: #e8f5e8;
+        border: 1px solid #4caf50;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        color: #2e7d32;
+      }
+
+      .time-suggestion:hover {
+        background: #4caf50;
+        color: white;
+        transform: translateY(-1px);
+      }
+
       /* Ensure navbar uses proper font from navbar.css */
       .navbar,
       .navbar * {
@@ -504,6 +557,18 @@
             style="width: 100%"
           /> </label
         ><br />
+      </div>
+
+      <!-- Time Conflict Warning and Suggestions -->
+      <div id="time-conflict-warning" class="time-conflict-warning" style="display: none;">
+        <div class="conflict-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Time conflict detected! The selected time overlaps with existing reservations.</span>
+        </div>
+        <div id="suggested-times" class="suggested-times">
+          <h4>Suggested Available Times:</h4>
+          <div id="time-suggestions" class="time-suggestions-list"></div>
+        </div>
       </div>
       <br />
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
@@ -2145,6 +2210,97 @@
           return reasons;
         }
 
+        /* Time conflict checking */
+        async function checkTimeConflicts() {
+          const date = document.getElementById("u_reserve_date")?.value;
+          const start = document.getElementById("u_time_start")?.value;
+          const end = document.getElementById("u_time_end")?.value;
+          const venue = getSelectedFacility() || localStorage.getItem('selectedReservationVenue');
+
+          if (!date || !start || !end || !venue) {
+            hideTimeConflictWarning();
+            return;
+          }
+
+          try {
+            const response = await fetch('/api/reservations/check-time-conflict', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              },
+              body: JSON.stringify({
+                reservation_date: date,
+                time_start: start + ':00',
+                time_end: end + ':00',
+                location: venue
+              })
+            });
+
+            const result = await response.json();
+
+            if (result.hasConflicts) {
+              showTimeConflictWarning(result.conflicts, result.suggestedTimes);
+            } else {
+              hideTimeConflictWarning();
+            }
+          } catch (error) {
+            console.error('Error checking time conflicts:', error);
+            hideTimeConflictWarning();
+          }
+        }
+
+        function showTimeConflictWarning(conflicts, suggestedTimes) {
+          const warningDiv = document.getElementById('time-conflict-warning');
+          const suggestionsDiv = document.getElementById('time-suggestions');
+
+          if (warningDiv && suggestionsDiv) {
+            warningDiv.style.display = 'block';
+
+            // Clear previous suggestions
+            suggestionsDiv.innerHTML = '';
+
+            // Add suggested times
+            if (suggestedTimes && suggestedTimes.length > 0) {
+              suggestedTimes.forEach(timeSlot => {
+                const suggestionBtn = document.createElement('div');
+                suggestionBtn.className = 'time-suggestion';
+                suggestionBtn.textContent = `${timeSlot.start} - ${timeSlot.end}`;
+                suggestionBtn.onclick = () => {
+                  document.getElementById('u_time_start').value = timeSlot.start_24h.slice(0, 5);
+                  document.getElementById('u_time_end').value = timeSlot.end_24h.slice(0, 5);
+                  hideTimeConflictWarning();
+                };
+                suggestionsDiv.appendChild(suggestionBtn);
+              });
+            } else {
+              suggestionsDiv.innerHTML = '<p style="color: #666; font-style: italic;">No alternative times available for this date.</p>';
+            }
+          }
+        }
+
+        function hideTimeConflictWarning() {
+          const warningDiv = document.getElementById('time-conflict-warning');
+          if (warningDiv) {
+            warningDiv.style.display = 'none';
+          }
+        }
+
+        // Add event listeners for time conflict checking
+        const timeStartInput = document.getElementById('u_time_start');
+        const timeEndInput = document.getElementById('u_time_end');
+        const dateInput = document.getElementById('u_reserve_date');
+
+        if (timeStartInput) {
+          timeStartInput.addEventListener('change', checkTimeConflicts);
+        }
+        if (timeEndInput) {
+          timeEndInput.addEventListener('change', checkTimeConflicts);
+        }
+        if (dateInput) {
+          dateInput.addEventListener('change', checkTimeConflicts);
+        }
+
         /* Copy values from user form to internal form */
         function copyUserValues() {
           document
@@ -2298,6 +2454,63 @@
           // If no date was selected from calendar, redirect back to reservation page
           alert('Please select a date from the reservation calendar first.');
           window.location.href = '/user/reservation.html';
+        }
+
+        // Show existing reservations info if any
+        const existingReservations = localStorage.getItem('existingReservations');
+        if (existingReservations) {
+          showExistingReservationsInfo(JSON.parse(existingReservations));
+        }
+      }
+
+      // Function to show existing reservations for the selected date
+      function showExistingReservationsInfo(reservations) {
+        // Remove any existing info div
+        const existingInfo = document.getElementById('existing-reservations-info');
+        if (existingInfo) {
+          existingInfo.remove();
+        }
+
+        const infoDiv = document.createElement('div');
+        infoDiv.id = 'existing-reservations-info';
+        infoDiv.className = 'alert alert-info';
+        infoDiv.style.cssText = `
+          margin: 15px 0;
+          padding: 15px;
+          background: #e3f2fd;
+          border: 1px solid #2196f3;
+          border-radius: 8px;
+          color: #1565c0;
+        `;
+
+        infoDiv.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <i class="fas fa-info-circle" style="margin-right: 8px; color: #2196f3;"></i>
+            <strong>Existing Reservations for This Date:</strong>
+          </div>
+          <div style="margin-left: 20px;">
+            ${reservations.map(res => `
+              <div style="margin: 8px 0; padding: 8px; background: rgba(33, 150, 243, 0.1); border-radius: 4px;">
+                <div style="font-weight: 500;">${res.title}</div>
+                <div style="font-size: 0.9em; color: #666; margin-top: 4px;">
+                  <i class="fas fa-clock" style="margin-right: 5px;"></i> ${res.time}
+                  <span style="margin-left: 15px;">
+                    <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> ${res.venue || res.location}
+                  </span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="margin-top: 10px; font-size: 0.9em; color: #1565c0;">
+            <i class="fas fa-lightbulb" style="margin-right: 5px;"></i>
+            <strong>Note:</strong> Choose different times to avoid conflicts.
+          </div>
+        `;
+
+        // Insert after the date field
+        const dateField = document.getElementById('u_reserve_date');
+        if (dateField && dateField.parentNode) {
+          dateField.parentNode.insertBefore(infoDiv, dateField.nextSibling);
         }
       }
 

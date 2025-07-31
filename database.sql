@@ -68,13 +68,20 @@ CREATE TABLE IF NOT EXISTS reservation_calendar (
     form_type ENUM('campus', 'internal', 'external') NOT NULL,
     title VARCHAR(255) NOT NULL,
     location VARCHAR(100),
+    venue VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     INDEX idx_reservation_date (reservation_date),
     INDEX idx_user_date (user_id, reservation_date),
-    UNIQUE KEY unique_user_date (user_id, reservation_date)
+    INDEX idx_venue_date (venue, reservation_date)
 );
+
+-- Add venue column to existing reservation_calendar table if it doesn't exist
+ALTER TABLE reservation_calendar
+ADD COLUMN IF NOT EXISTS venue VARCHAR(100) AFTER location,
+DROP INDEX IF EXISTS unique_user_date,
+ADD INDEX IF NOT EXISTS idx_venue_date (venue, reservation_date);
 
 -- Update existing users table to include new admin roles
 ALTER TABLE users MODIFY COLUMN role ENUM('master-admin', 'citcs-admin', 'coa-admin', 'cas-admin', 'cba-admin', 'cea-admin', 'cht-admin', 'con-admin', 'cte-admin', 'student', 'external') NOT NULL;

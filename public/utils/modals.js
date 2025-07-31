@@ -410,6 +410,111 @@ async function downloadPDF(pdfId) {
 }
 
 /**
+ * Show reservation details modal
+ * @param {Object} options - Configuration options
+ * @param {string} options.title - Modal title
+ * @param {Object} options.reservation - Reservation details
+ * @param {Array} options.reservations - Multiple reservations for same date (optional)
+ * @param {boolean} options.allowSelection - Whether to allow date selection (default: false)
+ * @param {Function} options.onSelect - Callback when date is selected (optional)
+ * @param {Function} options.onClose - Callback when closed (optional)
+ * @returns {Promise} - Resolves when modal is closed
+ */
+function showReservationDetailsModal(options = {}) {
+    return new Promise((resolve) => {
+        const {
+            title = 'Reservation Details',
+            reservation = null,
+            reservations = [],
+            allowSelection = false,
+            onSelect = null,
+            onClose = null
+        } = options;
+
+        const modalId = 'reservation-details-modal-' + Date.now();
+
+        // Handle single reservation or multiple reservations
+        const items = reservations.length > 0 ? reservations : (reservation ? [reservation] : []);
+
+        let reservationListHTML = '';
+        if (items.length > 0) {
+            reservationListHTML = items.map((item, index) => `
+                <div class="reservation-item ${index > 0 ? 'border-top' : ''}">
+                    <div class="reservation-info">
+                        <h4><i class="fas fa-calendar-alt"></i> ${item.title || 'Event'}</h4>
+                        <div class="reservation-details">
+                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> ${item.time || 'All Day'}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> <strong>Venue:</strong> ${item.location || item.venue || 'TBD'}</p>
+                            <p><i class="fas fa-calendar"></i> <strong>Day:</strong> ${item.day || new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                            ${item.status ? `<p><i class="fas fa-info-circle"></i> <strong>Status:</strong> <span class="status-badge status-${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span></p>` : ''}
+                            ${item.user ? `<p><i class="fas fa-user"></i> <strong>Reserved by:</strong> ${item.user}</p>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            reservationListHTML = '<p class="no-reservations">No reservation details available.</p>';
+        }
+
+        const selectButtonHTML = allowSelection ? `
+            <button class="modal-btn primary-btn" data-action="select">
+                <i class="fas fa-check"></i> Select This Date
+            </button>
+        ` : '';
+
+        const modalHTML = `
+            <div class="modal-overlay" id="${modalId}">
+                <div class="modal-content reservation-details-modal">
+                    <div class="modal-header info">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>${title}</h3>
+                        <button class="modal-close" data-action="close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="reservations-list">
+                            ${reservationListHTML}
+                        </div>
+                        ${!allowSelection && items.length > 0 ? '<p class="selection-note"><i class="fas fa-info-circle"></i> This date has existing reservations. You can still book if you choose a different time.</p>' : ''}
+                    </div>
+                    <div class="modal-footer">
+                        ${selectButtonHTML}
+                        <button class="modal-btn secondary-btn" data-action="close">
+                            ${allowSelection ? 'Cancel' : 'Close'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const container = document.getElementById('modal-container');
+        container.innerHTML = modalHTML;
+        const modal = document.getElementById(modalId);
+
+        // Add event listeners
+        modal.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                closeModal(modalId, false, resolve, onClose);
+            }
+        });
+
+        modal.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = e.target.closest('[data-action]').dataset.action;
+                if (action === 'select' && onSelect) {
+                    onSelect();
+                }
+                closeModal(modalId, action === 'select', resolve, onClose);
+            });
+        });
+
+        // Show modal with animation
+        setTimeout(() => modal.classList.add('show'), 10);
+    });
+}
+
+/**
  * Close any open modal
  */
 function closeAnyModal() {
@@ -437,5 +542,6 @@ window.showConfirmationModal = showConfirmationModal;
 window.showSuccessModal = showSuccessModal;
 window.showSuccessModalWithPDF = showSuccessModalWithPDF;
 window.showErrorModal = showErrorModal;
+window.showReservationDetailsModal = showReservationDetailsModal;
 window.closeAnyModal = closeAnyModal;
 window.downloadPDF = downloadPDF;
