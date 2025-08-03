@@ -2154,7 +2154,6 @@
         ]; /* sample holidates */
         const EARLIEST = "07:30";
         const LATEST = "19:30";
-        const MAX_HOURS = 4;
         const CURFEW_URL = "exemption-form.html";
 
         const btnPrint = document.getElementById("preparePrint");
@@ -2200,11 +2199,6 @@
 
           if (toMin(end) > toMin(LATEST)) {
             reasons.push("• Ends **after 7:30-PM**.");
-          }
-
-          // Check duration
-          if (toMin(end) - toMin(start) > MAX_HOURS * 60) {
-            reasons.push("• Duration **exceeds 4 hours**.");
           }
 
           return reasons;
