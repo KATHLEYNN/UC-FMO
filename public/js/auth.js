@@ -123,7 +123,8 @@ async function handleSignup(event) {
         email: form.email.value,
         username: form.username.value,
         password: form.password.value,
-        role: form.role.value
+        role: form.role.value,
+        department: form.department.value
     };
 
     try {

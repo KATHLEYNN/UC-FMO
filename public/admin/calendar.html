@@ -527,7 +527,7 @@
 
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
-      const todayStr = now.toISOString().split("T")[0];
+      const todayStr = new Date().toISOString().split("T")[0];
 
       const firstDay = new Date(year, month, 1).getDay();
       const lastDate = new Date(year, month + 1, 0).getDate();

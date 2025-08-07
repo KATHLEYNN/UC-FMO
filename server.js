@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 const authRoutes = require('./routes/auth');
 const sarfRoutes = require('./routes/sarfRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
@@ -16,9 +18,39 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
 
 // Database connections
 const { pool } = require('./config/database');
+
+// Configure multer for image uploads
+const imageStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = 'uploads/images';
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'event-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const imageUpload = multer({
+    storage: imageStorage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    }
+});
 
 // Test database connection
 pool.getConnection()
@@ -98,22 +130,26 @@ app.get('/api/events', async (req, res) => {
     }
 });
 
-app.post('/api/events', [auth, checkRole(['admin'])], async (req, res) => {
+app.post('/api/events', [auth, checkAdminRole(), imageUpload.single('event_image')], async (req, res) => {
     try {
-        const { title, date, time, location, image_url } = req.body;
+        const { title, date, time, location } = req.body;
 
         if (!title || !date || !time || !location) {
             return res.status(400).json({ message: 'Title, date, time, and location are required' });
         }
 
+        // Get image path if file was uploaded
+        const imagePath = req.file ? `/uploads/images/${req.file.filename}` : null;
+
         const [result] = await pool.execute(
             'INSERT INTO events (title, date, time, location, image_url) VALUES (?, ?, ?, ?, ?)',
-            [title, date, time, location, image_url || null]
+            [title, date, time, location, imagePath]
         );
 
         res.status(201).json({
             message: 'Event created successfully',
-            eventId: result.insertId
+            eventId: result.insertId,
+            imagePath: imagePath
         });
     } catch (error) {
         console.error('Error creating event:', error);
@@ -121,7 +157,7 @@ app.post('/api/events', [auth, checkRole(['admin'])], async (req, res) => {
     }
 });
 
-app.delete('/api/events/:id', [auth, checkRole(['admin'])], async (req, res) => {
+app.delete('/api/events/:id', [auth, checkAdminRole()], async (req, res) => {
     try {
         const eventId = req.params.id;
 

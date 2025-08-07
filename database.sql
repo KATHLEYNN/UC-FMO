@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS student_activity_requests (
     user_id INT NOT NULL,
     reservation_type ENUM('campus', 'internal', 'external') NOT NULL,
     pdf_url VARCHAR(255) NOT NULL,
+    control_no VARCHAR(50),
     status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
     rejection_notes TEXT,
     version INT DEFAULT 1,
@@ -57,7 +58,6 @@ CREATE TABLE IF NOT EXISTS student_activity_requests (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Reservation Calendar Table for tracking date selections and availability
 CREATE TABLE IF NOT EXISTS reservation_calendar (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -83,5 +83,8 @@ ADD COLUMN IF NOT EXISTS venue VARCHAR(100) AFTER location,
 DROP INDEX IF EXISTS unique_user_date,
 ADD INDEX IF NOT EXISTS idx_venue_date (venue, reservation_date);
 
--- Update existing users table to include new admin roles
+ALTER TABLE users ADD COLUMN IF NOT EXISTS department VARCHAR(100) AFTER role;
 ALTER TABLE users MODIFY COLUMN role ENUM('master-admin', 'citcs-admin', 'coa-admin', 'cas-admin', 'cba-admin', 'cea-admin', 'cht-admin', 'con-admin', 'cte-admin', 'student', 'external') NOT NULL;
+
+-- Add control_no column to existing student_activity_requests table if it doesn't exist
+ALTER TABLE student_activity_requests ADD COLUMN IF NOT EXISTS control_no VARCHAR(50) AFTER pdf_url;

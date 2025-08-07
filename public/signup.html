@@ -209,6 +209,25 @@
                     <div class="error-text" id="user-type-error"></div>
                 </div>
 
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-building input-icon"></i>
+                        <select name="department" id="department" required>
+                            <option value="">Select department</option>
+                            <option value="CITCS">CITCS</option>
+                            <option value="COA">COA</option>
+                            <option value="CAS">CAS</option>
+                            <option value="CBA">CBA</option>
+                            <option value="CEA">CEA</option>
+                            <option value="CHT">CHT</option>
+                            <option value="CON">CON</option>
+                            <option value="CTE">CTE</option>
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                    <div class="error-text" id="department-error"></div>
+                </div>
+
                 <button type="submit" class="signup-btn">
                     <span class="btn-text">Create Account</span>
                     <i class="fas fa-arrow-right btn-icon"></i>
@@ -721,6 +740,14 @@
             if (!userType.value) {
                 showSignupError('user-type-error', 'Please select a user type');
                 userType.classList.add('error');
+                isValid = false;
+            }
+
+            // Department validation
+            const department = document.getElementById('department');
+            if (!department.value) {
+                showSignupError('department-error', 'Please select a department');
+                department.classList.add('error');
                 isValid = false;
             }
 

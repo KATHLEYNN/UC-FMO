@@ -4,7 +4,7 @@ const { pool } = require('../config/database');
 
 const authController = {
     async register(req, res) {
-        const { username, email, password, role } = req.body;
+        const { username, email, password, role, department } = req.body;
 
         try {
             const [existingUsers] = await pool.execute(
@@ -13,8 +13,8 @@ const authController = {
             );
 
             if (existingUsers.length > 0) {
-                return res.status(400).json({ 
-                    message: 'Email or username already exists' 
+                return res.status(400).json({
+                    message: 'Email or username already exists'
                 });
             }
 
@@ -22,15 +22,16 @@ const authController = {
             const hashedPassword = await bcrypt.hash(password, salt);
 
             const [result] = await pool.execute(
-                'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
-                [username, email, hashedPassword, role]
+                'INSERT INTO users (username, email, password, role, department) VALUES (?, ?, ?, ?, ?)',
+                [username, email, hashedPassword, role, department]
             );
 
-            res.status(201).json({ 
+            res.status(201).json({
                 message: 'User registered successfully',
                 userId: result.insertId
             });
         } catch (error) {
+            console.error('Registration error:', error);
             res.status(500).json({ message: 'Error during registration' });
         }
     },

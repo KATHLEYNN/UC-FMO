@@ -2147,12 +2147,11 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        /* For editing */
         const HOLIDAYS = [
           "2025-01-01",
           "2025-04-09",
           "2025-12-25",
-        ]; /* sample holidates */
+        ];
         const EARLIEST = "07:30";
         const LATEST = "19:30";
         const CURFEW_URL = "exemption-form.html";
@@ -2163,22 +2162,16 @@
           return;
         }
 
-        /* Time string to total minutes */
         const toMin = (t) => {
           const [h, m] = t.split(":").map(Number);
           return h * 60 + m;
         };
-
-        /* Determine if curfew rules are triggered */
         function curfewReasons() {
           const date = document.getElementById("u_reserve_date")?.value;
           const start = document.getElementById("u_time_start")?.value;
           const end = document.getElementById("u_time_end")?.value;
 
-          // Track reasoning
           const reasons = [];
-
-          // uses from YYYY-MM-DD
           if (date) {
             const [year, month, day] = date.split("-").map(Number);
             const d = new Date(year, month - 1, day);
@@ -2191,7 +2184,6 @@
             }
           }
 
-          // Exit early if no time inputs
           if (!start || !end) return reasons;
 
           if (toMin(start) < toMin(EARLIEST)) {

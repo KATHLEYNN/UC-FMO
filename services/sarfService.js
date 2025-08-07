@@ -35,10 +35,6 @@ class SARFService {
         };
       }
 
-      if (!formData.control_no) {
-        formData.control_no = await this.generateControlNumber();
-      }
-
       const insertQuery = `
         INSERT INTO student_activity_requests (
           user_id, reservation_type, pdf_url, status, version
@@ -47,8 +43,8 @@ class SARFService {
 
       const values = [
         userId,
-        'campus', 
-        '', 
+        'campus',
+        '',
         'pending',
         1
       ];
@@ -60,7 +56,7 @@ class SARFService {
         message: 'Student Activity Request Form submitted successfully',
         data: {
           id: result.insertId,
-          control: formData.control_no,
+          control: null, // Control number will be assigned when approved
           status: 'pending',
           reservation_type: 'campus',
           organization_name: formData.organization_name,
@@ -233,16 +229,19 @@ class SARFService {
       }
 
       const newStatus = action === 'approve' ? 'accepted' : 'rejected';
+      let controlNumber = null;
 
       let updateQuery, updateParams;
 
       if (action === 'approve') {
+        // Generate control number when approving
+        controlNumber = await this.generateControlNumber();
         updateQuery = `
           UPDATE student_activity_requests
-          SET status = ?
+          SET status = ?, control_no = ?
           WHERE id = ?
         `;
-        updateParams = [newStatus, sarfId];
+        updateParams = [newStatus, controlNumber, sarfId];
       } else {
         updateQuery = `
           UPDATE student_activity_requests
@@ -259,7 +258,7 @@ class SARFService {
         message: `SARF ${newStatus} successfully`,
         data: {
           id: sarfId,
-          control: `SARF-${sarfId}`,
+          control: controlNumber,
           status: newStatus,
           updated_at: new Date()
         }
