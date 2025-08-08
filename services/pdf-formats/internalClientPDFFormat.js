@@ -334,7 +334,8 @@ class InternalClientPDFFormat extends BasePDFFormat {
           </td>
           <td colspan="1" style="width: 25%;">
             <strong>Scope of Activity:</strong><br/>
-            ${this.getValue(formData, 'u_scope')}
+            ${formData.general === 'General Public' ? '☑' : '☐'} General Public<br/>
+            ${formData.exclusive === 'Exclusive' ? '☑' : '☐'} Exclusive
           </td>
           <td colspan="2" style="width: 40%;">
             <div style="display: flex; justify-content: space-between;">
@@ -386,12 +387,14 @@ class InternalClientPDFFormat extends BasePDFFormat {
         </tr>
         <tr>
           <td colspan="1">
-            ${formData.mic ? '☑' : '☐'} Microphones<br/>
+            ${formData.wired_mic ? '☑' : '☐'} Wired Microphones:<br/>
+            ${formData.wireless_mic ? '☑' : '☐'} Wireless Microphones:<br/>
             ${formData.mic_stand ? '☑' : '☐'} Microphone Stands<br/>
             ${formData.projector ? '☑' : '☐'} Projector<br/>
-            ${formData.pa_system ? '☑' : '☐'} PA System
+            
           </td>
           <td colspan="1">
+          ${formData.pa_system ? '☑' : '☐'} PA System<br/>
             ${formData.laptop ? '☑' : '☐'} Laptop<br/>
             ${formData.lights ? '☑' : '☐'} Lights<br/>
             Other AV needs:<br/>
