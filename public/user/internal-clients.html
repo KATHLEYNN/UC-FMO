@@ -5,9 +5,9 @@
     <meta charset="utf-8" />
     <title>Internal Clients Registration Form</title>
     <!-- Include navbar CSS -->
-    <link rel="stylesheet" href="/utils/navbar.css">
+    <link rel="stylesheet" href="/utils/navbar.css" />
     <!-- Include modal CSS -->
-    <link rel="stylesheet" href="/utils/modals.css">
+    <link rel="stylesheet" href="/utils/modals.css" />
     <style>
       @page {
         size: 8.5in 13in;
@@ -91,7 +91,8 @@
       /* Ensure navbar uses proper font from navbar.css */
       .navbar,
       .navbar * {
-        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif !important;
       }
       .footer {
         background-color: #033e2e;
@@ -360,14 +361,24 @@
       });
     }
 
-    function toggleLongTablesCount(checkbox) {
-      const countBox = document.getElementById("u_long_tables_count");
-      if (checkbox.value === "yes") {
-        countBox.disabled = !checkbox.checked;
-      } else if (checkbox.value === "no" && checkbox.checked) {
-        countBox.disabled = true;
-        countBox.value = "";
-      }
+    function toggleDependentInput(checkbox) {
+      const ids = (checkbox.dataset.toggleTarget || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      if (!ids.length) return;
+      ids.forEach((id) => {
+        const target = document.getElementById(id);
+        if (!target) return;
+
+        if (checkbox.checked) {
+          target.disabled = false;
+        } else {
+          target.disabled = true;
+          if ("value" in target) target.value = "";
+        }
+      });
     }
   </script>
 
@@ -378,17 +389,17 @@
       const maxNote = document.getElementById("attend_max_note");
 
       const capacityMap = {
-        "Auditorium": 250,
+        Auditorium: 250,
         "Cañao Hall": 150,
         "Conference Room": 20,
-        "Gymnasium": 1200,
+        Gymnasium: 1200,
         "Laboratory Room": 100,
         "Lecture Room (Main)": 60,
         "Training Center": 40,
 
-        "AVR": 45,
+        AVR: 45,
         "Crime Lab": 50,
-        "Deftac": 50,
+        Deftac: 50,
         "Lecture Room (Legarda)": 45,
         "Moot Court": 45,
       };
@@ -419,19 +430,68 @@
     <div id="navbar-container"></div>
 
     <form id="userForm" class="full-form">
-      <input type="hidden" id="curfew_required" name="curfew_required" value="No" />
-      <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e8f5e8;">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png" alt="UC Logo" style="height: 60px; width: auto;">
+      <input
+        type="hidden"
+        id="curfew_required"
+        name="curfew_required"
+        value="No"
+      />
+      <div
+        style="
+          text-align: center;
+          margin-bottom: 2rem;
+          padding-bottom: 1.5rem;
+          border-bottom: 2px solid #e8f5e8;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+          "
+        >
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/8/84/UC_Official_Logo.png"
+            alt="UC Logo"
+            style="height: 60px; width: auto"
+          />
           <div>
-            <h1 style="margin: 0; color: #2e7d32; font-size: 1.8rem; font-weight: 700;">Internal Clients Request Form</h1>
-            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 1rem;">Facilities Management Operations Unit</p>
+            <h1
+              style="
+                margin: 0;
+                color: #2e7d32;
+                font-size: 1.8rem;
+                font-weight: 700;
+              "
+            >
+              Internal Clients Request Form
+            </h1>
+            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 1rem">
+              Facilities Management Operations Unit
+            </p>
           </div>
         </div>
-        <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 1rem; margin-top: 1rem;">
-          <i class="fas fa-info-circle" style="color: #856404; margin-right: 0.5rem;"></i>
-          <strong style="color: #856404;">NOTE:</strong>
-          <span style="color: #856404;">Submit two (2) copies of this form at least two (2) weeks prior to your event.</span>
+        <div
+          style="
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+          "
+        >
+          <i
+            class="fas fa-info-circle"
+            style="color: #856404; margin-right: 0.5rem"
+          ></i>
+          <strong style="color: #856404">NOTE:</strong>
+          <span style="color: #856404"
+            >Submit two (2) copies of this form at least two (2) weeks prior to
+            your event.</span
+          >
         </div>
       </div>
 
@@ -457,9 +517,24 @@
         </small>
       </label>
 
-      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
-        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
-          <i class="fas fa-building" style="margin-right: 0.5rem;"></i>
+      <div
+        style="
+          background-color: #f8fdf8;
+          padding: 1.5rem;
+          border-radius: 8px;
+          margin-bottom: 2rem;
+          border-left: 4px solid #2e7d32;
+        "
+      >
+        <h3
+          style="
+            margin: 0 0 1.5rem 0;
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: 600;
+          "
+        >
+          <i class="fas fa-building" style="margin-right: 0.5rem"></i>
           Organization Information
         </h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
@@ -488,12 +563,34 @@
         </div>
       </div>
 
-      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
-        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
-          <i class="fas fa-calendar-alt" style="margin-right: 0.5rem;"></i>
+      <div
+        style="
+          background-color: #f8fdf8;
+          padding: 1.5rem;
+          border-radius: 8px;
+          margin-bottom: 2rem;
+          border-left: 4px solid #2e7d32;
+        "
+      >
+        <h3
+          style="
+            margin: 0 0 1.5rem 0;
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: 600;
+          "
+        >
+          <i class="fas fa-calendar-alt" style="margin-right: 0.5rem"></i>
           Event Details
         </h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+          "
+        >
           <label>
             Function / Event
             <input
@@ -544,7 +641,7 @@
           </label>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
           <label>
             Number of Attendees
             <input
@@ -556,21 +653,69 @@
               required
               style="width: 100%"
             />
-            <small id="attend_max_note" style="margin-left: 5px; color: #666;">Max: —</small>
+            <small id="attend_max_note" style="margin-left: 5px; color: #666"
+              >Max: —</small
+            >
           </label>
 
-          <label>
-            Scope of Activity
-            <input type="text" name="u_scope" data-target="audience_type" />
-          </label>
+          <fieldset>
+            <legend>Scope of Activity</legend>
+            <div style="display: flex; gap: 2rem; align-items: center">
+              <label>
+                <input
+                  type="checkbox"
+                  name="u_scope"
+                  value="general"
+                  data-target="audience_type"
+                  data-value="general"
+                  onclick="onlyOne(this, 'u_scope')"
+                />
+                General Public
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="u_scope"
+                  value="exclusive"
+                  data-target="audience_type"
+                  data-value="exclusive"
+                  onclick="onlyOne(this, 'u_scope')"
+                />
+                Exclusive
+              </label>
+            </div>
+          </fieldset>
         </div>
       </div>
-      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
-        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
-          <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>
+      <div
+        style="
+          background-color: #f8fdf8;
+          padding: 1.5rem;
+          border-radius: 8px;
+          margin-bottom: 2rem;
+          border-left: 4px solid #2e7d32;
+        "
+      >
+        <h3
+          style="
+            margin: 0 0 1.5rem 0;
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: 600;
+          "
+        >
+          <i class="fas fa-clock" style="margin-right: 0.5rem"></i>
           Schedule & Budget Information
         </h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+          "
+        >
           <label>
             Day / Date of Event
             <input
@@ -580,9 +725,16 @@
               data-target="event_date"
               required
               readonly
-              style="background-color: #f0f0f0; cursor: not-allowed;"
+              style="background-color: #f0f0f0; cursor: not-allowed"
             />
-            <small style="color: #666; font-size: 0.8rem; margin-top: 0.25rem; display: block;">
+            <small
+              style="
+                color: #666;
+                font-size: 0.8rem;
+                margin-top: 0.25rem;
+                display: block;
+              "
+            >
               Date selected from reservation calendar
             </small>
           </label>
@@ -611,10 +763,17 @@
         </div>
 
         <!-- Time Conflict Warning and Suggestions -->
-        <div id="time-conflict-warning" class="time-conflict-warning" style="display: none;">
+        <div
+          id="time-conflict-warning"
+          class="time-conflict-warning"
+          style="display: none"
+        >
           <div class="conflict-message">
             <i class="fas fa-exclamation-triangle"></i>
-            <span>Time conflict detected! The selected time overlaps with existing reservations.</span>
+            <span
+              >Time conflict detected! The selected time overlaps with existing
+              reservations.</span
+            >
           </div>
           <div id="suggested-times" class="suggested-times">
             <h4>Suggested Available Times:</h4>
@@ -622,7 +781,9 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+        <div
+          style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem"
+        >
           <label>
             Budget Source
             <input type="text" name="u_budget" data-target="budget_source" />
@@ -640,12 +801,29 @@
         </div>
       </div>
 
-      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
-        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
-          <i class="fas fa-concierge-bell" style="margin-right: 0.5rem;"></i>
+      <div
+        style="
+          background-color: #f8fdf8;
+          padding: 1.5rem;
+          border-radius: 8px;
+          margin-bottom: 2rem;
+          border-left: 4px solid #2e7d32;
+        "
+      >
+        <h3
+          style="
+            margin: 0 0 1.5rem 0;
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: 600;
+          "
+        >
+          <i class="fas fa-concierge-bell" style="margin-right: 0.5rem"></i>
           Additional Services
         </h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
+        <div
+          style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem"
+        >
           <fieldset>
             <legend>With Food / Canteen Service?</legend>
 
@@ -727,286 +905,457 @@
           </fieldset>
         </div>
       </div>
-      <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
-        <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
-          <i class="fas fa-tools" style="margin-right: 0.5rem;"></i>
+      <div
+        style="
+          background-color: #f8fdf8;
+          padding: 1.5rem;
+          border-radius: 8px;
+          margin-bottom: 2rem;
+          border-left: 4px solid #2e7d32;
+        "
+      >
+        <h3
+          style="
+            margin: 0 0 1.5rem 0;
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: 600;
+          "
+        >
+          <i class="fas fa-tools" style="margin-right: 0.5rem"></i>
           Equipment & Requirements
         </h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
           <fieldset>
             <legend>Audio-Visual Requirements</legend>
-          <label
-            ><input
-              type="checkbox"
-              name="mic"
-              value="Microphones"
-              data-target="mic_checkbox"
-            />
-            Wired/Wireless Microphones:</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="mic_stand"
-              value="Mic_Stands"
-              data-target="mic_stands_checkbox"
-            />
-            Microphone Stands</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="projector"
-              value="Projector"
-              data-target="projector_checkbox"
-            />
-            Projector</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="pa_system"
-              value="PA_System"
-              data-target="pa_system_checkbox"
-            />
-            PA System</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="laptop"
-              value="Laptop"
-              data-target="laptop_checkbox"
-            />
-            Laptop</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="lights"
-              value="Lights"
-              data-target="lights_checkbox"
-            />
-            Lights</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="wifi_connection"
-              value="WiFi_Connection"
-              data-target="wifi_checkbox"
-            />
-            WiFi Connection</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="podium_monitor"
-              value="Podium_Monitor"
-              data-target="podium_checkbox"
-            />
-            Podium Monitor Board</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="live_streaming"
-              value="Live_Streaming"
-              data-target="stream_checkbox"
-            />
-            Live Streaming</label
-          >
-
-          <label
-            >Other AV needs:
-            <input type="text" name="u_av_other" data-target="others_AV" />
-          </label>
-        </fieldset>
-
-        <fieldset>
-          <legend>Property / Equipment Needs (from LMO)</legend>
-
-          <!-- Air Cooler -->
-          <label>Air Cooler:</label><br />
-          <label>
-            <input
-              type="checkbox"
-              name="u_air_cooler"
-              value="yes"
-              onclick="onlyOne(this, 'u_air_cooler')"
-              data-target="air_cooler"
-              data-value="yes"
-            />
-            Yes
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="u_air_cooler"
-              value="no"
-              onclick="onlyOne(this, 'u_air_cooler')"
-              data-target="air_cooler"
-              data-value="no"
-            />
-            No
-          </label>
-
-          <br /><br />
-
-          <!-- Long Tables -->
-          <fieldset>
-            <legend>Long Tables:</legend>
-
-            <label>
-              <input
+            <label
+              ><input
                 type="checkbox"
-                name="u_long_tables"
-                value="yes"
-                onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
-                data-target="long_tables"
-                data-value="yes"
+                name="wired_mic"
+                value="Microphones"
+                data-target="wired_mic_checkbox"
+                data-toggle-target="u_wired_count"
+                onclick="toggleDependentInput(this)"
               />
-              Yes </label
-            ><br />
-
-            <label>
+              Wired Microphones:
               <input
-                type="checkbox"
-                name="u_long_tables"
-                value="no"
-                onclick="onlyOne(this, 'u_long_tables'); toggleLongTablesCount(this);"
-                data-target="long_tables"
-                data-value="no"
-              />
-              No </label
-            ><br /><br />
-
-            <label>
-              If Yes, how many?
-              <input
-                type="number"
-                name="u_long_tables_count"
-                id="u_long_tables_count"
-                data-target="long_tables_count"
+                type="text"
+                id="u_wired_count"
+                name="u_wired_count"
                 min="0"
-                style="width: 150px"
+                step="1"
+                style="width: 20%"
                 disabled
               />
+              pcs
+            </label>
+            <label
+              ><input
+                type="checkbox"
+                name="wireless_mic"
+                value="Microphones"
+                data-target="wired_mic_checkbox"
+                data-toggle-target="u_wireless_count"
+                onclick="toggleDependentInput(this)"
+              />
+              Wireless Microphones:
+              <input
+                type="text"
+                id="u_wireless_count"
+                name="u_wireless_count"
+                min="0"
+                step="1"
+                style="width: 20%"
+                disabled
+              />
+              pcs
+            </label>
+            <label
+              ><input
+                type="checkbox"
+                name="mic_stand"
+                value="Mic_Stands"
+                data-target="mic_stands_checkbox"
+              />
+              Microphone Stands:</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                name="projector"
+                value="Projector"
+                data-target="projector_checkbox"
+              />
+              Projector</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                name="pa_system"
+                value="PA_System"
+                data-target="pa_system_checkbox"
+              />
+              PA System</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                name="laptop"
+                value="Laptop"
+                data-target="laptop_checkbox"
+              />
+              Laptop</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                name="lights"
+                value="Lights"
+                data-target="lights_checkbox"
+              />
+              Lights</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                name="wifi_connection"
+                value="WiFi_Connection"
+                data-target="wifi_checkbox"
+              />
+              WiFi Connection</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                name="podium_monitor"
+                value="Podium_Monitor"
+                data-target="podium_checkbox"
+              />
+              Podium Monitor Board</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                name="live_streaming"
+                value="Live_Streaming"
+                data-target="stream_checkbox"
+              />
+              Live Streaming</label
+            >
+
+            <label
+              >Other AV needs:
+              <input type="text" name="u_av_other" data-target="others_AV" />
             </label>
           </fieldset>
 
-          <br /><br />
+          <fieldset>
+            <legend>Property / Equipment Needs (from LMO)</legend>
 
-          <!-- Flags -->
-          <label>Philippine Flag and UC Flag:</label><br />
-          <label>
-            <input
-              type="checkbox"
-              name="u_flags"
-              value="yes"
-              onclick="onlyOne(this, 'u_flags')"
-              data-target="flags"
-              data-value="yes"
-            />
-            Yes
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="u_flags"
-              value="no"
-              onclick="onlyOne(this, 'u_flags')"
-              data-target="flags"
-              data-value="no"
-            />
-            No
-          </label>
-        </fieldset>
+            <!-- Air Cooler -->
+            <label>Air Cooler:</label><br />
+            <label>
+              <input
+                type="checkbox"
+                name="u_air_cooler"
+                value="yes"
+                onclick="onlyOne(this, 'u_air_cooler')"
+                data-target="air_cooler"
+                data-value="yes"
+              />
+              Yes
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="u_air_cooler"
+                value="no"
+                onclick="onlyOne(this, 'u_air_cooler')"
+                data-target="air_cooler"
+                data-value="no"
+              />
+              No
+            </label>
+
+            <br /><br />
+
+            <!-- Long Tables -->
+            <fieldset>
+              <legend>Long Tables:</legend>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="u_long_tables"
+                  value="yes"
+                  onclick="onlyOne(this, 'u_long_tables'); toggleDependentInput(this)"
+                  data-target="long_tables"
+                  data-value="yes"
+                  data-toggle-target="u_long_tables_count"
+                />
+                Yes </label
+              ><br />
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="u_long_tables"
+                  value="no"
+                  onclick="onlyOne(this, 'u_long_tables'); toggleDependentInput(this)"
+                  data-target="long_tables"
+                  data-value="no"
+                />
+                No </label
+              ><br /><br />
+
+              <label>
+                If Yes, how many?
+                <input
+                  type="text"
+                  name="u_long_tables_count"
+                  id="u_long_tables_count"
+                  data-target="long_tables_count"
+                  min="0"
+                  style="width: 150px"
+                  disabled
+                />
+              </label>
+            </fieldset>
+
+            <br /><br />
+
+            <!-- Flags -->
+            <label>Philippine Flag and UC Flag:</label><br />
+            <label>
+              <input
+                type="checkbox"
+                name="u_flags"
+                value="yes"
+                onclick="onlyOne(this, 'u_flags')"
+                data-target="flags"
+                data-value="yes"
+              />
+              Yes
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="u_flags"
+                value="no"
+                onclick="onlyOne(this, 'u_flags')"
+                data-target="flags"
+                data-value="no"
+              />
+              No
+            </label>
+          </fieldset>
         </div>
       </div>
 
-      <div id="exemption-section" style="display: none; margin-top: 2rem; padding: 2rem; background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <h2 style="color: #856404; margin: 0;">📋 Page 2: Curfew Exemption Form</h2>
-          <p style="color: #856404; margin: 0.5rem 0;">This form will be included in your PDF submission</p>
+      <div
+        id="exemption-section"
+        style="
+          display: none;
+          margin-top: 2rem;
+          padding: 2rem;
+          background-color: #fff3cd;
+          border: 2px solid #ffc107;
+          border-radius: 8px;
+        "
+      >
+        <div style="text-align: center; margin-bottom: 2rem">
+          <h2 style="color: #856404; margin: 0">
+            📋 Page 2: Curfew Exemption Form
+          </h2>
+          <p style="color: #856404; margin: 0.5rem 0">
+            This form will be included in your PDF submission
+          </p>
         </div>
 
-        <div style="background-color: #f8fdf8; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2e7d32;">
-          <h3 style="margin: 0 0 1.5rem 0; color: #2e7d32; font-size: 1.2rem; font-weight: 600;">
-            <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>
+        <div
+          style="
+            background-color: #f8fdf8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2e7d32;
+          "
+        >
+          <h3
+            style="
+              margin: 0 0 1.5rem 0;
+              color: #2e7d32;
+              font-size: 1.2rem;
+              font-weight: 600;
+            "
+          >
+            <i class="fas fa-clock" style="margin-right: 0.5rem"></i>
             REQUEST FOR EXEMPTION FROM CURFEW
           </h3>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 1rem;
+              margin-bottom: 1rem;
+            "
+          >
             <label>
               Requesting Office
-              <input type="text" name="exemption_office" id="exemption_office" style="width: 100%;" />
+              <input
+                type="text"
+                name="exemption_office"
+                id="exemption_office"
+                style="width: 100%"
+              />
             </label>
 
             <label>
               Venue
-              <input type="text" name="exemption_venue" id="exemption_venue" style="width: 100%;" />
+              <input
+                type="text"
+                name="exemption_venue"
+                id="exemption_venue"
+                style="width: 100%"
+              />
             </label>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 1rem;
+              margin-bottom: 1rem;
+            "
+          >
             <label>
               Number of People
-              <input type="number" name="exemption_people" id="exemption_people" min="1" style="width: 100%;" />
+              <input
+                type="number"
+                name="exemption_people"
+                id="exemption_people"
+                min="1"
+                style="width: 100%"
+              />
             </label>
 
             <label>
               Activity Date
-              <input type="date" name="exemption_date" id="exemption_date" style="width: 100%;" />
+              <input
+                type="date"
+                name="exemption_date"
+                id="exemption_date"
+                style="width: 100%"
+              />
             </label>
           </div>
 
-          <label style="margin-bottom: 1rem;">
+          <label style="margin-bottom: 1rem">
             Title/Nature of Activity
-            <input type="text" name="exemption_activity" id="exemption_activity" style="width: 100%;" />
+            <input
+              type="text"
+              name="exemption_activity"
+              id="exemption_activity"
+              style="width: 100%"
+            />
           </label>
 
-          <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: end; margin-bottom: 1rem;">
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr auto 1fr;
+              gap: 1rem;
+              align-items: end;
+              margin-bottom: 1rem;
+            "
+          >
             <label>
               Time Start
-              <input type="time" name="exemption_start" id="exemption_start" style="width: 100%;" />
+              <input
+                type="time"
+                name="exemption_start"
+                id="exemption_start"
+                style="width: 100%"
+              />
             </label>
-            <span style="text-align: center; padding: 0 1rem;">to</span>
+            <span style="text-align: center; padding: 0 1rem">to</span>
             <label>
               Time End
-              <input type="time" name="exemption_end" id="exemption_end" style="width: 100%;" />
+              <input
+                type="time"
+                name="exemption_end"
+                id="exemption_end"
+                style="width: 100%"
+              />
             </label>
           </div>
 
-          <div style="background-color: #e8f5e8; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
-            <h4 style="margin: 0 0 0.5rem 0; color: #2e7d32;">Attachment: Duly accomplished and approved</h4>
-            <label style="display: block; margin-bottom: 0.5rem;">
-              <input type="checkbox" checked disabled /> Facilities & Service Request Form for Internal Clients (UC-SDWO-FORM-22)
+          <div
+            style="
+              background-color: #e8f5e8;
+              padding: 1rem;
+              border-radius: 4px;
+              margin-bottom: 1rem;
+            "
+          >
+            <h4 style="margin: 0 0 0.5rem 0; color: #2e7d32">
+              Attachment: Duly accomplished and approved
+            </h4>
+            <label style="display: block; margin-bottom: 0.5rem">
+              <input type="checkbox" checked disabled /> Facilities & Service
+              Request Form for Internal Clients (UC-SDWO-FORM-22)
             </label>
-            <label style="display: block; margin-bottom: 0.5rem;">
-              <input type="checkbox" disabled /> Student Activity Request Form (UC-SDWO-FORM-106)
+            <label style="display: block; margin-bottom: 0.5rem">
+              <input type="checkbox" disabled /> Student Activity Request Form
+              (UC-SDWO-FORM-106)
             </label>
-            <label style="display: block;">
+            <label style="display: block">
               <input type="checkbox" disabled /> List of Participants
             </label>
           </div>
 
-          <div style="text-align: center; margin-top: 2rem;">
-            <button type="button" onclick="proceedWithSubmission()" style="background-color: #2e7d32; color: white; padding: 0.75rem 2rem; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
+          <div style="text-align: center; margin-top: 2rem">
+            <button
+              type="button"
+              onclick="proceedWithSubmission()"
+              style="
+                background-color: #2e7d32;
+                color: white;
+                padding: 0.75rem 2rem;
+                border: none;
+                border-radius: 4px;
+                font-size: 1rem;
+                cursor: pointer;
+              "
+            >
               <i class="fas fa-check"></i> Confirm & Submit Both Forms
             </button>
           </div>
         </div>
       </div>
 
-      <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e8f5e8;">
-        <button type="button" id="preparePrint" onclick="handleFormSubmission()">
+      <div
+        style="
+          text-align: center;
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 2px solid #e8f5e8;
+        "
+      >
+        <button
+          type="button"
+          id="preparePrint"
+          onclick="handleFormSubmission()"
+        >
           <i class="fas fa-paper-plane"></i>
           Submit Form
         </button>
-        <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+        <p style="margin-top: 1rem; color: #666; font-size: 0.9rem">
           <i class="fas fa-info-circle"></i>
-          Your form will be submitted and a PDF will be generated for your records.
+          Your form will be submitted and a PDF will be generated for your
+          records.
         </p>
       </div>
     </form>
@@ -1085,7 +1434,9 @@
           const date = document.getElementById("u_date")?.value;
           const start = document.getElementById("u_start")?.value;
           const end = document.getElementById("u_end")?.value;
-          const venue = document.getElementById("u_venue")?.value || localStorage.getItem('selectedReservationVenue');
+          const venue =
+            document.getElementById("u_venue")?.value ||
+            localStorage.getItem("selectedReservationVenue");
 
           if (!date || !start || !end || !venue) {
             hideTimeConflictWarning();
@@ -1093,20 +1444,23 @@
           }
 
           try {
-            const response = await fetch('/api/reservations/check-time-conflict', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-              },
-              body: JSON.stringify({
-                reservation_date: date,
-                time_start: start + ':00',
-                time_end: end + ':00',
-                location: venue,
-                venue: venue
-              })
-            });
+            const response = await fetch(
+              "/api/reservations/check-time-conflict",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                  reservation_date: date,
+                  time_start: start + ":00",
+                  time_end: end + ":00",
+                  location: venue,
+                  venue: venue,
+                }),
+              }
+            );
 
             const result = await response.json();
 
@@ -1116,64 +1470,67 @@
               hideTimeConflictWarning();
             }
           } catch (error) {
-            console.error('Error checking time conflicts:', error);
+            console.error("Error checking time conflicts:", error);
             hideTimeConflictWarning();
           }
         }
 
         function showTimeConflictWarning(conflicts, suggestedTimes) {
-          const warningDiv = document.getElementById('time-conflict-warning');
-          const suggestionsDiv = document.getElementById('time-suggestions');
+          const warningDiv = document.getElementById("time-conflict-warning");
+          const suggestionsDiv = document.getElementById("time-suggestions");
 
           if (warningDiv && suggestionsDiv) {
-            warningDiv.style.display = 'block';
+            warningDiv.style.display = "block";
 
             // Clear previous suggestions
-            suggestionsDiv.innerHTML = '';
+            suggestionsDiv.innerHTML = "";
 
             // Add suggested times
             if (suggestedTimes && suggestedTimes.length > 0) {
-              suggestedTimes.forEach(timeSlot => {
-                const suggestionBtn = document.createElement('div');
-                suggestionBtn.className = 'time-suggestion';
+              suggestedTimes.forEach((timeSlot) => {
+                const suggestionBtn = document.createElement("div");
+                suggestionBtn.className = "time-suggestion";
                 suggestionBtn.textContent = `${timeSlot.start} - ${timeSlot.end}`;
                 suggestionBtn.onclick = () => {
-                  document.getElementById('u_start').value = timeSlot.start_24h.slice(0, 5);
-                  document.getElementById('u_end').value = timeSlot.end_24h.slice(0, 5);
+                  document.getElementById("u_start").value =
+                    timeSlot.start_24h.slice(0, 5);
+                  document.getElementById("u_end").value =
+                    timeSlot.end_24h.slice(0, 5);
                   hideTimeConflictWarning();
                 };
                 suggestionsDiv.appendChild(suggestionBtn);
               });
             } else {
-              suggestionsDiv.innerHTML = '<p style="color: #666; font-style: italic;">No alternative times available for this date.</p>';
+              suggestionsDiv.innerHTML =
+                '<p style="color: #666; font-style: italic;">No alternative times available for this date.</p>';
             }
           }
         }
 
         function hideTimeConflictWarning() {
-          const warningDiv = document.getElementById('time-conflict-warning');
+          const warningDiv = document.getElementById("time-conflict-warning");
           if (warningDiv) {
-            warningDiv.style.display = 'none';
+            warningDiv.style.display = "none";
           }
         }
 
         // Add event listeners for time conflict checking
-        const timeStartInput = document.getElementById('u_start');
-        const timeEndInput = document.getElementById('u_end');
-        const dateInput = document.getElementById('u_date');
-        const venueInput = document.getElementById('u_venue');
+        const timeStartInput = document.getElementById("u_start");
+        const timeEndInput = document.getElementById("u_end");
+        const dateInput = document.getElementById("u_date");
+        const venueInput = document.getElementById("u_venue");
 
         if (timeStartInput) {
-          timeStartInput.addEventListener('change', checkTimeConflicts);
+          timeStartInput.addEventListener("change", checkTimeConflicts);
         }
         if (timeEndInput) {
-          timeEndInput.addEventListener('change', checkTimeConflicts);
+          timeEndInput.addEventListener("change", checkTimeConflicts);
         }
         if (dateInput) {
-          dateInput.addEventListener('change', checkTimeConflicts);
+          dateInput.addEventListener("change", checkTimeConflicts);
         }
         if (venueInput) {
-          venueInput.addEventListener('change', checkTimeConflicts);
+          venueInput.addEventListener("change", checkTimeConflicts);
         }
 
         /* Copy values from userform to internal form */
@@ -1187,35 +1544,52 @@
               const srcValue = src.value;
 
               // Special handling for fields that map to checkboxes in combinedForm
-              if (targetName === 'admission_fee') {
+              if (targetName === "admission_fee") {
                 // Clear all admission_fee checkboxes first
-                document.querySelectorAll('#combinedForm input[name="admission_fee"]').forEach(cb => cb.checked = false);
+                document
+                  .querySelectorAll('#combinedForm input[name="admission_fee"]')
+                  .forEach((cb) => (cb.checked = false));
 
                 // Set appropriate checkbox based on text value
-                if (srcValue.toLowerCase().includes('free')) {
-                  const freeCheckbox = document.querySelector('#combinedForm input[name="admission_fee"][value="free"]');
+                if (srcValue.toLowerCase().includes("free")) {
+                  const freeCheckbox = document.querySelector(
+                    '#combinedForm input[name="admission_fee"][value="free"]'
+                  );
                   if (freeCheckbox) freeCheckbox.checked = true;
-                } else if (srcValue.toLowerCase().includes('php') || srcValue.match(/\d/)) {
-                  const phpCheckbox = document.querySelector('#combinedForm input[name="admission_fee"][value="php"]');
+                } else if (
+                  srcValue.toLowerCase().includes("php") ||
+                  srcValue.match(/\d/)
+                ) {
+                  const phpCheckbox = document.querySelector(
+                    '#combinedForm input[name="admission_fee"][value="php"]'
+                  );
                   if (phpCheckbox) phpCheckbox.checked = true;
 
                   // Extract amount if present
                   const amountMatch = srcValue.match(/\d+(\.\d+)?/);
                   if (amountMatch) {
-                    const amountField = document.querySelector('#combinedForm input[name="admission_amount"]');
+                    const amountField = document.querySelector(
+                      '#combinedForm input[name="admission_amount"]'
+                    );
                     if (amountField) amountField.value = amountMatch[0];
                   }
                 }
-              } else if (targetName === 'audience_type') {
+              } else if (targetName === "audience_type") {
                 // Clear all audience_type checkboxes first
-                document.querySelectorAll('#combinedForm input[name="audience_type"]').forEach(cb => cb.checked = false);
+                document
+                  .querySelectorAll('#combinedForm input[name="audience_type"]')
+                  .forEach((cb) => (cb.checked = false));
 
                 // Set appropriate checkbox based on text value
-                if (srcValue.toLowerCase().includes('general')) {
-                  const generalCheckbox = document.querySelector('#combinedForm input[name="audience_type"][value="general"]');
+                if (srcValue.toLowerCase().includes("general")) {
+                  const generalCheckbox = document.querySelector(
+                    '#combinedForm input[name="audience_type"][value="general"]'
+                  );
                   if (generalCheckbox) generalCheckbox.checked = true;
-                } else if (srcValue.toLowerCase().includes('exclusive')) {
-                  const exclusiveCheckbox = document.querySelector('#combinedForm input[name="audience_type"][value="exclusive"]');
+                } else if (srcValue.toLowerCase().includes("exclusive")) {
+                  const exclusiveCheckbox = document.querySelector(
+                    '#combinedForm input[name="audience_type"][value="exclusive"]'
+                  );
                   if (exclusiveCheckbox) exclusiveCheckbox.checked = true;
                 }
               } else {
@@ -1250,8 +1624,6 @@
             });
         }
 
-
-
         /* Make copyUserValues available globally for form submission */
         window.copyUserValues = copyUserValues;
 
@@ -1260,7 +1632,7 @@
           // Helper function to safely get element value
           const getElementValue = (id) => {
             const element = document.getElementById(id);
-            return element ? element.value || '' : '';
+            return element ? element.value || "" : "";
           };
 
           // Helper function to safely set element value
@@ -1272,45 +1644,45 @@
           };
 
           // Populate exemption form fields safely
-          setElementValue('exemption_office', getElementValue('u_org'));
-          setElementValue('exemption_venue', getElementValue('u_venue'));
-          setElementValue('exemption_people', getElementValue('u_attend'));
-          setElementValue('exemption_date', getElementValue('u_date'));
-          setElementValue('exemption_activity', getElementValue('u_event'));
+          setElementValue("exemption_office", getElementValue("u_org"));
+          setElementValue("exemption_venue", getElementValue("u_venue"));
+          setElementValue("exemption_people", getElementValue("u_attend"));
+          setElementValue("exemption_date", getElementValue("u_date"));
+          setElementValue("exemption_activity", getElementValue("u_event"));
 
           // Set times in 24-hour format for time inputs (they'll display as 12-hour automatically)
-          const startTime = getElementValue('u_start');
-          const endTime = getElementValue('u_end');
+          const startTime = getElementValue("u_start");
+          const endTime = getElementValue("u_end");
 
-          setElementValue('exemption_start', startTime);
-          setElementValue('exemption_end', endTime);
+          setElementValue("exemption_start", startTime);
+          setElementValue("exemption_end", endTime);
         }
 
         /* Format time from 24-hour to 12-hour format */
         function formatTimeTo12Hour(time24) {
-          if (!time24) return '';
-          const [hours, minutes] = time24.split(':');
+          if (!time24) return "";
+          const [hours, minutes] = time24.split(":");
           const hour24 = parseInt(hours, 10);
           const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
-          const ampm = hour24 >= 12 ? 'PM' : 'AM';
+          const ampm = hour24 >= 12 ? "PM" : "AM";
           return `${hour12}:${minutes} ${ampm}`;
         }
 
         /* Function to proceed with submission after exemption form is shown */
-        window.proceedWithSubmission = function() {
+        window.proceedWithSubmission = function () {
           // Validate exemption form fields
           const requiredFields = [
-            { id: 'exemption_office', name: 'Requesting Office' },
-            { id: 'exemption_venue', name: 'Venue' },
-            { id: 'exemption_people', name: 'Number of People' },
-            { id: 'exemption_date', name: 'Activity Date' },
-            { id: 'exemption_activity', name: 'Title/Nature of Activity' },
-            { id: 'exemption_start', name: 'Time Start' },
-            { id: 'exemption_end', name: 'Time End' }
+            { id: "exemption_office", name: "Requesting Office" },
+            { id: "exemption_venue", name: "Venue" },
+            { id: "exemption_people", name: "Number of People" },
+            { id: "exemption_date", name: "Activity Date" },
+            { id: "exemption_activity", name: "Title/Nature of Activity" },
+            { id: "exemption_start", name: "Time Start" },
+            { id: "exemption_end", name: "Time End" },
           ];
 
           const missingFields = [];
-          requiredFields.forEach(field => {
+          requiredFields.forEach((field) => {
             const element = document.getElementById(field.id);
             if (!element || !element.value.trim()) {
               missingFields.push(field.name);
@@ -1319,9 +1691,11 @@
 
           if (missingFields.length > 0) {
             showErrorModal({
-              title: 'Exemption Form Incomplete',
-              message: `Please fill out the following required fields in the exemption form:\n\n• ${missingFields.join('\n• ')}`,
-              buttonText: 'OK'
+              title: "Exemption Form Incomplete",
+              message: `Please fill out the following required fields in the exemption form:\n\n• ${missingFields.join(
+                "\n• "
+              )}`,
+              buttonText: "OK",
             });
             return;
           }
@@ -1336,15 +1710,21 @@
 
         /* Update the curfew check to populate exemption form */
         const originalCheckCurfewRules = window.checkCurfewRules;
-        window.checkCurfewRules = function() {
+        window.checkCurfewRules = function () {
           const reasons = curfewReasons();
 
           if (reasons.length > 0) {
             // Check if exemption form is already visible and filled
-            const exemptionSection = document.getElementById('exemption-section');
+            const exemptionSection =
+              document.getElementById("exemption-section");
             const curfewFlag = document.getElementById("curfew_required");
 
-            if (exemptionSection && exemptionSection.style.display === 'block' && curfewFlag && curfewFlag.value === "Yes") {
+            if (
+              exemptionSection &&
+              exemptionSection.style.display === "block" &&
+              curfewFlag &&
+              curfewFlag.value === "Yes"
+            ) {
               // Exemption form is already shown and acknowledged, proceed with submission
               return true;
             }
@@ -1354,15 +1734,20 @@
 
             // Show modal for curfew exemption
             showConfirmationModal({
-              title: 'Curfew Exemption Required',
-              message: `This booking triggers curfew rules:\n\n${reasons.join('\n')}\n\nYou need to fill out the exemption form to proceed.`,
-              confirmText: 'Fill Exemption Form',
-              cancelText: 'Cancel',
-              type: 'warning',
+              title: "Curfew Exemption Required",
+              message: `This booking triggers curfew rules:\n\n${reasons.join(
+                "\n"
+              )}\n\nYou need to fill out the exemption form to proceed.`,
+              confirmText: "Fill Exemption Form",
+              cancelText: "Cancel",
+              type: "warning",
               onConfirm: () => {
                 // Show exemption form section
-                document.getElementById('exemption-section').style.display = 'block';
-                document.getElementById('exemption-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById("exemption-section").style.display =
+                  "block";
+                document
+                  .getElementById("exemption-section")
+                  .scrollIntoView({ behavior: "smooth" });
 
                 // Set flag that curfew form is needed
                 const flag = document.getElementById("curfew_required");
@@ -1372,7 +1757,7 @@
               },
               onCancel: () => {
                 return false; // User cancelled
-              }
+              },
             });
             return false; // Don't proceed with submission yet
           }
@@ -1400,17 +1785,17 @@
       });
     </script>
     <script>
-  window.addEventListener("beforeprint", () => {
-    const flag = document.getElementById("curfew_required");
-    const exemptionDiv = document.getElementById("exemption-section");
+      window.addEventListener("beforeprint", () => {
+        const flag = document.getElementById("curfew_required");
+        const exemptionDiv = document.getElementById("exemption-section");
 
-    if (flag && flag.value === "Yes" && exemptionDiv) {
-      exemptionDiv.style.display = "block";
-    } else if (exemptionDiv) {
-      exemptionDiv.style.display = "none";
-    }
-  });
-</script>
+        if (flag && flag.value === "Yes" && exemptionDiv) {
+          exemptionDiv.style.display = "block";
+        } else if (exemptionDiv) {
+          exemptionDiv.style.display = "none";
+        }
+      });
+    </script>
 
     <!-- Include required JavaScript files -->
     <script src="/js/roleUtils.js"></script>
@@ -1419,69 +1804,71 @@
 
     <script>
       // Initialize navbar and modals
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener("DOMContentLoaded", function () {
         // Check authentication and initialize navbar
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
-          window.location.href = '/login';
+          window.location.href = "/login";
           return;
         }
 
         // Verify user role and initialize navbar
-        fetch('/api/auth/verify', {
+        fetch("/api/auth/verify", {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .then(response => response.json())
-        .then(data => {
-          if (!data.user) {
-            window.location.href = '/login';
-            return;
-          }
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.user) {
+              window.location.href = "/login";
+              return;
+            }
 
-          // Initialize navbar with correct user role
-          initializeNavbar('user', 'internal-clients', data.user.role);
+            // Initialize navbar with correct user role
+            initializeNavbar("user", "internal-clients", data.user.role);
 
-          // Initialize modals
-          initializeModals();
+            // Initialize modals
+            initializeModals();
 
-          // Populate date field from calendar selection
-          populateSelectedDate();
-        })
-        .catch(error => {
-          console.error('Error verifying user:', error);
-          window.location.href = '/login';
-        });
+            // Populate date field from calendar selection
+            populateSelectedDate();
+          })
+          .catch((error) => {
+            console.error("Error verifying user:", error);
+            window.location.href = "/login";
+          });
       });
 
       // Function to populate the selected date and venue from calendar
       function populateSelectedDate() {
-        const selectedDate = localStorage.getItem('selectedReservationDate');
-        const selectedVenue = localStorage.getItem('selectedReservationVenue');
-        const dateField = document.getElementById('u_date');
-        const venueField = document.getElementById('u_venue');
+        const selectedDate = localStorage.getItem("selectedReservationDate");
+        const selectedVenue = localStorage.getItem("selectedReservationVenue");
+        const dateField = document.getElementById("u_date");
+        const venueField = document.getElementById("u_venue");
 
         if (selectedDate && dateField) {
           dateField.value = selectedDate;
-          console.log('Pre-populated date from calendar:', selectedDate);
+          console.log("Pre-populated date from calendar:", selectedDate);
         } else if (!selectedDate) {
           // If no date was selected from calendar, redirect back to reservation page
-          alert('Please select a date from the reservation calendar first.');
-          window.location.href = '/user/reservation.html';
+          alert("Please select a date from the reservation calendar first.");
+          window.location.href = "/user/reservation.html";
         }
 
         if (selectedVenue && venueField) {
           venueField.value = selectedVenue;
-          console.log('Pre-populated venue from calendar:', selectedVenue);
+          console.log("Pre-populated venue from calendar:", selectedVenue);
 
           // Trigger change event to update capacity if needed
-          const changeEvent = new Event('change', { bubbles: true });
+          const changeEvent = new Event("change", { bubbles: true });
           venueField.dispatchEvent(changeEvent);
         }
 
         // Show existing reservations info if any
-        const existingReservations = localStorage.getItem('existingReservations');
+        const existingReservations = localStorage.getItem(
+          "existingReservations"
+        );
         if (existingReservations) {
           showExistingReservationsInfo(JSON.parse(existingReservations));
         }
@@ -1490,14 +1877,16 @@
       // Function to show existing reservations for the selected date
       function showExistingReservationsInfo(reservations) {
         // Remove any existing info div
-        const existingInfo = document.getElementById('existing-reservations-info');
+        const existingInfo = document.getElementById(
+          "existing-reservations-info"
+        );
         if (existingInfo) {
           existingInfo.remove();
         }
 
-        const infoDiv = document.createElement('div');
-        infoDiv.id = 'existing-reservations-info';
-        infoDiv.className = 'alert alert-info';
+        const infoDiv = document.createElement("div");
+        infoDiv.id = "existing-reservations-info";
+        infoDiv.className = "alert alert-info";
         infoDiv.style.cssText = `
           margin: 15px 0;
           padding: 15px;
@@ -1513,17 +1902,25 @@
             <strong>Existing Reservations for This Date:</strong>
           </div>
           <div style="margin-left: 20px;">
-            ${reservations.map(res => `
+            ${reservations
+              .map(
+                (res) => `
               <div style="margin: 8px 0; padding: 8px; background: rgba(33, 150, 243, 0.1); border-radius: 4px;">
                 <div style="font-weight: 500;">${res.title}</div>
                 <div style="font-size: 0.9em; color: #666; margin-top: 4px;">
-                  <i class="fas fa-clock" style="margin-right: 5px;"></i> ${res.time}
+                  <i class="fas fa-clock" style="margin-right: 5px;"></i> ${
+                    res.time
+                  }
                   <span style="margin-left: 15px;">
-                    <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> ${res.venue || res.location}
+                    <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> ${
+                      res.venue || res.location
+                    }
                   </span>
                 </div>
               </div>
-            `).join('')}
+            `
+              )
+              .join("")}
           </div>
           <div style="margin-top: 10px; font-size: 0.9em; color: #1565c0;">
             <i class="fas fa-lightbulb" style="margin-right: 5px;"></i>
@@ -1532,7 +1929,7 @@
         `;
 
         // Insert after the venue field
-        const venueField = document.getElementById('u_venue');
+        const venueField = document.getElementById("u_venue");
         if (venueField && venueField.parentNode) {
           venueField.parentNode.insertBefore(infoDiv, venueField.nextSibling);
         }
@@ -1545,30 +1942,33 @@
             reservation_date: formData.u_date,
             time_start: formData.u_start,
             time_end: formData.u_end,
-            form_type: 'internal',
-            title: formData.u_event || 'Internal Client Event', // Function/Event field
-            location: formData.u_venue || 'TBD',
-            venue: formData.u_venue || localStorage.getItem('selectedReservationVenue') || 'TBD'
+            form_type: "internal",
+            title: formData.u_event || "Internal Client Event", // Function/Event field
+            location: formData.u_venue || "TBD",
+            venue:
+              formData.u_venue ||
+              localStorage.getItem("selectedReservationVenue") ||
+              "TBD",
           };
 
-          const response = await fetch('/api/reservations/save-date', {
-            method: 'POST',
+          const response = await fetch("/api/reservations/save-date", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            body: JSON.stringify(reservationData)
+            body: JSON.stringify(reservationData),
           });
 
           if (!response.ok) {
             const error = await response.json();
-            console.error('Failed to save reservation:', error);
-            throw new Error(error.message || 'Failed to save reservation');
+            console.error("Failed to save reservation:", error);
+            throw new Error(error.message || "Failed to save reservation");
           }
 
-          console.log('Reservation saved successfully');
+          console.log("Reservation saved successfully");
         } catch (error) {
-          console.error('Error saving reservation:', error);
+          console.error("Error saving reservation:", error);
           // Don't throw error here to allow form submission to continue
         }
       }
@@ -1582,7 +1982,7 @@
           }
 
           // Get form data directly from the user form
-          const formData = new FormData(document.getElementById('userForm'));
+          const formData = new FormData(document.getElementById("userForm"));
 
           // Convert FormData to regular object
           const formObject = {};
@@ -1591,8 +1991,10 @@
           }
 
           // Add checkbox values properly
-          const checkboxes = document.querySelectorAll('#userForm input[type="checkbox"]:checked');
-          checkboxes.forEach(checkbox => {
+          const checkboxes = document.querySelectorAll(
+            '#userForm input[type="checkbox"]:checked'
+          );
+          checkboxes.forEach((checkbox) => {
             if (checkbox.name && checkbox.value) {
               formObject[checkbox.name] = checkbox.value;
             }
@@ -1601,50 +2003,52 @@
           // Add exemption form data if curfew is required
           if (formObject.curfew_required === "Yes") {
             const exemptionFields = [
-              'exemption_office', 'exemption_venue', 'exemption_people',
-              'exemption_date', 'exemption_activity', 'exemption_start', 'exemption_end'
+              "exemption_office",
+              "exemption_venue",
+              "exemption_people",
+              "exemption_date",
+              "exemption_activity",
+              "exemption_start",
+              "exemption_end",
             ];
 
-            exemptionFields.forEach(fieldId => {
+            exemptionFields.forEach((fieldId) => {
               const element = document.getElementById(fieldId);
               if (element && element.value) {
                 formObject[fieldId] = element.value;
               }
             });
-
-
           }
 
           // Check authentication token
-          const token = localStorage.getItem('token');
+          const token = localStorage.getItem("token");
 
           if (!token) {
             showErrorModal({
-              title: 'Authentication Required',
-              message: 'Please log in to submit the form.',
-              buttonText: 'Go to Login',
+              title: "Authentication Required",
+              message: "Please log in to submit the form.",
+              buttonText: "Go to Login",
               onClose: () => {
-                window.location.href = '/login';
-              }
+                window.location.href = "/login";
+              },
             });
             return;
           }
 
-
-
           // Show loading state
-          const submitBtn = document.getElementById('preparePrint');
+          const submitBtn = document.getElementById("preparePrint");
           submitBtn.disabled = true;
-          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
           // Submit form to backend
-          const response = await fetch('/api/sarf/internal/submit', {
-            method: 'POST',
+          const response = await fetch("/api/sarf/internal/submit", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            body: JSON.stringify(formObject)
+            body: JSON.stringify(formObject),
           });
 
           if (!response.ok) {
@@ -1656,7 +2060,7 @@
 
           // Reset button
           submitBtn.disabled = false;
-          submitBtn.innerHTML = 'Submit';
+          submitBtn.innerHTML = "Submit";
 
           if (result.success) {
             // Save the reservation to calendar after successful form submission
@@ -1664,47 +2068,47 @@
 
             // Show success modal with PDF options
             showSuccessModalWithPDF({
-              title: 'Form Submitted Successfully!',
+              title: "Form Submitted Successfully!",
               message: `Your internal client form has been submitted and PDF generated. Control Number: ${result.data.control}`,
               pdfUrl: result.data.pdfUrl,
               pdfId: result.data.id,
               controlNumber: result.data.control,
               onClose: () => {
                 // Optionally redirect or reset form
-                window.location.href = '/user/my-forms';
-              }
+                window.location.href = "/user/my-forms";
+              },
             });
           } else {
             showErrorModal({
-              title: 'Submission Failed',
-              message: result.message || 'Failed to submit form. Please try again.',
-              buttonText: 'Try Again'
+              title: "Submission Failed",
+              message:
+                result.message || "Failed to submit form. Please try again.",
+              buttonText: "Try Again",
             });
           }
-
         } catch (error) {
-
           // Reset button
-          const submitBtn = document.getElementById('preparePrint');
+          const submitBtn = document.getElementById("preparePrint");
           submitBtn.disabled = false;
-          submitBtn.innerHTML = 'Submit';
+          submitBtn.innerHTML = "Submit";
 
           // More detailed error message
-          let errorMessage = 'Unable to submit form. ';
-          if (error.message.includes('Failed to fetch')) {
-            errorMessage += 'Server connection failed. Please check if the server is running.';
-          } else if (error.message.includes('401')) {
-            errorMessage += 'Authentication failed. Please log in again.';
-          } else if (error.message.includes('403')) {
-            errorMessage += 'Access denied. Please check your permissions.';
+          let errorMessage = "Unable to submit form. ";
+          if (error.message.includes("Failed to fetch")) {
+            errorMessage +=
+              "Server connection failed. Please check if the server is running.";
+          } else if (error.message.includes("401")) {
+            errorMessage += "Authentication failed. Please log in again.";
+          } else if (error.message.includes("403")) {
+            errorMessage += "Access denied. Please check your permissions.";
           } else {
             errorMessage += `Error: ${error.message}`;
           }
 
           showErrorModal({
-            title: 'Network Error',
+            title: "Network Error",
             message: errorMessage,
-            buttonText: 'Try Again'
+            buttonText: "Try Again",
           });
         }
       }
