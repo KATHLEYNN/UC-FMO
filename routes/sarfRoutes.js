@@ -711,20 +711,16 @@ router.put('/admin/update-status/:formId', [auth, checkAdminRole()], async (req,
     const { formId } = req.params;
     const { status, rejection_notes } = req.body;
 
-    if (!['pending', 'accepted', 'rejected'].includes(status)) {
+    // Validate status
+    const validationResult = validateStatusUpdate(status, rejection_notes);
+    if (!validationResult.isValid) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid status. Must be pending, accepted, or rejected.'
+        message: validationResult.message
       });
     }
 
-    if (status === 'rejected' && (!rejection_notes || rejection_notes.trim() === '')) {
-      return res.status(400).json({
-        success: false,
-        message: 'Rejection notes are required when rejecting a form.'
-      });
-    }
-
+    // Check if form exists
     const [formRows] = await pool.execute(
       'SELECT * FROM student_activity_requests WHERE id = ?',
       [formId]
@@ -737,35 +733,8 @@ router.put('/admin/update-status/:formId', [auth, checkAdminRole()], async (req,
       });
     }
 
-    let controlNumber = null;
-    let updateQuery, updateParams;
-
-    if (status === 'accepted') {
-      const formType = formRows[0].reservation_type;
-      if (formType === 'campus') {
-        controlNumber = await generateSARFControlNumber();
-      } else if (formType === 'internal') {
-        controlNumber = await generateControlNumber();
-      } else if (formType === 'external') {
-        controlNumber = await generateExternalControlNumber();
-      }
-
-      updateQuery = `
-        UPDATE student_activity_requests
-        SET status = ?, control_no = ?, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `;
-      updateParams = [status, controlNumber, formId];
-    } else {
-      updateQuery = `
-        UPDATE student_activity_requests
-        SET status = ?, rejection_notes = ?, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `;
-      updateParams = [status, status === 'rejected' ? rejection_notes : null, formId];
-    }
-
-    await pool.execute(updateQuery, updateParams);
+    // Process status update
+    const updateResult = await processFormStatusUpdate(formRows[0], status, rejection_notes);
 
     res.json({
       success: true,
@@ -773,7 +742,7 @@ router.put('/admin/update-status/:formId', [auth, checkAdminRole()], async (req,
       data: {
         id: formId,
         status: status,
-        control_no: controlNumber,
+        control_no: updateResult.controlNumber,
         rejection_notes: status === 'rejected' ? rejection_notes : null
       }
     });
@@ -964,63 +933,137 @@ router.get('/external/download/:pdfId', auth, async (req, res) => {
 });
 
 /**
+ * Validate status update request
+ */
+function validateStatusUpdate(status, rejection_notes) {
+  if (!['pending', 'accepted', 'rejected'].includes(status)) {
+    return {
+      isValid: false,
+      message: 'Invalid status. Must be pending, accepted, or rejected.'
+    };
+  }
+
+  if (status === 'rejected' && (!rejection_notes || typeof rejection_notes !== 'string' || rejection_notes.trim() === '')) {
+    return {
+      isValid: false,
+      message: 'Rejection notes are required when rejecting a form.'
+    };
+  }
+
+  return { isValid: true };
+}
+
+/**
+ * Process form status update with control number generation
+ */
+async function processFormStatusUpdate(form, status, rejection_notes) {
+  let controlNumber = null;
+  let updateQuery, updateParams;
+
+  if (status === 'accepted') {
+    const formType = form.reservation_type;
+
+    if (formType === 'campus') {
+      controlNumber = await generateSARFControlNumber();
+    } else if (formType === 'internal') {
+      controlNumber = await generateControlNumber();
+    } else if (formType === 'external') {
+      controlNumber = await generateExternalControlNumber();
+    }
+
+    updateQuery = `
+      UPDATE student_activity_requests
+      SET status = ?, control_no = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+    updateParams = [status, controlNumber, form.id];
+  } else {
+    updateQuery = `
+      UPDATE student_activity_requests
+      SET status = ?, rejection_notes = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+    updateParams = [status, status === 'rejected' ? rejection_notes : null, form.id];
+  }
+
+  await pool.execute(updateQuery, updateParams);
+
+  return { controlNumber };
+}
+
+/**
  * Generate control number for SARF forms
  */
 async function generateSARFControlNumber() {
-  const year = new Date().getFullYear();
-  const month = String(new Date().getMonth() + 1).padStart(2, '0');
+  try {
+    const year = new Date().getFullYear();
+    const month = String(new Date().getMonth() + 1).padStart(2, '0');
 
-  // Get the count of SARF forms this month
-  const [countResult] = await pool.execute(
-    `SELECT COUNT(*) as count FROM student_activity_requests
-     WHERE reservation_type = 'campus'
-     AND YEAR(submitted_at) = ?
-     AND MONTH(submitted_at) = ?`,
-    [year, month]
-  );
+    // Get the count of all SARF forms (simpler approach)
+    const [countResult] = await pool.execute(
+      `SELECT COUNT(*) as count FROM student_activity_requests
+       WHERE reservation_type = 'campus'`,
+      []
+    );
 
-  const sequence = String(countResult[0].count + 1).padStart(4, '0');
-  return `SARF-${year}${month}-${sequence}`;
+    const sequence = String(countResult[0].count + 1).padStart(4, '0');
+    return `SARF-${year}${month}-${sequence}`;
+  } catch (error) {
+    console.error('Error generating SARF control number:', error);
+    // Fallback to timestamp-based sequence
+    const timestamp = Date.now().toString().slice(-6);
+    return `SARF-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}-${timestamp}`;
+  }
 }
 
 /**
  * Generate control number for internal client forms
  */
 async function generateControlNumber() {
-  const year = new Date().getFullYear();
-  const month = String(new Date().getMonth() + 1).padStart(2, '0');
+  try {
+    const year = new Date().getFullYear();
+    const month = String(new Date().getMonth() + 1).padStart(2, '0');
 
-  // Get the count of internal forms this month
-  const [countResult] = await pool.execute(
-    `SELECT COUNT(*) as count FROM student_activity_requests
-     WHERE reservation_type = 'internal'
-     AND YEAR(submitted_at) = ?
-     AND MONTH(submitted_at) = ?`,
-    [year, month]
-  );
+    // Get the count of all internal forms (simpler approach)
+    const [countResult] = await pool.execute(
+      `SELECT COUNT(*) as count FROM student_activity_requests
+       WHERE reservation_type = 'internal'`,
+      []
+    );
 
-  const sequence = String(countResult[0].count + 1).padStart(4, '0');
-  return `IC-${year}${month}-${sequence}`;
+    const sequence = String(countResult[0].count + 1).padStart(4, '0');
+    return `IC-${year}${month}-${sequence}`;
+  } catch (error) {
+    console.error('Error generating internal control number:', error);
+    // Fallback to timestamp-based sequence
+    const timestamp = Date.now().toString().slice(-6);
+    return `IC-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}-${timestamp}`;
+  }
 }
 
 /**
  * Generate control number for external client forms
  */
 async function generateExternalControlNumber() {
-  const year = new Date().getFullYear();
-  const month = String(new Date().getMonth() + 1).padStart(2, '0');
+  try {
+    const year = new Date().getFullYear();
+    const month = String(new Date().getMonth() + 1).padStart(2, '0');
 
-  // Get the count of external forms this month
-  const [countResult] = await pool.execute(
-    `SELECT COUNT(*) as count FROM student_activity_requests
-     WHERE reservation_type = 'external'
-     AND YEAR(submitted_at) = ?
-     AND MONTH(submitted_at) = ?`,
-    [year, month]
-  );
+    // Get the count of all external forms (simpler approach)
+    const [countResult] = await pool.execute(
+      `SELECT COUNT(*) as count FROM student_activity_requests
+       WHERE reservation_type = 'external'`,
+      []
+    );
 
-  const sequence = String(countResult[0].count + 1).padStart(4, '0');
-  return `EC-${year}${month}-${sequence}`;
+    const sequence = String(countResult[0].count + 1).padStart(4, '0');
+    return `EC-${year}${month}-${sequence}`;
+  } catch (error) {
+    console.error('Error generating external control number:', error);
+    // Fallback to timestamp-based sequence
+    const timestamp = Date.now().toString().slice(-6);
+    return `EC-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}-${timestamp}`;
+  }
 }
 
 module.exports = router;
